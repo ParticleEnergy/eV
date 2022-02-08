@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>eV.Session</Title>
+        <Description>eV.Session</Description>
+        <Copyright>Copyright (c) ParticleEnergy</Copyright>
+        <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="log4net" Version="2.0.14" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\eV.Network\eV.Network.Core\eV.Network.Core.csproj" />
+      <ProjectReference Include="..\eV.Routing\eV.Routing.csproj" />
+    </ItemGroup>
+
+</Project>
