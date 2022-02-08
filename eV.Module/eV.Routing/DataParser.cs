@@ -62,8 +62,8 @@ namespace eV.Routing
             if (_lastReceiveBuffer.Length <= 0)
                 return data;
             MemoryStream memoryStream = new();
-            memoryStream.Write(_lastReceiveBuffer);
-            memoryStream.Write(data);
+            memoryStream.Write(_lastReceiveBuffer, 0, _lastReceiveBuffer.Length);
+            memoryStream.Write(data, 0, data.Length);
             return memoryStream.ToArray();
         }
 

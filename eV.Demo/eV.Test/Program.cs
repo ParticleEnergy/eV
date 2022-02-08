@@ -45,7 +45,7 @@ namespace eV.Test
             packet.SetContent(Serializer.Serialize(indexParam));
             byte[] data = Package.Pack(packet);
             Packet packet1 = new();
-            packet1.SetName("IndexParam1");
+            packet1.SetName("IndexParam");
             packet1.SetContent(Serializer.Serialize(indexParam1));
             byte[] data1 = Package.Pack(packet1);
 
@@ -70,6 +70,7 @@ namespace eV.Test
             foreach (var rst in result)
             {
                 Console.WriteLine(rst.GetNameLength());
+                Console.WriteLine(rst.GetContent().Length);
                 Dispatch.Dispense(session, rst);
 
                 // Console.WriteLine(rst.GetName());

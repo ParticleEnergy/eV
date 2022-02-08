@@ -1,20 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Title>eV.Routing</Title>
-        <Description>eV.Routing</Description>
-        <Copyright>Copyright (c) ParticleEnergy</Copyright>
-        <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
-        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    </PropertyGroup>
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>eV.Routing</Title>
+    <Description>eV.Routing</Description>
+    <Copyright>Copyright (c) ParticleEnergy</Copyright>
+    <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <TargetFrameworks>net5.0;net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <LangVersion>10</LangVersion>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="log4net" Version="2.0.14" />
-      <PackageReference Include="MongoDB.Bson" Version="2.14.1" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.14" />
+    <PackageReference Include="MongoDB.Bson" Version="2.14.1" />
+  </ItemGroup>
 </Project>

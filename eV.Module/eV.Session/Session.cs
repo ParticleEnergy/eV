@@ -110,9 +110,9 @@ namespace eV.Session
         private void Release()
         {
             OnRelease?.Invoke(this);
-            foreach (var (_, groupName) in _group)
+            foreach (var g in _group)
             {
-                LeaveGroup(groupName);
+                LeaveGroup(g.Value);
             }
             _sessionId = null;
             _group.Clear();
