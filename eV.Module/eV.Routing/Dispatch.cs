@@ -49,10 +49,10 @@ namespace eV.Routing
                 }
             }
         }
-        public static bool Dispense(ISession session, IPacket packet)
+        public static void Dispense(ISession session, IPacket packet)
         {
             if (packet.GetName().Equals("") || packet.GetContent().Length == 0)
-                return false;
+                return;
 
             try
             {
@@ -60,17 +60,15 @@ namespace eV.Routing
                 if (route == null)
                 {
                     s_logger.Error($"The receiver corresponding to packet [{packet.GetName()}] is not found");
-                    return false;
+                    return;
                 }
                 object content = Serializer.Deserialize(packet.GetContent(), route.ContentType);
                 route.Handler.Run(session, content);
                 s_logger.Info($"Message [{packet.GetName()}] handle access");
-                return true;
             }
             catch (Exception e)
             {
                 s_logger.Error(e.Message, e);
-                return false;
             }
         }
         private static IRoute? GetRoute(string name)
