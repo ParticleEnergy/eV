@@ -11,9 +11,6 @@ namespace eV.Network.Client
         public const SocketType SocketType = (SocketType)1;
         public const ProtocolType ProtocolType = (ProtocolType)6;
         public const int ReceiveBufferSize = 2048;
-        public const int TcpKeepAliveTime = 60;
-        public const int TcpKeepAliveInterval = 3;
-        public const int TcpKeepAliveRetryCount = 3;
         public const string LoggerName = "eV.Network.Client";
     }
 }

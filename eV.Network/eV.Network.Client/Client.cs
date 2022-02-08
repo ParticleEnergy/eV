@@ -29,9 +29,6 @@ namespace eV.Network.Client
         private SocketType _socketType;
         private ProtocolType _protocolType;
         private int _receiveBufferSize;
-        private int _tcpKeepAliveTime;
-        private int _tcpKeepAliveInterval;
-        private int _tcpKeepAliveRetryCount;
         #endregion
 
 
@@ -68,10 +65,6 @@ namespace eV.Network.Client
             _socketType = setting.SocketType;
             _protocolType = setting.ProtocolType;
             _receiveBufferSize = setting.ReceiveBufferSize;
-
-            _tcpKeepAliveTime = setting.TcpKeepAliveTime;
-            _tcpKeepAliveInterval = setting.TcpKeepAliveInterval;
-            _tcpKeepAliveRetryCount = setting.TcpKeepAliveRetryCount;
         }
 
         #region Operate
@@ -137,10 +130,6 @@ namespace eV.Network.Client
         {
             _socket = new Socket(_ipEndPoint!.AddressFamily, _socketType, _protocolType);
             _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-            if (_protocolType != ProtocolType.Tcp)
-                return;
-            _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, _tcpKeepAliveInterval);
-            _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, _tcpKeepAliveRetryCount);
         }
         #endregion
 
@@ -149,8 +138,6 @@ namespace eV.Network.Client
         {
             if (socketAsyncEventArgs.ConnectSocket != null)
             {
-                if (socketAsyncEventArgs.ConnectSocket.ProtocolType == ProtocolType.Tcp)
-                    socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Tcp,SocketOptionName.TcpKeepAliveTime,_tcpKeepAliveTime);
                 _channel.Open(socketAsyncEventArgs.ConnectSocket);
             }
             else
