@@ -77,7 +77,7 @@ namespace eV.GameProfile
                     try
                     {
                         string text = File.ReadAllText(file.FullName);
-                        result.Add(file.Name.Split(".")[0], text);
+                        result.Add(file.Name.Split('.')[0], text);
                     }
                     catch (Exception e)
                     {
