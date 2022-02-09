@@ -19,8 +19,8 @@ namespace eV.Session
 
         #region Action
         public Func<string, byte[], bool>? SendAction;
-        public Action<string, byte[]>? SendGroupAction;
-        public Action<byte[]>? SendBroadcastAction;
+        public Action<string, string, byte[]>? SendGroupAction;
+        public Action<string, byte[]>? SendBroadcastAction;
         public Func<string, string, bool>? JoinGroupAction;
         public Func<string, string, bool>? LeaveGroupAction;
         #endregion
@@ -129,7 +129,7 @@ namespace eV.Session
 
 
         #region IO
-        private byte[]? GetSendData<T>(T data)
+        private static byte[]? GetSendData<T>(T data)
         {
             try
             {
@@ -166,6 +166,11 @@ namespace eV.Session
         }
         public bool Send<T>(string sessionId, T data)
         {
+            if (_sessionId is null or "")
+            {
+                Logger.Warn("SendBySessionId needs to activate the session");
+                return false;
+            }
             try
             {
                 byte[]? result = GetSendData(data);
@@ -177,14 +182,19 @@ namespace eV.Session
                 return false;
             }
         }
-        public void SendGroup<T>(string groupId, T data)
+        public void SendGroup<T>(string groupName, T data)
         {
+            if (_sessionId is null or "")
+            {
+                Logger.Warn("SendGroup needs to activate the session");
+                return;
+            }
             try
             {
                 byte[]? result = GetSendData(data);
                 if (result == null)
                     return;
-                SendGroupAction?.Invoke(groupId, result);
+                SendGroupAction?.Invoke(_sessionId, groupName, result);
             }
             catch (Exception e)
             {
@@ -193,12 +203,17 @@ namespace eV.Session
         }
         public void SendBroadcast<T>(T data)
         {
+            if (_sessionId is null or "")
+            {
+                Logger.Warn("SendBroadcast needs to activate the session");
+                return;
+            }
             try
             {
                 byte[]? result = GetSendData(data);
                 if (result == null)
                     return;
-                SendBroadcastAction?.Invoke(result);
+                SendBroadcastAction?.Invoke(_sessionId, result);
             }
             catch (Exception e)
             {

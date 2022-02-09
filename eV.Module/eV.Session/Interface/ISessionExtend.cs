@@ -7,8 +7,8 @@ namespace eV.Session.Interface
     public interface ISessionExtend
     {
         public bool Send(string sessionId, byte[] data);
-        public void SendGroup(string groupName, byte[] data);
-        public void SendBroadcast(byte[] data);
+        public void SendGroup(string selfSessionId, string groupName, byte[] data);
+        public void SendBroadcast(string selfSessionId, byte[] data);
         public bool JoinGroup(string groupName, string sessionId);
         public bool LeaveGroup(string groupName, string sessionId);
         public void OnActivate(ISession session);
