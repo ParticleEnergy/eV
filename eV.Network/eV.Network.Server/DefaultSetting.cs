@@ -16,6 +16,5 @@ namespace eV.Network.Server
         public const int TcpKeepAliveTime = 60;
         public const int TcpKeepAliveInterval = 3;
         public const int TcpKeepAliveRetryCount = 3;
-        public const string LoggerName = "eV.Network.Server";
     }
 }

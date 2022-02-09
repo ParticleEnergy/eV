@@ -11,6 +11,5 @@ namespace eV.Network.Client
         public const SocketType SocketType = (SocketType)1;
         public const ProtocolType ProtocolType = (ProtocolType)6;
         public const int ReceiveBufferSize = 2048;
-        public const string LoggerName = "eV.Network.Client";
     }
 }
