@@ -5,8 +5,8 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using eV.EasyLog;
 using eV.Network.Core;
-using log4net;
 namespace eV.Network.Server
 {
     public class Server
@@ -42,7 +42,6 @@ namespace eV.Network.Server
         private readonly ObjectPool<Channel> _channelPool;
         private readonly ChannelManager _connectedChannels;
         private readonly Semaphore _maxAcceptedConnected;
-        private readonly ILog _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
         #endregion
 
         public Server(ServerSetting setting)
@@ -91,7 +90,7 @@ namespace eV.Network.Server
         {
             if (ServerState == RunState.On)
             {
-                _logger.Warn("The server is already turned on");
+                Logger.Warn("The server is already turned on");
                 return;
             }
             try
@@ -113,19 +112,19 @@ namespace eV.Network.Server
 
                 if (StartAccept())
                 {
-                    _logger.Info($"Server {_ipEndPoint.Address}:{_ipEndPoint.Port} start listen");
+                    Logger.Info($"Server {_ipEndPoint.Address}:{_ipEndPoint.Port} start listen");
                 }
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
             }
         }
         public void Stop()
         {
             if (ServerState == RunState.Off)
             {
-                _logger.Warn("The server is already turned off");
+                Logger.Warn("The server is already turned off");
                 return;
             }
             ServerState = RunState.Off;
@@ -135,11 +134,11 @@ namespace eV.Network.Server
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
             }
             finally
             {
-                _logger.Info("Server stopping ...");
+                Logger.Info("Server stopping ...");
                 Release();
             }
         }
@@ -153,7 +152,7 @@ namespace eV.Network.Server
             {
 
             }
-            _logger.Info("Server shutdown");
+            Logger.Info("Server shutdown");
         }
         private void Init()
         {
@@ -235,20 +234,20 @@ namespace eV.Network.Server
             if (socketAsyncEventArgs.SocketError != SocketError.Success)
             {
                 CloseAcceptSocketAsyncEventArgs(socketAsyncEventArgs);
-                _logger.Error($"ProcessAccept {socketAsyncEventArgs.SocketError}");
+                Logger.Error($"ProcessAccept {socketAsyncEventArgs.SocketError}");
                 return;
             }
 
             if (socketAsyncEventArgs.AcceptSocket == null)
             {
                 ResetAcceptSocketAsyncEventArgs(socketAsyncEventArgs);
-                _logger.Error("ProcessAccept AcceptSocket is null");
+                Logger.Error("ProcessAccept AcceptSocket is null");
                 return;
             }
 
             if (!socketAsyncEventArgs.AcceptSocket.Connected)
             {
-                _logger.Error("ProcessAccept AcceptSocket not Connected");
+                Logger.Error("ProcessAccept AcceptSocket not Connected");
                 ResetAcceptSocketAsyncEventArgs(socketAsyncEventArgs);
                 return;
             }
@@ -263,12 +262,12 @@ namespace eV.Network.Server
                 }
                 else
                 {
-                    _logger.Error($"The maximum number of servers is {_maxConnectionCount}");
+                    Logger.Error($"The maximum number of servers is {_maxConnectionCount}");
                 }
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
             }
             finally
             {
@@ -282,30 +281,30 @@ namespace eV.Network.Server
         {
             if (channel.ChannelId.Equals(""))
             {
-                _logger.Error($"Open client {channel.RemoteEndPoint} channelId is empty");
+                Logger.Error($"Open client {channel.RemoteEndPoint} channelId is empty");
                 return;
             }
             if (_connectedChannels.Add(channel))
             {
                 Interlocked.Increment(ref _connectedCount);
                 AcceptConnect?.Invoke(channel);
-                _logger.Info($"Client {channel.RemoteEndPoint} connected");
+                Logger.Info($"Client {channel.RemoteEndPoint} connected");
             }
             else
             {
-                _logger.Error($"Channel {channel.RemoteEndPoint} {channel.ChannelId} add on failed");
+                Logger.Error($"Channel {channel.RemoteEndPoint} {channel.ChannelId} add on failed");
             }
         }
         private void CloseCompleted(Channel channel)
         {
             if (channel.ChannelId.Equals(""))
             {
-                _logger.Error($"Close client {channel.RemoteEndPoint} channelId is empty");
+                Logger.Error($"Close client {channel.RemoteEndPoint} channelId is empty");
                 return;
             }
             if (!_connectedChannels.Remove(channel))
             {
-                _logger.Error($"Channel {channel.RemoteEndPoint} {channel.ChannelId} remove on failed");
+                Logger.Error($"Channel {channel.RemoteEndPoint} {channel.ChannelId} remove on failed");
             }
             _channelPool.Push(channel);
             Interlocked.Decrement(ref _connectedCount);

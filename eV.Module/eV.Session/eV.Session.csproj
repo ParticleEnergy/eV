@@ -12,11 +12,8 @@
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
         <TargetFrameworks>net5.0;net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
         <LangVersion>10</LangVersion>
+        <Authors>绵羊</Authors>
     </PropertyGroup>
-
-    <ItemGroup>
-      <PackageReference Include="log4net" Version="2.0.14" />
-    </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\eV.Network\eV.Network.Core\eV.Network.Core.csproj" />

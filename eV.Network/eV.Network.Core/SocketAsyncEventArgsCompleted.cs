@@ -2,7 +2,7 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using System.Net.Sockets;
-using log4net;
+using eV.EasyLog;
 namespace eV.Network.Core
 {
     public delegate void AsyncCompleted(SocketAsyncEventArgs socketAsyncEventArgs);
@@ -45,7 +45,7 @@ namespace eV.Network.Core
                 case SocketAsyncOperation.SendTo:
                     break;
                 default:
-                    LogManager.GetLogger(DefaultSetting.LoggerName).Warn(
+                    Logger.Warn(
                         $"{socketAsyncEventArgs.LastOperation} not found in socketAsyncEventArgs.LastOperation"
                     );
                     break;

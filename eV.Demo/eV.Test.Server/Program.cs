@@ -3,6 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using eV.EasyLog;
+using eV.EasyLog.Interface;
 using eV.GameProfile;
 using eV.GameProfile.Attributes;
 using eV.Server;
@@ -74,8 +76,6 @@ namespace eV.Test.Server
             // }
             // Console.WriteLine(test.Name);
 
-
-
             Profile.OnLoad += delegate
             {
                 Profile.AssignmentConfigObject(Config.Instance);
@@ -90,8 +90,53 @@ namespace eV.Test.Server
 
             Console.WriteLine(Config.Instance.BattleMap!["1"].Name);
 
+
             Console.ReadLine();
             // server.Stop();
+        }
+    }
+
+    public class L : ILog{
+
+        public void Debug(object message)
+        {
+            throw new NotImplementedException();
+        }
+        public void Debug(object message, Exception exception)
+        {
+            throw new NotImplementedException();
+        }
+        public void Info(object message)
+        {
+            Console.Write("11111111111111111");
+        }
+        public void Info(object message, Exception exception)
+        {
+            throw new NotImplementedException();
+        }
+        public void Warn(object message)
+        {
+            throw new NotImplementedException();
+        }
+        public void Warn(object message, Exception exception)
+        {
+            throw new NotImplementedException();
+        }
+        public void Error(object message)
+        {
+            throw new NotImplementedException();
+        }
+        public void Error(object message, Exception exception)
+        {
+            throw new NotImplementedException();
+        }
+        public void Fatal(object message)
+        {
+            throw new NotImplementedException();
+        }
+        public void Fatal(object message, Exception exception)
+        {
+            throw new NotImplementedException();
         }
     }
 

@@ -4,8 +4,8 @@
 using System;
 using System.Net;
 using System.Net.Sockets;
+using eV.EasyLog;
 using eV.Network.Core;
-using log4net;
 namespace eV.Network.Client
 {
 
@@ -36,7 +36,6 @@ namespace eV.Network.Client
         private Socket? _socket;
         private readonly Channel _channel;
         private readonly SocketAsyncEventArgs _connectSocketAsyncEventArgs;
-        private readonly ILog _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
         #endregion
         public Client(ClientSetting setting)
         {
@@ -78,7 +77,7 @@ namespace eV.Network.Client
             {
                 ClientState = RunState.On;
                 Init();
-                _logger.Info($"Trying to connect to the server {_ipEndPoint?.Address}:{_ipEndPoint?.Port}");
+                Logger.Info($"Trying to connect to the server {_ipEndPoint?.Address}:{_ipEndPoint?.Port}");
                 if (!_socket!.ConnectAsync(_connectSocketAsyncEventArgs))
                 {
                     ProcessConnect(_connectSocketAsyncEventArgs);
@@ -86,7 +85,7 @@ namespace eV.Network.Client
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
             }
         }
         public void Disconnect()
@@ -113,7 +112,7 @@ namespace eV.Network.Client
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
             }
         }
         private void Release()
@@ -123,7 +122,7 @@ namespace eV.Network.Client
             {
                 _channel.Close();
             }
-            _logger.Info("Client released");
+            Logger.Info("Client released");
             DisconnectCompleted?.Invoke(_channel);
         }
         private void Init()
@@ -142,12 +141,12 @@ namespace eV.Network.Client
             }
             else
             {
-                _logger.Error($"Connect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port} failed");
+                Logger.Error($"Connect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port} failed");
             }
         }
         private void ProcessDisconnect(SocketAsyncEventArgs socketAsyncEventArgs)
         {
-            _logger.Info($"Disconnect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port}");
+            Logger.Info($"Disconnect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port}");
             Release();
         }
         #endregion
@@ -157,17 +156,17 @@ namespace eV.Network.Client
         {
             if (channel.ChannelId.Equals(""))
             {
-                _logger.Error($"Client {channel.RemoteEndPoint} open channel error by channelId is empty");
+                Logger.Error($"Client {channel.RemoteEndPoint} open channel error by channelId is empty");
                 return;
             }
             ConnectCompleted?.Invoke(channel);
-            _logger.Info($"Connect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port} success");
+            Logger.Info($"Connect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port} success");
         }
         private void CloseCompleted(Channel channel)
         {
             if (channel.ChannelId.Equals(""))
             {
-                _logger.Error($"Client {channel.RemoteEndPoint} close channel error by channelId is empty");
+                Logger.Error($"Client {channel.RemoteEndPoint} close channel error by channelId is empty");
                 return;
             }
             if (ClientState == RunState.On)

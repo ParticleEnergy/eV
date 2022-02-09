@@ -4,16 +4,15 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using eV.EasyLog;
 using eV.Routing.Attributes;
 using eV.Routing.Interface;
-using log4net;
 namespace eV.Routing
 {
     public static class Dispatch
     {
         private static readonly Dictionary<string, Route> s_receiveHandlers = new();
         private static readonly Dictionary<Type, string> s_sendMessages = new();
-        private static readonly ILog s_logger = LogManager.GetLogger(DefaultSetting.LoggerName);
         private static bool s_registered;
 
         public static void Register(string nsName)
@@ -39,13 +38,13 @@ namespace eV.Routing
                     if (contentTypes is not { Length: > 0 })
                         continue;
 
-                    s_receiveHandlers.Add(contentTypes[0].Name, new Route(handler, contentTypes[0]));
-                    s_logger.Info($"ReceiveMessageHandler [{type.FullName}] registration succeeded");
+                    s_receiveHandlers[contentTypes[0].Name] = new Route(handler, contentTypes[0]);
+                    Logger.Info($"ReceiveMessageHandler [{type.FullName}] registration succeeded");
                 }
                 else if (sendMessageAttributes.Length > 0)
                 {
-                    s_sendMessages.Add(type, type.Name);
-                    s_logger.Info($"SendMessage [{type.Name}] registration succeeded");
+                    s_sendMessages[type] = type.Name;
+                    Logger.Info($"SendMessage [{type.Name}] registration succeeded");
                 }
             }
         }
@@ -59,22 +58,22 @@ namespace eV.Routing
                 IRoute? route = GetRoute(packet.GetName());
                 if (route == null)
                 {
-                    s_logger.Error($"The receiver corresponding to packet [{packet.GetName()}] is not found");
+                    Logger.Error($"The receiver corresponding to packet [{packet.GetName()}] is not found");
                     return;
                 }
                 object content = Serializer.Deserialize(packet.GetContent(), route.ContentType);
                 route.Handler.Run(session, content);
-                s_logger.Info($"Message [{packet.GetName()}] handle access");
+                Logger.Info($"Message [{packet.GetName()}] handle access");
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
             }
         }
         private static IRoute? GetRoute(string name)
         {
             if (!s_receiveHandlers.TryGetValue(name, out Route? result))
-                s_logger.Error($"Message [{name}] handler not found!");
+                Logger.Error($"Message [{name}] handler not found!");
 
             return result;
         }
@@ -82,8 +81,15 @@ namespace eV.Routing
         public static string GetSendMessageName(Type type)
         {
             if (!s_sendMessages.TryGetValue(type, out string? result))
-                s_logger.Error($"Send Message [{type.Name}] not found!");
+                Logger.Error($"Send Message [{type.Name}] not found!");
             return result ?? "";
+        }
+
+        public static void AddCustomHandler(Type handlerType, Type contentType)
+        {
+            if (Activator.CreateInstance(handlerType) is not IHandler handler)
+                return;
+            s_receiveHandlers[handlerType.Name] = new Route(handler, contentType);
         }
     }
 }

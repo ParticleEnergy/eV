@@ -2,13 +2,12 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Concurrent;
-using log4net;
+using eV.EasyLog;
 namespace eV.Session
 {
     public class SessionGroup
     {
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, string>> _allGroup = new();
-        private readonly ILog _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
 
         public ConcurrentDictionary<string, string>? GetGroup(string groupName)
         {
@@ -17,13 +16,13 @@ namespace eV.Session
 
         public void CreateGroup(string groupName)
         {
-            _logger.Info($"Create group {groupName}");
+            Logger.Info($"Create group {groupName}");
             _allGroup[groupName] = new ConcurrentDictionary<string, string>();
         }
 
         public bool DeleteGroup(string groupName)
         {
-            _logger.Info($"Delete group {groupName}");
+            Logger.Info($"Delete group {groupName}");
             return _allGroup.TryRemove(groupName, out ConcurrentDictionary<string, string>? _);
         }
 
@@ -35,7 +34,7 @@ namespace eV.Session
             if (!_allGroup.TryGetValue(groupName, out ConcurrentDictionary<string, string>? group))
                 return false;
 
-            _logger.Info($"Session {sessionId} join group {groupName}");
+            Logger.Info($"Session {sessionId} join group {groupName}");
             group[sessionId] = sessionId;
             return true;
         }
@@ -48,7 +47,7 @@ namespace eV.Session
             if (!_allGroup.TryGetValue(groupName, out ConcurrentDictionary<string, string>? group))
                 return false;
 
-            _logger.Info($"Session {sessionId} Leave group {groupName}");
+            Logger.Info($"Session {sessionId} Leave group {groupName}");
             group.TryRemove(sessionId, out string? _);
             return true;
         }

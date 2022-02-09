@@ -7,7 +7,7 @@ using eV.Session.Interface;
 using log4net;
 namespace eV.Server
 {
-    public class SessionExtension : SessionExtend
+    public class SessionExtension : ISessionExtend
     {
         public event SessionEvent? OnActivateEvent;
         public event SessionEvent? OnReleaseEvent;

@@ -46,7 +46,7 @@ namespace eV.Test
             byte[] data = Package.Pack(packet);
             Packet packet1 = new();
             packet1.SetName("IndexParam");
-            packet1.SetContent(Serializer.Serialize(indexParam1));
+            // packet1.SetContent(Serializer.Serialize(indexParam1));
             byte[] data1 = Package.Pack(packet1);
 
             MemoryStream memoryStream = new();

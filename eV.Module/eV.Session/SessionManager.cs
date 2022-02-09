@@ -3,19 +3,18 @@
 
 
 using System.Collections.Concurrent;
+using eV.EasyLog;
 using eV.Network.Core;
 using eV.Session.Interface;
-using log4net;
 namespace eV.Session
 {
     public class SessionManager
     {
         private readonly ConcurrentDictionary<string, Session> _sessions = new();
         private readonly ConcurrentDictionary<string, Session> _activeSessions = new();
-        private readonly ILog _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
 
         #region Session
-        public Session GetSession(Channel channel, SessionExtend? sessionExtend)
+        public Session GetSession(Channel channel, ISessionExtend? sessionExtend)
         {
             Session session;
             if (_sessions.TryGetValue(channel.ChannelId, out Session? result))
@@ -36,7 +35,7 @@ namespace eV.Session
                     session.OnRelease += sessionExtend.OnRelease;
                 }
                 _sessions[channel.ChannelId] = session;
-                _logger.Info($"Channel {channel.ChannelId} bind session success");
+                Logger.Info($"Channel {channel.ChannelId} bind session success");
             }
             session.Occupy();
             return session;
@@ -72,12 +71,12 @@ namespace eV.Session
         {
             if (session.SessionId is null or "")
             {
-                _logger.Warn("SessionId is null");
+                Logger.Warn("SessionId is null");
                 return false;
             }
             if (session.SessionState != SessionState.Active)
             {
-                _logger.Warn("Session is not active");
+                Logger.Warn("Session is not active");
                 return false;
             }
 

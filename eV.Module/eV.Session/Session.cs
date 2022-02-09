@@ -4,10 +4,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using eV.EasyLog;
 using eV.Network.Core;
 using eV.Routing;
 using eV.Routing.Interface;
-using log4net;
 namespace eV.Session
 {
     public class Session : ISession
@@ -72,7 +72,6 @@ namespace eV.Session
 
         private readonly Channel _channel;
         private readonly DataParser _dataParser = new();
-        private readonly ILog _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
 
         public Session(Channel channel)
         {
@@ -144,7 +143,7 @@ namespace eV.Session
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return null;
             }
         }
@@ -161,7 +160,7 @@ namespace eV.Session
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return false;
             }
         }
@@ -174,7 +173,7 @@ namespace eV.Session
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return false;
             }
         }
@@ -189,7 +188,7 @@ namespace eV.Session
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
             }
         }
         public void SendBroadcast<T>(T data)
@@ -203,7 +202,7 @@ namespace eV.Session
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
             }
         }
 

@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using log4net;
+using eV.EasyLog;
 namespace eV.Network.Core
 {
     public delegate void ChannelEvent(Channel channel);
@@ -55,13 +55,11 @@ namespace eV.Network.Core
         private readonly SocketAsyncEventArgs _receiveSocketAsyncEventArgs;
         private readonly SocketAsyncEventArgs _disconnectSocketAsyncEventArgs;
         private readonly byte[] _receiveBuffer;
-        private readonly ILog _logger;
         #endregion
 
 
         public Channel(int receiveBufferSize)
         {
-            _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
             ChannelId = Guid.NewGuid().ToString();
             ChannelState = RunState.Off;
 
@@ -89,7 +87,7 @@ namespace eV.Network.Core
         {
             if (ChannelState == RunState.On)
             {
-                _logger.Warn("The channel is already turned on");
+                Logger.Warn("The channel is already turned on");
                 return;
             }
             try
@@ -97,12 +95,12 @@ namespace eV.Network.Core
                 Init(socket);
 
                 OpenCompleted?.Invoke(this);
-                _logger.Info($"Channel {ChannelId} {RemoteEndPoint} open");
-                _logger.Info(StartReceive() ? $"Channel {ChannelId} {RemoteEndPoint} start receive" : $"Channel {ChannelId} {RemoteEndPoint} start receive failed");
+                Logger.Info($"Channel {ChannelId} {RemoteEndPoint} open");
+                Logger.Info(StartReceive() ? $"Channel {ChannelId} {RemoteEndPoint} start receive" : $"Channel {ChannelId} {RemoteEndPoint} start receive failed");
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
             }
         }
         public void Close()
@@ -129,7 +127,7 @@ namespace eV.Network.Core
             }
             catch (Exception e)
             {
-                _logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
             }
         }
         /// <summary>
@@ -143,7 +141,7 @@ namespace eV.Network.Core
             _sendSocketAsyncEventArgs.AcceptSocket = null;
             Array.Clear(_receiveBuffer, 0, _receiveBuffer.Length);
 
-            _logger.Info($"Channel {ChannelId} {RemoteEndPoint} close");
+            Logger.Info($"Channel {ChannelId} {RemoteEndPoint} close");
             CloseCompleted?.Invoke(this);
         }
         /// <summary>
@@ -226,7 +224,7 @@ namespace eV.Network.Core
             }
             if (socketAsyncEventArgs.SocketError != SocketError.Success)
             {
-                _logger.Debug($"Channel {ChannelId} Error {socketAsyncEventArgs.SocketError}");
+                Logger.Debug($"Channel {ChannelId} Error {socketAsyncEventArgs.SocketError}");
                 Error(ChannelError.SocketError);
                 return;
             }
@@ -260,7 +258,7 @@ namespace eV.Network.Core
         }
         private void ProcessDisconnect(SocketAsyncEventArgs socketAsyncEventArgs)
         {
-            _logger.Info($"Channel {ChannelId} {RemoteEndPoint} disconnect");
+            Logger.Info($"Channel {ChannelId} {RemoteEndPoint} disconnect");
             Release();
         }
         #endregion
@@ -283,7 +281,7 @@ namespace eV.Network.Core
                     Close();
                     break;
                 default:
-                    _logger.Error("ChannelError not found");
+                    Logger.Error("ChannelError not found");
                     break;
             }
         }

@@ -4,7 +4,7 @@
 using eV.Routing.Interface;
 namespace eV.Session.Interface
 {
-    public interface SessionExtend
+    public interface ISessionExtend
     {
         public bool Send(string sessionId, byte[] data);
         public void SendGroup(string groupName, byte[] data);

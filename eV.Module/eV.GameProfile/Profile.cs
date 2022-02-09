@@ -5,17 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using eV.EasyLog;
 using eV.GameProfile.Attributes;
 using eV.GameProfile.Interface;
-using log4net;
 namespace eV.GameProfile
 {
     public static class Profile
     {
         public static event Action? OnLoad;
         public static Dictionary<string, object> Config { get; private set; } = new();
-
-        private static readonly ILog s_logger = LogManager.GetLogger(DefaultSetting.LoggerName);
 
         private static DirectoryInfo? s_configRoot;
         private static string? s_nsName;
@@ -40,7 +38,7 @@ namespace eV.GameProfile
         {
             if (s_configParser == null)
             {
-                s_logger.Error("GameProfile not init");
+                Logger.Error("GameProfile not init");
                 return;
             }
 
@@ -50,7 +48,7 @@ namespace eV.GameProfile
             Config = s_configParser.Parser(configType, configJsonString);
             OnLoad?.Invoke();
 
-            s_logger.Info("Game profile load");
+            Logger.Info("Game profile load");
         }
 
         public static void AssignmentConfigObject<T>(T co)
@@ -68,7 +66,7 @@ namespace eV.GameProfile
             Dictionary<string, string> result = new();
             if (s_configRoot == null)
             {
-                s_logger.Error("GameProfile not init");
+                Logger.Error("GameProfile not init");
             }
             else
             {
@@ -81,7 +79,7 @@ namespace eV.GameProfile
                     }
                     catch (Exception e)
                     {
-                        s_logger.Error(e.Message, e);
+                        Logger.Error(e.Message, e);
                     }
                 }
             }
@@ -93,7 +91,7 @@ namespace eV.GameProfile
             Dictionary<string, Type> result = new();
             if (s_nsName == null)
             {
-                s_logger.Error("GameProfile not init");
+                Logger.Error("GameProfile not init");
             }
             else
             {
@@ -116,7 +114,7 @@ namespace eV.GameProfile
         {
             if (s_configPath == null)
             {
-                s_logger.Error("GameProfile not init");
+                Logger.Error("GameProfile not init");
                 return;
             }
 
@@ -142,7 +140,7 @@ namespace eV.GameProfile
             };
             watcher.Error += (_, args) =>
             {
-                s_logger.Error(args.GetException().Message, args.GetException());
+                Logger.Error(args.GetException().Message, args.GetException());
             };
         }
     }

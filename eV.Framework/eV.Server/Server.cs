@@ -2,11 +2,13 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 
+using eV.EasyLog;
 using eV.GameProfile;
 using eV.Network.Core;
 using eV.Network.Server;
 using eV.Routing;
 using eV.Routing.Interface;
+using eV.Server.ClientHeartbeat;
 using eV.Server.Storage;
 using eV.Session;
 using log4net;
@@ -30,6 +32,7 @@ namespace eV.Server
 
         public Server()
         {
+            Logger.SetLogger(new Log());
             _idleDetection = new IdleDetection(_sessionManager, Configure.Instance.ServerOptions.SessionMaximumIdleTime);
 
             _sessionExtension = new SessionExtension(_sessionManager, _sessionGroup);
@@ -52,6 +55,7 @@ namespace eV.Server
             MongodbManager.Instance.Start();
             RedisManager.Instance.Start();
             Dispatch.Register(Configure.Instance.BaseOptions.ProjectNamespace);
+            Dispatch.AddCustomHandler(typeof(KeepaliveHandler), typeof(Keepalive));
             _server.Start();
             _idleDetection.Start();
         }
