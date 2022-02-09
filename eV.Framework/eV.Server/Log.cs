@@ -8,7 +8,7 @@ namespace eV.Server
 {
     public class Log : ILog
     {
-        private log4net.ILog _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
+        private readonly log4net.ILog _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
         public void Debug(object message)
         {
             _logger.Debug(message);
