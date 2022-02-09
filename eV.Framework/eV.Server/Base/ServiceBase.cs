@@ -3,14 +3,11 @@
 
 
 using eV.Server.Storage;
-using log4net;
 using StackExchange.Redis;
 namespace eV.Server.Base
 {
     public class ServiceBase
     {
-        protected readonly ILog Logger = LogManager.GetLogger(DefaultSetting.LoggerName);
-
         private readonly RedisManager _redis = RedisManager.Instance;
         public IDatabase? GetRedis(string name)
         {

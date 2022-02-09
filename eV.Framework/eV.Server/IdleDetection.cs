@@ -4,13 +4,12 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using eV.EasyLog;
 using eV.Session;
-using log4net;
 namespace eV.Server
 {
     public class IdleDetection
     {
-        private readonly ILog _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
         private readonly SessionManager _sessionManager;
         private readonly int _threshold;
         private readonly CancellationTokenSource _cancellationTokenSource;
@@ -26,7 +25,7 @@ namespace eV.Server
         public void Start()
         {
             _task.Start();
-            _logger.Info("Idle detection start");
+            Logger.Info("Idle detection start");
         }
         public void Stop()
         {

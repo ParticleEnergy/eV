@@ -3,8 +3,8 @@
 
 using System;
 using System.Collections.Generic;
+using eV.EasyLog;
 using eV.Server.Options;
-using log4net;
 using StackExchange.Redis;
 namespace eV.Server.Storage
 {
@@ -16,7 +16,6 @@ namespace eV.Server.Storage
         } = new();
 
         private readonly Dictionary<string, ConnectionMultiplexer> _redisConnection;
-        private readonly ILog _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
         private bool _isStart;
 
         private RedisManager()
@@ -38,7 +37,7 @@ namespace eV.Server.Storage
             {
                 if (redisOptions.Address == null)
                 {
-                    _logger.Warn($"Redis {name} address is null");
+                    Logger.Warn($"Redis {name} address is null");
                     return;
                 }
                 try
@@ -48,12 +47,12 @@ namespace eV.Server.Storage
                     if (conn.IsConnected)
                     {
                         _redisConnection.Add(name, conn);
-                        _logger.Info($"Redis [{name}] connected success");
+                        Logger.Info($"Redis [{name}] connected success");
                     }
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e.Message, e);
+                    Logger.Error(e.Message, e);
                 }
             }
         }
@@ -65,11 +64,11 @@ namespace eV.Server.Storage
                 try
                 {
                     connectionMultiplexer.Close();
-                    _logger.Info($"Redis [{name}] stop");
+                    Logger.Info($"Redis [{name}] stop");
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e.Message, e);
+                    Logger.Error(e.Message, e);
                 }
             }
         }

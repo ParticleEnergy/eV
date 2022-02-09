@@ -11,7 +11,6 @@ using eV.Routing.Interface;
 using eV.Server.ClientHeartbeat;
 using eV.Server.Storage;
 using eV.Session;
-using log4net;
 using eVNetworkServer = eV.Network.Server.Server;
 namespace eV.Server
 {
@@ -23,7 +22,6 @@ namespace eV.Server
         public event SessionEvent? SessionOnRelease;
         #endregion
 
-        private ILog _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
         private readonly SessionGroup _sessionGroup = new();
         private readonly SessionManager _sessionManager = new();
         private readonly SessionExtension _sessionExtension;
@@ -45,7 +43,7 @@ namespace eV.Server
 
         public void Start()
         {
-            _logger.Info(DefaultSetting.Logo);
+            Logger.Info(DefaultSetting.Logo);
             Profile.Init(
                 Configure.Instance.BaseOptions.ProjectNamespace,
                 Configure.Instance.BaseOptions.GameProfilePath,

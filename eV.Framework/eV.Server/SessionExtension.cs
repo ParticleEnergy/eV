@@ -1,10 +1,10 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
+using eV.EasyLog;
 using eV.Routing.Interface;
 using eV.Session;
 using eV.Session.Interface;
-using log4net;
 namespace eV.Server
 {
     public class SessionExtension : ISessionExtend
@@ -14,8 +14,6 @@ namespace eV.Server
 
         private readonly SessionManager _sessionManager;
         private readonly SessionGroup _sessionGroup;
-
-        private readonly ILog _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
 
         public SessionExtension(SessionManager sessionManager, SessionGroup sessionGroup)
         {
@@ -63,14 +61,14 @@ namespace eV.Server
             }
             else
             {
-                _logger.Error($"Session {session.SessionId} Session add active group error");
+                Logger.Error($"Session {session.SessionId} Session add active group error");
                 session.Shutdown();
             }
         }
         public void OnRelease(ISession session)
         {
             if (!_sessionManager.RemoveActiveSession((Session.Session)session))
-                _logger.Error($"Session {session.SessionId} Session remove active group error");
+                Logger.Error($"Session {session.SessionId} Session remove active group error");
             OnReleaseEvent?.Invoke(session);
         }
     }

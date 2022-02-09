@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using log4net;
+using eV.EasyLog;
 using MongoDB.Driver;
 namespace eV.Server.Storage
 {
@@ -15,7 +15,6 @@ namespace eV.Server.Storage
         } = new();
 
         private readonly Dictionary<string, MongoClient> _clients;
-        private readonly ILog _logger = LogManager.GetLogger(DefaultSetting.LoggerName);
         private bool _isStart;
 
         private MongodbManager()
@@ -32,7 +31,7 @@ namespace eV.Server.Storage
 
             if (Configure.Instance.StorageOptions.Mongodb == null)
             {
-                _logger.Warn("Mongodb config is null");
+                Logger.Warn("Mongodb config is null");
                 return;
             }
             foreach (var (dbName, connString) in Configure.Instance.StorageOptions.Mongodb)
@@ -41,11 +40,11 @@ namespace eV.Server.Storage
                 {
                     MongoClient client = new(connString);
                     _clients.Add(dbName, client);
-                    _logger.Info($"Mongodb [{dbName}] connected success");
+                    Logger.Info($"Mongodb [{dbName}] connected success");
                 }
                 catch (Exception e)
                 {
-                    _logger.Error(e.Message, e);
+                    Logger.Error(e.Message, e);
                 }
             }
         }

@@ -4,22 +4,20 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using eV.EasyLog;
 using eV.Server.Interface;
-using log4net;
 using MongoDB.Driver;
 namespace eV.Server.Storage
 {
     public static class MongodbHelper
     {
-        private static ILog s_logger = LogManager.GetLogger(DefaultSetting.LoggerName);
-
         #region Resource
         public static IMongoClient? GetMongoClient(string name)
         {
             var client = MongodbManager.Instance.GetClient(name);
             if (client == null)
             {
-                s_logger.Error($"Mongo client database [{name}] not found");
+                Logger.Error($"Mongo client database [{name}] not found");
             }
             return client;
         }
@@ -28,7 +26,7 @@ namespace eV.Server.Storage
             var db = GetMongoClient(database)?.GetDatabase(database);
             if (db == null)
             {
-                s_logger.Error($"Mongo database [{database}] not found");
+                Logger.Error($"Mongo database [{database}] not found");
             }
             return db;
         }
@@ -37,7 +35,7 @@ namespace eV.Server.Storage
             var c = GetDatabase(database)?.GetCollection<T>(collection);
             if (c == null)
             {
-                s_logger.Error($"Mongo database [{database}] collection [{collection}] not found");
+                Logger.Error($"Mongo database [{database}] collection [{collection}] not found");
             }
             return c;
         }
@@ -53,7 +51,7 @@ namespace eV.Server.Storage
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
             }
         }
         public static void Insert<T>(string database, string collection, List<T> data) where T : class, IModel
@@ -65,7 +63,7 @@ namespace eV.Server.Storage
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
             }
         }
         public static Task? InsertAsync<T>(string database, string collection, T data) where T : IModel
@@ -77,7 +75,7 @@ namespace eV.Server.Storage
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return null;
             }
         }
@@ -90,7 +88,7 @@ namespace eV.Server.Storage
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return null;
             }
         }
@@ -105,7 +103,7 @@ namespace eV.Server.Storage
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return null;
             }
         }
@@ -117,7 +115,7 @@ namespace eV.Server.Storage
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return null;
             }
         }
@@ -139,7 +137,7 @@ namespace eV.Server.Storage
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return null;
             }
         }
@@ -158,7 +156,7 @@ namespace eV.Server.Storage
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return null;
             }
         }
@@ -176,7 +174,7 @@ namespace eV.Server.Storage
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return null;
             }
         }
@@ -191,7 +189,7 @@ namespace eV.Server.Storage
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return null;
             }
         }
@@ -210,7 +208,7 @@ namespace eV.Server.Storage
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return null;
             }
         }
@@ -226,7 +224,7 @@ namespace eV.Server.Storage
             }
             catch (Exception e)
             {
-                s_logger.Error(e.Message, e);
+                Logger.Error(e.Message, e);
                 return null;
             }
         }

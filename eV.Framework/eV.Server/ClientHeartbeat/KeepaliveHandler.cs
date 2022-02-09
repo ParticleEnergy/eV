@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using System;
+using eV.EasyLog;
 using eV.Routing.Interface;
 using eV.Server.Base;
 namespace eV.Server.ClientHeartbeat

@@ -6,13 +6,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using eV.Server.Interface;
 using eV.Server.Storage;
-using log4net;
 using MongoDB.Driver;
 namespace eV.Server.Base
 {
     public abstract class DalBase<T> where T : class, IModel
     {
-        protected readonly ILog Logger = LogManager.GetLogger(DefaultSetting.LoggerName);
         public abstract string Database { get; }
         public abstract string Collection { get; }
 
