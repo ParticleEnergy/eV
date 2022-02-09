@@ -5,8 +5,10 @@ namespace eV.Unity
 {
     public class UnitySetting
     {
-        public string Host { get; set; }
-        public int Port { get; set; }
-        public int ReceiveBufferSize { get; set; }
+        public string Host { get; set; } = DefaultSetting.Host;
+        public int Port { get; set; } = DefaultSetting.Port;
+        public int ReceiveBufferSize { get; set; } = DefaultSetting.ReceiveBufferSize;
+        public string ProjectNamespace { get; set; } = string.Empty;
+        public string GameProfilePath { get; set; } = string.Empty;
     }
 }

@@ -3,6 +3,7 @@
 
 
 using eV.Network.Client;
+using eV.Network.Core;
 using eVNetworkClient = eV.Network.Client.Client;
 namespace eV.Unity
 {
@@ -18,6 +19,21 @@ namespace eV.Unity
                 ReceiveBufferSize = setting.ReceiveBufferSize
             };
             _client = new eVNetworkClient(clientSetting);
+            _client.ConnectCompleted += ClientOnConnectCompleted;
+            _client.DisconnectCompleted += ClientOnDisconnectCompleted;
+        }
+        public void Start()
+        {
+            _client.Connect();
+        }
+
+        private void ClientOnConnectCompleted(Channel channel)
+        {
+
+        }
+        private void ClientOnDisconnectCompleted(Channel channel)
+        {
+
         }
     }
 }

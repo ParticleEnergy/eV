@@ -3,15 +3,10 @@
 
 namespace eV.Unity
 {
-    internal static class DefaultSetting
+    internal class DefaultSetting
     {
-        public const string Logo = @"
-     ____   ____
-    |_  _| |_  _|
- .---.\ \   / /
-/ /__\\\ \ / /
-| \__., \ ' /
- '.__.'  \_/
-";
+        public const string Host = "0.0.0.0";
+        public const int Port = 8888;
+        public const int ReceiveBufferSize = 2014;
     }
 }
