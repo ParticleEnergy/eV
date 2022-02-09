@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+      <ImplicitUsings>enable</ImplicitUsings>
+      <Nullable>enable</Nullable>
+      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+      <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+      <Title>eV.Unity</Title>
+      <Description>eV.Unity</Description>
+      <Copyright>Copyright (c) ParticleEnergy</Copyright>
+      <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
+      <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+      <LangVersion>10</LangVersion>
+      <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+      <Authors>绵羊</Authors>
+    </PropertyGroup>
+</Project>
