@@ -6,12 +6,11 @@ namespace eV.Server
     internal static class DefaultSetting
     {
         public const string Logo = @"
-     ____   ____
-    |_  _| |_  _|
- .---.\ \   / /
-/ /__\\\ \ / /
-| \__., \ ' /
- '.__.'  \_/
+      _    __   _____
+  ___| |  / /  / ___/___  ______   _____  _____
+ / _ \ | / /   \__ \/ _ \/ ___/ | / / _ \/ ___/
+/  __/ |/ /   ___/ /  __/ /   | |/ /  __/ /
+\___/|___/   /____/\___/_/    |___/\___/_/
 ";
         public const string LoggerName = "eV.Server";
     }
