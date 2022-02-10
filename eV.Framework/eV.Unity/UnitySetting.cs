@@ -10,5 +10,7 @@ namespace eV.Unity
         public int ReceiveBufferSize { get; set; } = DefaultSetting.ReceiveBufferSize;
         public string ProjectNamespace { get; set; } = string.Empty;
         public string GameProfilePath { get; set; } = string.Empty;
+
+        public int TcpKeepAliveInterval { get; set; } = DefaultSetting.TcpKeepAliveInterval;
     }
 }

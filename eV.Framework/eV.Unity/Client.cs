@@ -19,12 +19,14 @@ namespace eV.Unity
         public event Action? OnDisconnect;
         #endregion
 
+        private readonly Keepalive _keepalive ;
+
         private readonly eVNetworkClient _client;
         public Client(UnitySetting setting)
         {
             Logger.SetLogger(new Log());
-
             Logger.Info(DefaultSetting.Logo);
+
             ClientSetting clientSetting = new()
             {
                 Address = setting.Host,
@@ -40,8 +42,9 @@ namespace eV.Unity
                 setting.GameProfilePath,
                 new GameProfileParser()
             );
-
             Dispatch.Register(setting.ProjectNamespace);
+
+            _keepalive = new Keepalive(setting.TcpKeepAliveInterval);
         }
         public void Start()
         {
@@ -53,9 +56,11 @@ namespace eV.Unity
             Session.Session session = new(channel);
             SessionDispatch.Instance.SetClientSession(session);
             OnConnect?.Invoke(session);
+            _keepalive.Start();
         }
         private void ClientOnDisconnectCompleted(Channel _)
         {
+            _keepalive.Stop();
             OnDisconnect?.Invoke();
         }
     }
