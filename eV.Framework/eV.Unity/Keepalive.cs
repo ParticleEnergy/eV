@@ -30,6 +30,7 @@ namespace eV.Unity
 
         public void Stop()
         {
+            _timer?.Change(-1, -1);
             _timer?.Dispose();
         }
     }
