@@ -9,6 +9,7 @@ using eV.Network.Server;
 using eV.Routing;
 using eV.Routing.Interface;
 using eV.Server.Storage;
+using eV.Server.SystemHandler;
 using eVNetworkServer = eV.Network.Server.Server;
 namespace eV.Server
 {
@@ -20,20 +21,17 @@ namespace eV.Server
         public event SessionEvent? SessionOnRelease;
         #endregion
 
-        private readonly SessionExtension _sessionExtension;
-        private readonly IdleDetection _idleDetection;
-        private readonly eVNetworkServer _server;
+        private readonly SessionExtension _sessionExtension = new();
+        private readonly IdleDetection _idleDetection = new(Configure.Instance.ServerOptions.SessionMaximumIdleTime);
+        private readonly eVNetworkServer _server = new(GetServerSetting());
 
         public Server()
         {
             Logger.SetLogger(new Log());
-            _idleDetection = new IdleDetection(Configure.Instance.ServerOptions.SessionMaximumIdleTime);
 
-            _sessionExtension = new SessionExtension();
             _sessionExtension.OnActivateEvent += SessionOnActivate;
             _sessionExtension.OnReleaseEvent += SessionOnRelease;
 
-            _server = new eVNetworkServer(GetServerSetting());
             _server.AcceptConnect += ServerOnAcceptConnect;
         }
 
@@ -48,8 +46,8 @@ namespace eV.Server
             );
             MongodbManager.Instance.Start();
             RedisManager.Instance.Start();
-            Dispatch.Register(Configure.Instance.BaseOptions.ProjectNamespace);
-            // Dispatch.AddCustomHandler(typeof(KeepaliveHandler), typeof(Keepalive));
+            RegisterHandler();
+
             _server.Start();
             _idleDetection.Start();
         }
@@ -100,6 +98,18 @@ namespace eV.Server
                 serverSetting.TcpKeepAliveRetryCount = Configure.Instance.ServerOptions.TcpKeepAliveRetryCount;
 
             return serverSetting;
+        }
+
+        private static void RegisterHandler()
+        {
+            Dispatch.Register(Configure.Instance.BaseOptions.ProjectNamespace);
+
+            Dispatch.AddCustomHandler(typeof(ClientKeepaliveHandler), typeof(ClientKeepalive));
+            Dispatch.AddCustomHandler(typeof(ClientJoinGroupHandler), typeof(ClientJoinGroup));
+            Dispatch.AddCustomHandler(typeof(ClientLeaveGroupHandler), typeof(ClientLeaveGroup));
+            Dispatch.AddCustomHandler(typeof(ClientSendBroadcastHandler), typeof(ClientSendBroadcast));
+            Dispatch.AddCustomHandler(typeof(ClientSendBySessionIdHandler), typeof(ClientSendBySessionId));
+            Dispatch.AddCustomHandler(typeof(ClientSendGroupHandler), typeof(ClientSendGroup));
         }
     }
 }
