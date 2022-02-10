@@ -85,6 +85,7 @@ namespace eV.Test
     public class Session : ISession
     {
 
+
         public string? SessionId
         {
             get;
@@ -117,7 +118,7 @@ namespace eV.Test
         {
             throw new NotImplementedException();
         }
-        public bool Send<T>(string sessionId, T data)
+        public bool Send<T>(string groupId, T data)
         {
             throw new NotImplementedException();
         }
@@ -129,11 +130,11 @@ namespace eV.Test
         {
             throw new NotImplementedException();
         }
-        public bool JoinGroup(string groupName)
+        public bool JoinGroup(string groupId)
         {
             throw new NotImplementedException();
         }
-        public bool LeaveGroup(string groupName)
+        public bool LeaveGroup(string groupId)
         {
             throw new NotImplementedException();
         }

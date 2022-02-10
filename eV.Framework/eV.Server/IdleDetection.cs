@@ -5,19 +5,16 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using eV.EasyLog;
-using eV.Session;
 namespace eV.Server
 {
     public class IdleDetection
     {
-        private readonly SessionManager _sessionManager;
         private readonly int _threshold;
         private readonly CancellationTokenSource _cancellationTokenSource;
         private readonly Task _task;
 
-        public IdleDetection(SessionManager sessionManager, int threshold)
+        public IdleDetection(int threshold)
         {
-            _sessionManager = sessionManager;
             _threshold = threshold;
             _cancellationTokenSource = new CancellationTokenSource();
             _task = new Task(Check, _cancellationTokenSource.Token);
@@ -36,7 +33,7 @@ namespace eV.Server
             while (!_cancellationTokenSource.IsCancellationRequested)
             {
                 Thread.Sleep(15 * 60 * 1000);
-                foreach (var (_, session) in _sessionManager.GetAllActiveSession())
+                foreach (var (_, session) in SessionDispatch.Instance.SessionManager.GetAllActiveSession())
                 {
                     var flagDateTime = session.LastActiveDateTime?.AddSeconds(_threshold);
                     if (flagDateTime < DateTime.Now)

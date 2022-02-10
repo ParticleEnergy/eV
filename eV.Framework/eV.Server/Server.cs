@@ -8,9 +8,7 @@ using eV.Network.Core;
 using eV.Network.Server;
 using eV.Routing;
 using eV.Routing.Interface;
-using eV.Server.ClientHeartbeat;
 using eV.Server.Storage;
-using eV.Session;
 using eVNetworkServer = eV.Network.Server.Server;
 namespace eV.Server
 {
@@ -22,8 +20,6 @@ namespace eV.Server
         public event SessionEvent? SessionOnRelease;
         #endregion
 
-        private readonly SessionGroup _sessionGroup = new();
-        private readonly SessionManager _sessionManager = new();
         private readonly SessionExtension _sessionExtension;
         private readonly IdleDetection _idleDetection;
         private readonly eVNetworkServer _server;
@@ -31,9 +27,9 @@ namespace eV.Server
         public Server()
         {
             Logger.SetLogger(new Log());
-            _idleDetection = new IdleDetection(_sessionManager, Configure.Instance.ServerOptions.SessionMaximumIdleTime);
+            _idleDetection = new IdleDetection(Configure.Instance.ServerOptions.SessionMaximumIdleTime);
 
-            _sessionExtension = new SessionExtension(_sessionManager, _sessionGroup);
+            _sessionExtension = new SessionExtension();
             _sessionExtension.OnActivateEvent += SessionOnActivate;
             _sessionExtension.OnReleaseEvent += SessionOnRelease;
 
@@ -53,7 +49,7 @@ namespace eV.Server
             MongodbManager.Instance.Start();
             RedisManager.Instance.Start();
             Dispatch.Register(Configure.Instance.BaseOptions.ProjectNamespace);
-            Dispatch.AddCustomHandler(typeof(KeepaliveHandler), typeof(Keepalive));
+            // Dispatch.AddCustomHandler(typeof(KeepaliveHandler), typeof(Keepalive));
             _server.Start();
             _idleDetection.Start();
         }
@@ -69,7 +65,7 @@ namespace eV.Server
         {
             if (_server.ServerState != RunState.On)
                 return;
-            var session = _sessionManager.GetSession(channel, _sessionExtension);
+            var session = SessionDispatch.Instance.SessionManager.GetSession(channel, _sessionExtension);
             OnConnected?.Invoke(session);
         }
 

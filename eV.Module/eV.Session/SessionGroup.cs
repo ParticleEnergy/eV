@@ -9,45 +9,45 @@ namespace eV.Session
     {
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, string>> _allGroup = new();
 
-        public ConcurrentDictionary<string, string>? GetGroup(string groupName)
+        public ConcurrentDictionary<string, string>? GetGroup(string groupId)
         {
-            return _allGroup.TryGetValue(groupName, out ConcurrentDictionary<string, string>? result) ? result : null;
+            return _allGroup.TryGetValue(groupId, out ConcurrentDictionary<string, string>? result) ? result : null;
         }
 
-        public void CreateGroup(string groupName)
+        public void CreateGroup(string groupId)
         {
-            Logger.Info($"Create group {groupName}");
-            _allGroup[groupName] = new ConcurrentDictionary<string, string>();
+            Logger.Info($"Create group {groupId}");
+            _allGroup[groupId] = new ConcurrentDictionary<string, string>();
         }
 
-        public bool DeleteGroup(string groupName)
+        public bool DeleteGroup(string groupId)
         {
-            Logger.Info($"Delete group {groupName}");
-            return _allGroup.TryRemove(groupName, out ConcurrentDictionary<string, string>? _);
+            Logger.Info($"Delete group {groupId}");
+            return _allGroup.TryRemove(groupId, out ConcurrentDictionary<string, string>? _);
         }
 
-        public bool JoinGroup(string groupName, string sessionId)
+        public bool JoinGroup(string groupId, string sessionId)
         {
-            if (!_allGroup.ContainsKey(groupName))
+            if (!_allGroup.ContainsKey(groupId))
                 return false;
 
-            if (!_allGroup.TryGetValue(groupName, out ConcurrentDictionary<string, string>? group))
+            if (!_allGroup.TryGetValue(groupId, out ConcurrentDictionary<string, string>? group))
                 return false;
 
-            Logger.Info($"Session {sessionId} join group {groupName}");
+            Logger.Info($"Session {sessionId} join group {groupId}");
             group[sessionId] = sessionId;
             return true;
         }
 
-        public bool LeaveGroup(string groupName, string sessionId)
+        public bool LeaveGroup(string groupId, string sessionId)
         {
-            if (!_allGroup.ContainsKey(groupName))
+            if (!_allGroup.ContainsKey(groupId))
                 return false;
 
-            if (!_allGroup.TryGetValue(groupName, out ConcurrentDictionary<string, string>? group))
+            if (!_allGroup.TryGetValue(groupId, out ConcurrentDictionary<string, string>? group))
                 return false;
 
-            Logger.Info($"Session {sessionId} Leave group {groupName}");
+            Logger.Info($"Session {sessionId} Leave group {groupId}");
             group.TryRemove(sessionId, out string? _);
             return true;
         }

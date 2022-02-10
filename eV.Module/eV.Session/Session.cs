@@ -182,7 +182,7 @@ namespace eV.Session
                 return false;
             }
         }
-        public void SendGroup<T>(string groupName, T data)
+        public void SendGroup<T>(string groupId, T data)
         {
             if (_sessionId is null or "")
             {
@@ -194,7 +194,7 @@ namespace eV.Session
                 byte[]? result = GetSendData(data);
                 if (result == null)
                     return;
-                SendGroupAction?.Invoke(_sessionId, groupName, result);
+                SendGroupAction?.Invoke(_sessionId, groupId, result);
             }
             catch (Exception e)
             {
@@ -238,22 +238,22 @@ namespace eV.Session
         #endregion
 
         #region Group
-        public bool JoinGroup(string groupName)
+        public bool JoinGroup(string groupId)
         {
             if (JoinGroupAction == null || _sessionId is null or "")
                 return false;
-            if (!JoinGroupAction.Invoke(groupName, _sessionId))
+            if (!JoinGroupAction.Invoke(groupId, _sessionId))
                 return false;
-            _group[groupName] = _sessionId;
+            _group[groupId] = _sessionId;
             return true;
         }
-        public bool LeaveGroup(string groupName)
+        public bool LeaveGroup(string groupId)
         {
             if (LeaveGroupAction == null || _sessionId is null or "")
                 return false;
-            if (!LeaveGroupAction.Invoke(groupName, _sessionId))
+            if (!LeaveGroupAction.Invoke(groupId, _sessionId))
                 return false;
-            _group.Remove(groupName);
+            _group.Remove(groupId);
             return true;
         }
         #endregion

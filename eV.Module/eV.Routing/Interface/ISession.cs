@@ -16,11 +16,11 @@ namespace eV.Routing.Interface
         public DateTime? LastActiveDateTime { get; set; }
         public bool Send(byte[] data);
         public bool Send<T>(T data);
-        public bool Send<T>(string groupName, T data);
-        public void SendGroup<T>(string groupName, T data);
+        public bool Send<T>(string groupId, T data);
+        public void SendGroup<T>(string groupId, T data);
         public void SendBroadcast<T>(T data);
-        public bool JoinGroup(string groupName);
-        public bool LeaveGroup(string groupName);
+        public bool JoinGroup(string groupId);
+        public bool LeaveGroup(string groupId);
         public void Activate(string sessionId);
         public void Shutdown();
     }

@@ -5,11 +5,15 @@ using System;
 using eV.EasyLog;
 using eV.Routing.Interface;
 using eV.Server.Base;
-namespace eV.Server.ClientHeartbeat
+namespace eV.Server.SystemHandler
 {
-    public class KeepaliveHandler : HandlerBase<Keepalive>
+    public class ClientKeepalive
     {
-        protected override void Handle(ISession session, Keepalive _)
+
+    }
+    public class ClientKeepaliveHandler : HandlerBase<ClientKeepalive>
+    {
+        protected override void Handle(ISession session, ClientKeepalive _)
         {
             Logger.Info($"Session {session.SessionId} Connected Time - {session.ConnectedDateTime:hh:mm:ss} keepalive time - {DateTime.Now:hh:mm:ss}");
         }

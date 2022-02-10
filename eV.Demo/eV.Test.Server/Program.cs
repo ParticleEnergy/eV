@@ -76,19 +76,22 @@ namespace eV.Test.Server
             // }
             // Console.WriteLine(test.Name);
 
-            Profile.OnLoad += delegate
-            {
-                Profile.AssignmentConfigObject(Config.Instance);
-            };
-
-            eVServer server = new();
-            server.Start();
-
-
-            // Console.WriteLine(Profile.Config.Count);
-            // Console.WriteLine(((BattleMap)Profile.Config["BattleMap"])["1"].Name);
-
-            Console.WriteLine(Config.Instance.BattleMap!["1"].Name);
+            // Profile.OnLoad += delegate
+            // {
+            //     Profile.AssignmentConfigObject(Config.Instance);
+            // };
+            //
+            // eVServer server = new();
+            // server.Start();
+            //
+            //
+            // // Console.WriteLine(Profile.Config.Count);
+            // // Console.WriteLine(((BattleMap)Profile.Config["BattleMap"])["1"].Name);
+            //
+            // Console.WriteLine(Config.Instance.BattleMap!["1"].Name);
+            Namelist.Instance.Name = "123";
+            Console.WriteLine(Namelist.Instance.Name );
+            Console.WriteLine(Namelist.Instance.Name );
 
 
             Console.ReadLine();
@@ -163,6 +166,7 @@ namespace eV.Test.Server
 
     public class Namelist
     {
+        public static Namelist Instance { get; } = new();
         public string Id { get; set; }
         public string Name { get; set; }
     }
