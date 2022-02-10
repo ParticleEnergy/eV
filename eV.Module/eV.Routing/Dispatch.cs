@@ -44,7 +44,7 @@ namespace eV.Routing
                 else if (sendMessageAttributes.Length > 0)
                 {
                     s_sendMessages[type] = type.Name;
-                    Logger.Info($"SendMessage [{type.Name}] registration succeeded");
+                    Logger.Info($"SendMessage [{type.FullName}] registration succeeded");
                 }
             }
         }
