@@ -12,10 +12,8 @@ namespace eV.Unity
         public Dictionary<string, object> Parser(Dictionary<string, Type> configType, Dictionary<string, string> configJsonString)
         {
             Dictionary<string, object> config = new();
-            foreach (var ct in configType)
+            foreach ((string name, Type type) in configType)
             {
-                string name = ct.Key;
-                Type type = ct.Value;
                 if (!configJsonString.TryGetValue(name, out string? json))
                     continue;
                 object? result = JsonUtility.FromJson(json, type);
