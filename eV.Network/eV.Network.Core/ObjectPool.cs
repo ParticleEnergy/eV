@@ -2,42 +2,41 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using System.Collections.Concurrent;
-namespace eV.Network.Core
+namespace eV.Network.Core;
+
+public sealed class ObjectPool<T> where T : class
 {
-    public sealed class ObjectPool<T> where T : class
+    private readonly ConcurrentStack<T> _pool;
+
+    public ObjectPool()
     {
-        private readonly ConcurrentStack<T> _pool;
+        _pool = new ConcurrentStack<T>();
+    }
 
-        public ObjectPool()
-        {
-            _pool = new ConcurrentStack<T>();
-        }
-
-        public void Push(T item)
+    public int Count
+    {
+        get
         {
             lock (_pool)
             {
-                _pool.Push(item);
+                return _pool.Count;
             }
         }
+    }
 
-        public T? Pop()
+    public void Push(T item)
+    {
+        lock (_pool)
         {
-            lock (_pool)
-            {
-                return _pool.TryPop(out T? item) ? item : null;
-            }
+            _pool.Push(item);
         }
+    }
 
-        public int Count
+    public T? Pop()
+    {
+        lock (_pool)
         {
-            get
-            {
-                lock (_pool)
-                {
-                    return _pool.Count;
-                }
-            }
+            return _pool.TryPop(out T? item) ? item : null;
         }
     }
 }

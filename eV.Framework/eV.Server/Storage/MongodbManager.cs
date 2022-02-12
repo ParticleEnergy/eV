@@ -1,66 +1,61 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
-using System;
-using System.Collections.Generic;
 using eV.EasyLog;
 using MongoDB.Driver;
-namespace eV.Server.Storage
+namespace eV.Server.Storage;
+
+public class MongodbManager
 {
-    public class MongodbManager
+
+    private readonly Dictionary<string, MongoClient> _clients;
+    private bool _isStart;
+
+    private MongodbManager()
     {
-        public static MongodbManager Instance
-        {
-            get;
-        } = new();
+        _isStart = false;
+        _clients = new Dictionary<string, MongoClient>();
+    }
+    public static MongodbManager Instance
+    {
+        get;
+    } = new();
 
-        private readonly Dictionary<string, MongoClient> _clients;
-        private bool _isStart;
+    public void Start()
+    {
+        if (_isStart)
+            return;
+        _isStart = true;
 
-        private MongodbManager()
+        if (Configure.Instance.StorageOptions.Mongodb == null)
         {
-            _isStart = false;
-            _clients = new Dictionary<string, MongoClient>();
+            Logger.Warn("Mongodb config is null");
+            return;
         }
-
-        public void Start()
-        {
-            if (_isStart)
-                return;
-            _isStart = true;
-
-            if (Configure.Instance.StorageOptions.Mongodb == null)
+        foreach ((string? dbName, string? connString) in Configure.Instance.StorageOptions.Mongodb)
+            try
             {
-                Logger.Warn("Mongodb config is null");
-                return;
+                MongoClient client = new(connString);
+                _clients.Add(dbName, client);
+                Logger.Info($"Mongodb [{dbName}] connected success");
             }
-            foreach (var (dbName, connString) in Configure.Instance.StorageOptions.Mongodb)
+            catch (Exception e)
             {
-                try
-                {
-                    MongoClient client = new(connString);
-                    _clients.Add(dbName, client);
-                    Logger.Info($"Mongodb [{dbName}] connected success");
-                }
-                catch (Exception e)
-                {
-                    Logger.Error(e.Message, e);
-                }
+                Logger.Error(e.Message, e);
             }
-        }
+    }
 
-        public MongoClient? GetClient(string name)
-        {
-            _clients.TryGetValue(name, out MongoClient? client);
-            return client;
-        }
-        public IMongoDatabase? GetDatabase(string database)
-        {
-            return _clients.TryGetValue(database, out MongoClient? client) ? client.GetDatabase(database) : null;
-        }
-        public IMongoCollection<T>? GetCollection<T>(string database, string collection)
-        {
-            return _clients.TryGetValue(database, out MongoClient? client) ? client.GetDatabase(database).GetCollection<T>(collection) : null;
-        }
+    public MongoClient? GetClient(string name)
+    {
+        _clients.TryGetValue(name, out MongoClient? client);
+        return client;
+    }
+    public IMongoDatabase? GetDatabase(string database)
+    {
+        return _clients.TryGetValue(database, out MongoClient? client) ? client.GetDatabase(database) : null;
+    }
+    public IMongoCollection<T>? GetCollection<T>(string database, string collection)
+    {
+        return _clients.TryGetValue(database, out MongoClient? client) ? client.GetDatabase(database).GetCollection<T>(collection) : null;
     }
 }

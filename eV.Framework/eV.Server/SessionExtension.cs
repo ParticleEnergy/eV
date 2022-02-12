@@ -4,50 +4,49 @@
 using eV.EasyLog;
 using eV.Routing.Interface;
 using eV.Session.Interface;
-namespace eV.Server
-{
-    public class SessionExtension : ISessionExtend
-    {
-        public event SessionEvent? OnActivateEvent;
-        public event SessionEvent? OnReleaseEvent;
+namespace eV.Server;
 
-        public bool Send(string sessionId, byte[] data)
+public class SessionExtension : ISessionExtend
+{
+
+    public bool Send(string sessionId, byte[] data)
+    {
+        return ServerSession.Send(sessionId, data);
+    }
+    public void SendGroup(string selfSessionId, string groupId, byte[] data)
+    {
+        ServerSession.SendGroup(selfSessionId, groupId, data);
+    }
+    public void SendBroadcast(string selfSessionId, byte[] data)
+    {
+        ServerSession.SendBroadcast(selfSessionId, data);
+    }
+    public bool JoinGroup(string groupId, string sessionId)
+    {
+        return ServerSession.JoinGroup(groupId, sessionId);
+    }
+    public bool LeaveGroup(string groupId, string sessionId)
+    {
+        return ServerSession.LeaveGroup(groupId, sessionId);
+    }
+    public void OnActivate(ISession session)
+    {
+        if (ServerSession.Activate(session))
         {
-            return ServerSession.Send(sessionId, data);
+            OnActivateEvent?.Invoke(session);
         }
-        public void SendGroup(string selfSessionId, string groupId, byte[] data)
+        else
         {
-            ServerSession.SendGroup(selfSessionId, groupId, data);
-        }
-        public void SendBroadcast(string selfSessionId, byte[] data)
-        {
-            ServerSession.SendBroadcast(selfSessionId, data);
-        }
-        public bool JoinGroup(string groupId, string sessionId)
-        {
-            return ServerSession.JoinGroup(groupId, sessionId);
-        }
-        public bool LeaveGroup(string groupId, string sessionId)
-        {
-            return ServerSession.LeaveGroup(groupId, sessionId);
-        }
-        public void OnActivate(ISession session)
-        {
-            if (ServerSession.Activate(session))
-            {
-                OnActivateEvent?.Invoke(session);
-            }
-            else
-            {
-                Logger.Error($"Session {session.SessionId} Session add active group error");
-                session.Shutdown();
-            }
-        }
-        public void OnRelease(ISession session)
-        {
-            if (!ServerSession.Release(session))
-                Logger.Error($"Session {session.SessionId} Session remove active group error");
-            OnReleaseEvent?.Invoke(session);
+            Logger.Error($"Session {session.SessionId} Session add active group error");
+            session.Shutdown();
         }
     }
+    public void OnRelease(ISession session)
+    {
+        if (!ServerSession.Release(session))
+            Logger.Error($"Session {session.SessionId} Session remove active group error");
+        OnReleaseEvent?.Invoke(session);
+    }
+    public event SessionEvent? OnActivateEvent;
+    public event SessionEvent? OnReleaseEvent;
 }

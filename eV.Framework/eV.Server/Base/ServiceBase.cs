@@ -4,14 +4,13 @@
 
 using eV.Server.Storage;
 using StackExchange.Redis;
-namespace eV.Server.Base
+namespace eV.Server.Base;
+
+public class ServiceBase
 {
-    public class ServiceBase
+    private readonly RedisManager _redis = RedisManager.Instance;
+    public IDatabase? GetRedis(string name)
     {
-        private readonly RedisManager _redis = RedisManager.Instance;
-        public IDatabase? GetRedis(string name)
-        {
-            return _redis.GetRedis(name);
-        }
+        return _redis.GetRedis(name);
     }
 }

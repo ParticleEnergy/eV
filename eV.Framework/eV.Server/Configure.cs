@@ -4,36 +4,35 @@
 using System.Reflection;
 using eV.Server.Options;
 using Microsoft.Extensions.Configuration;
-namespace eV.Server
+namespace eV.Server;
+
+public class Configure
 {
-    public class Configure
+
+    private Configure()
     {
-        #region Options
-        public BaseOptions BaseOptions { get; }
-        public ServerOptions ServerOptions { get; }
-        public StorageOptions StorageOptions { get; }
-        #endregion
+        ConfigurationBuilder builder = new();
 
-        public IConfiguration Config
-        {
-            get;
-        }
-        public static Configure Instance
-        {
-            get;
-        } = new();
+        object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyConfigurationAttribute), false);
+        builder.AddJsonFile(attributes.Length == 0 ? "appsettings.json" : ((AssemblyConfigurationAttribute)attributes[0]).Configuration);
+        Config = builder.Build();
 
-        private Configure()
-        {
-            ConfigurationBuilder builder = new();
-
-            object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyConfigurationAttribute), false);
-            builder.AddJsonFile(attributes.Length == 0 ? "appsettings.json" : ((AssemblyConfigurationAttribute)attributes[0]).Configuration);
-            Config = builder.Build();
-
-            BaseOptions = Config.GetSection(BaseOptions.Keyword).Get<BaseOptions>();
-            ServerOptions = Config.GetSection(ServerOptions.Keyword).Get<ServerOptions>();
-            StorageOptions = Config.GetSection(StorageOptions.Keyword).Get<StorageOptions>();
-        }
+        BaseOptions = Config.GetSection(BaseOptions.Keyword).Get<BaseOptions>();
+        ServerOptions = Config.GetSection(ServerOptions.Keyword).Get<ServerOptions>();
+        StorageOptions = Config.GetSection(StorageOptions.Keyword).Get<StorageOptions>();
     }
+
+    public IConfiguration Config
+    {
+        get;
+    }
+    public static Configure Instance
+    {
+        get;
+    } = new();
+    #region Options
+    public BaseOptions BaseOptions { get; }
+    public ServerOptions ServerOptions { get; }
+    public StorageOptions StorageOptions { get; }
+    #endregion
 }

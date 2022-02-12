@@ -1,35 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-      <ImplicitUsings>enable</ImplicitUsings>
-      <Nullable>enable</Nullable>
-      <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-      <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-      <Title>eV.Unity</Title>
-      <Description>eV.Unity</Description>
-      <Copyright>Copyright (c) ParticleEnergy</Copyright>
-      <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
-      <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-      <LangVersion>10</LangVersion>
-      <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-      <Authors>绵羊</Authors>
-    </PropertyGroup>
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>eV.Unity</Title>
+    <Description>eV.Unity</Description>
+    <Copyright>Copyright (c) ParticleEnergy</Copyright>
+    <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <LangVersion>10</LangVersion>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <Authors>绵羊</Authors>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\eV.Module\eV.EasyLog\eV.EasyLog.csproj" />
-      <ProjectReference Include="..\..\eV.Module\eV.GameProfile\eV.GameProfile.csproj" />
-      <ProjectReference Include="..\..\eV.Module\eV.Routing\eV.Routing.csproj" />
-      <ProjectReference Include="..\..\eV.Module\eV.Session\eV.Session.csproj" />
-      <ProjectReference Include="..\..\eV.Network\eV.Network.Client\eV.Network.Client.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\eV.Module\eV.EasyLog\eV.EasyLog.csproj"/>
+    <ProjectReference Include="..\..\eV.Module\eV.GameProfile\eV.GameProfile.csproj"/>
+    <ProjectReference Include="..\..\eV.Module\eV.Routing\eV.Routing.csproj"/>
+    <ProjectReference Include="..\..\eV.Module\eV.Session\eV.Session.csproj"/>
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Client\eV.Network.Client.csproj"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-        <HintPath>UnityLib\2021.2.3f1c1\UnityEngine.dll</HintPath>
-      </Reference>
-    </ItemGroup>
+  <ItemGroup>
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>UnityLib\2021.2.3f1c1\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="UnityLib\2020.3.23f1c1" />
-    </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UnityLib\2020.3.23f1c1"/>
+  </ItemGroup>
 </Project>

@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\eV.Module\eV.EasyLog\eV.EasyLog.csproj" />
+    <ProjectReference Include="..\..\eV.Module\eV.EasyLog\eV.EasyLog.csproj"/>
   </ItemGroup>
-  
+
 </Project>
