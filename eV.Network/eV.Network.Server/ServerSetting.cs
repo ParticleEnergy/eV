@@ -2,7 +2,6 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using System.Net.Sockets;
-using eV.Network.Core;
 namespace eV.Network.Server
 {
     public class ServerSetting
