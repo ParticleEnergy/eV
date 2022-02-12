@@ -58,10 +58,12 @@ public class Channel
         }
     }
     #endregion
+
     #region Event
     public event ChannelEvent? OpenCompleted;
     public event ChannelEvent? CloseCompleted;
     #endregion
+
     #region Public
     #region Time
     public DateTime? ConnectedDateTime
