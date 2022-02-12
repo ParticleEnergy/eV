@@ -20,7 +20,7 @@ namespace eV.GameProfile
         private static string? s_configPath;
         private static IConfigParser? s_configParser;
 
-        public static void Init(string nsName, string path,IConfigParser configParser, bool monitoringChange = false)
+        public static void Init(string nsName, string path, IConfigParser configParser, bool monitoringChange = false)
         {
             s_nsName = nsName;
             s_configPath = path;
@@ -86,7 +86,7 @@ namespace eV.GameProfile
             return result;
         }
 
-        private static  Dictionary<string, Type>  RegisterConfig()
+        private static Dictionary<string, Type> RegisterConfig()
         {
             Dictionary<string, Type> result = new();
             if (s_nsName == null)
@@ -130,11 +130,11 @@ namespace eV.GameProfile
             {
                 Load();
             };
-            watcher.Deleted +=  (_, _) =>
+            watcher.Deleted += (_, _) =>
             {
                 Load();
             };
-            watcher.Renamed +=  (_, _) =>
+            watcher.Renamed += (_, _) =>
             {
                 Load();
             };

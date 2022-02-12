@@ -10,8 +10,8 @@ namespace eV.Server
     {
         #region Options
         public BaseOptions BaseOptions { get; }
-        public ServerOptions ServerOptions { get;}
-        public StorageOptions StorageOptions { get;}
+        public ServerOptions ServerOptions { get; }
+        public StorageOptions StorageOptions { get; }
         #endregion
 
         public IConfiguration Config

@@ -19,7 +19,7 @@ namespace eV.Unity
         public event Action? OnDisconnect;
         #endregion
 
-        private readonly Keepalive _keepalive ;
+        private readonly Keepalive _keepalive;
 
         private readonly eVNetworkClient _client;
         public Client(UnitySetting setting)

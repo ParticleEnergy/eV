@@ -25,6 +25,7 @@ namespace eV.Server.SystemHandler
                 Logger.Warn($"Session {session.SessionId} JoinGroup failed sessionId is empty");
                 return;
             }
-            ServerSession.JoinGroup(content.GroupId, content.SessionId);        }
+            ServerSession.JoinGroup(content.GroupId, content.SessionId);
+        }
     }
 }

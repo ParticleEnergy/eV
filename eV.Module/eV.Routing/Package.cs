@@ -19,7 +19,7 @@ namespace eV.Routing
             memoryStream.Write(BitConverter.GetBytes(packet.GetContentLength()), 0, 4);
             memoryStream.Write(packet.GetNameBytes(), 0, packet.GetNameBytes().Length);
             if (packet.GetContentLength() > 0)
-                memoryStream.Write(packet.GetContent(),0 ,packet.GetContent().Length);
+                memoryStream.Write(packet.GetContent(), 0, packet.GetContent().Length);
 
             return memoryStream.ToArray();
         }
