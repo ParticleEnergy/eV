@@ -26,63 +26,63 @@ public abstract class DalBase<T> where T : class, IModel
     }
 
     #region Insert
-    public void Insert(T data)
+    public virtual void Insert(T data)
     {
         MongodbHelper.Insert(Database, Collection, data);
     }
-    public void Insert(List<T> data)
+    public virtual void Insert(List<T> data)
     {
         MongodbHelper.Insert(Database, Collection, data);
     }
-    public Task? InsertAsync(T data)
+    public virtual Task? InsertAsync(T data)
     {
         return MongodbHelper.InsertAsync(Database, Collection, data);
     }
-    public Task? InsertAsync(List<T> data)
+    public virtual Task? InsertAsync(List<T> data)
     {
         return MongodbHelper.InsertAsync(Database, Collection, data);
     }
     #endregion
 
     #region Delete
-    public DeleteResult? Delete(FilterDefinition<T> filter, bool one = true)
+    public virtual DeleteResult? Delete(FilterDefinition<T> filter, bool one = true)
     {
         return MongodbHelper.Delete(Database, Collection, filter, one);
     }
-    public Task<DeleteResult>? DeleteAsync(FilterDefinition<T> filter, bool one = true)
+    public virtual Task<DeleteResult>? DeleteAsync(FilterDefinition<T> filter, bool one = true)
     {
         return MongodbHelper.DeleteAsync(Database, Collection, filter, one);
     }
     #endregion
 
     #region Update
-    public UpdateResult? Update(FilterDefinition<T> filter, UpdateDefinition<T> update, bool one = true, bool isUpsert = false)
+    public virtual UpdateResult? Update(FilterDefinition<T> filter, UpdateDefinition<T> update, bool one = true, bool isUpsert = false)
     {
         return MongodbHelper.Update(Database, Collection, filter, update, one, isUpsert);
     }
-    public Task<UpdateResult>? UpdateAsync(FilterDefinition<T> filter, UpdateDefinition<T> update, bool one = true, bool isUpsert = false)
+    public virtual Task<UpdateResult>? UpdateAsync(FilterDefinition<T> filter, UpdateDefinition<T> update, bool one = true, bool isUpsert = false)
     {
         return MongodbHelper.UpdateAsync(Database, Collection, filter, update, one, isUpsert);
     }
     #endregion
 
     #region Select
-    public IAsyncCursor<T>? Select(FilterDefinition<T> filter, int offset, int limit)
+    public virtual IAsyncCursor<T>? Select(FilterDefinition<T> filter, int offset, int limit)
     {
         return MongodbHelper.Select(Database, Collection, filter, offset, limit);
     }
-    public Task<IAsyncCursor<T>>? SelectAsync(FilterDefinition<T> filter, int offset, int limit)
+    public virtual Task<IAsyncCursor<T>>? SelectAsync(FilterDefinition<T> filter, int offset, int limit)
     {
         return MongodbHelper.SelectAsync(Database, Collection, filter, offset, limit);
     }
     #endregion
 
     #region Replace
-    public ReplaceOneResult? Replace(FilterDefinition<T> filter, T data, bool isUpsert = false)
+    public virtual ReplaceOneResult? Replace(FilterDefinition<T> filter, T data, bool isUpsert = false)
     {
         return MongodbHelper.Replace(Database, Collection, filter, data, isUpsert);
     }
-    public Task<ReplaceOneResult>? ReplaceAsync(FilterDefinition<T> filter, T data, bool isUpsert = false)
+    public virtual Task<ReplaceOneResult>? ReplaceAsync(FilterDefinition<T> filter, T data, bool isUpsert = false)
     {
         return MongodbHelper.ReplaceAsync(Database, Collection, filter, data, isUpsert);
     }

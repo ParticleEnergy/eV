@@ -7,7 +7,7 @@ namespace eV.Server.Base;
 public abstract class HandlerBase<TContent> : IHandler
 {
 
-    public void Run(ISession session, object content)
+    public virtual void Run(ISession session, object content)
     {
         Handle(session, (TContent)content);
     }

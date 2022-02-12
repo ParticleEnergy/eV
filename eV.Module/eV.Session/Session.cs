@@ -137,11 +137,11 @@ public class Session : ISession
             return null;
         }
     }
-    public bool Send(byte[] data)
+    public virtual bool Send(byte[] data)
     {
         return _channel.ChannelState == RunState.On && _channel.Send(data);
     }
-    public bool Send<T>(T data)
+    public virtual bool Send<T>(T data)
     {
         try
         {
@@ -154,7 +154,7 @@ public class Session : ISession
             return false;
         }
     }
-    public bool Send<T>(string sessionId, T data)
+    public virtual bool Send<T>(string sessionId, T data)
     {
         if (_sessionId is null or "")
         {
@@ -172,7 +172,7 @@ public class Session : ISession
             return false;
         }
     }
-    public void SendGroup<T>(string groupId, T data)
+    public virtual void SendGroup<T>(string groupId, T data)
     {
         if (_sessionId is null or "")
         {
@@ -191,7 +191,7 @@ public class Session : ISession
             Logger.Error(e.Message, e);
         }
     }
-    public void SendBroadcast<T>(T data)
+    public virtual void SendBroadcast<T>(T data)
     {
         if (_sessionId is null or "")
         {
@@ -226,7 +226,7 @@ public class Session : ISession
     #endregion
 
     #region Group
-    public bool JoinGroup(string groupId)
+    public virtual bool JoinGroup(string groupId)
     {
         if (JoinGroupAction == null || _sessionId is null or "")
             return false;
@@ -235,7 +235,7 @@ public class Session : ISession
         _group[groupId] = _sessionId;
         return true;
     }
-    public bool LeaveGroup(string groupId)
+    public virtual bool LeaveGroup(string groupId)
     {
         if (LeaveGroupAction == null || _sessionId is null or "")
             return false;
