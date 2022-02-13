@@ -24,6 +24,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eV.EasyLog", "eV.Module\eV.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eV.Unity", "eV.Framework\eV.Unity\eV.Unity.csproj", "{F745BC43-A8DD-4427-BF4F-D6D9DD89B329}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eV.PushNotification", "eV.Module\eV.PushNotification\eV.PushNotification.csproj", "{2DFEB294-571D-4278-B717-6307AD666349}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,7 @@ Global
 		{440A189B-1100-4326-AE43-73D066917359} = {57FBAB04-08B1-4085-B666-B50D53C48B91}
 		{3897798B-476E-449A-AD81-122AD9CB727B} = {57FBAB04-08B1-4085-B666-B50D53C48B91}
 		{F745BC43-A8DD-4427-BF4F-D6D9DD89B329} = {86706CF4-FB4F-463F-97AF-B50F314F8587}
+		{2DFEB294-571D-4278-B717-6307AD666349} = {57FBAB04-08B1-4085-B666-B50D53C48B91}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FAD04CC7-C8D2-413E-BA93-8A914B7B39F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -77,5 +80,9 @@ Global
 		{F745BC43-A8DD-4427-BF4F-D6D9DD89B329}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F745BC43-A8DD-4427-BF4F-D6D9DD89B329}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F745BC43-A8DD-4427-BF4F-D6D9DD89B329}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DFEB294-571D-4278-B717-6307AD666349}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DFEB294-571D-4278-B717-6307AD666349}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DFEB294-571D-4278-B717-6307AD666349}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DFEB294-571D-4278-B717-6307AD666349}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
