@@ -58,7 +58,7 @@ public class Server
     {
         if (_server.ServerState != RunState.On)
             return;
-        Session.Session? session = SessionDispatch.Instance.SessionManager.GetSession(channel, _sessionExtension);
+        Session.Session session = SessionDispatch.Instance.SessionManager.GetSession(channel, _sessionExtension);
         OnConnected?.Invoke(session);
     }
 
@@ -107,7 +107,7 @@ public class Server
         Dispatch.AddCustomHandler(typeof(ClientSendGroupHandler), typeof(ClientSendGroup));
     }
     #region Event
-    public SessionEvent? OnConnected { private get; set; }
+    public event SessionEvent? OnConnected;
     public event SessionEvent? SessionOnActivate;
     public event SessionEvent? SessionOnRelease;
     #endregion
