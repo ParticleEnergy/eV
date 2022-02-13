@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>eV.PushNotification</Title>
+    <Description>eV.PushNotification</Description>
+    <Copyright>Copyright (c) ParticleEnergy</Copyright>
+    <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+    <LangVersion>10</LangVersion>
+    <Authors>绵羊</Authors>
+    <PackageVersion>1.0.0</PackageVersion>
+  </PropertyGroup>
+</Project>
+
