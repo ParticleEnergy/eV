@@ -28,8 +28,7 @@ public static class Dispatch
 
             if (receiveMessageHandlerAttributes.Length > 0)
             {
-                IHandler? handler = Activator.CreateInstance(type) as IHandler;
-                if (handler == null)
+                if (Activator.CreateInstance(type) is not IHandler handler)
                     continue;
 
                 Type[]? contentTypes = type.BaseType?.GenericTypeArguments;
