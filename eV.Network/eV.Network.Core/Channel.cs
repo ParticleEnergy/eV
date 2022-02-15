@@ -9,8 +9,6 @@ namespace eV.Network.Core;
 public delegate void ChannelEvent(Channel channel);
 public class Channel
 {
-
-
     public Channel(int receiveBufferSize)
     {
         ChannelId = Guid.NewGuid().ToString();
