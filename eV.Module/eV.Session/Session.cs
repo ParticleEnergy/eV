@@ -112,6 +112,7 @@ public class Session : ISession
             LeaveGroup(g.Value);
         _sessionId = null;
         _group.Clear();
+        _dataParser.Reset();
         SessionData.Clear();
         SessionState = SessionState.Free;
     }
