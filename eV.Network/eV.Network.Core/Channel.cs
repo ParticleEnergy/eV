@@ -4,10 +4,10 @@
 using System.Net;
 using System.Net.Sockets;
 using eV.EasyLog;
+using eV.Network.Core.Interface;
 namespace eV.Network.Core;
 
-public delegate void ChannelEvent(Channel channel);
-public class Channel
+public class Channel : IChannel
 {
     public Channel(int receiveBufferSize)
     {
@@ -193,7 +193,7 @@ public class Channel
             ProcessReceive(_receiveSocketAsyncEventArgs);
         return true;
     }
-    public Action<byte[]?>? Receive;
+    public Action<byte[]?>? Receive { get; set; }
 
     public bool Send(byte[] data)
     {

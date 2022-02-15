@@ -5,6 +5,7 @@
 using eV.EasyLog;
 using eV.GameProfile;
 using eV.Network.Core;
+using eV.Network.Core.Interface;
 using eV.Network.Server;
 using eV.Routing;
 using eV.Routing.Interface;
@@ -54,11 +55,11 @@ public class Server
         RedisManager.Instance.Stop();
     }
 
-    private void ServerOnAcceptConnect(Channel channel)
+    private void ServerOnAcceptConnect(IChannel channel)
     {
         if (_server.ServerState != RunState.On)
             return;
-        Session.Session session = SessionDispatch.Instance.SessionManager.GetSession(channel, _sessionExtension);
+        Session.Session session = SessionDispatch.Instance.SessionManager.GetSession((Channel)channel, _sessionExtension);
         OnConnected?.Invoke(session);
     }
 

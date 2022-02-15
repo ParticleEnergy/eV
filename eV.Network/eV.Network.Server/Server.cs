@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using eV.EasyLog;
 using eV.Network.Core;
+using eV.Network.Core.Interface;
 namespace eV.Network.Server;
 
 public class Server
@@ -259,14 +260,14 @@ public class Server
     #endregion
 
     #region Channel
-    private void OpenCompleted(Channel channel)
+    private void OpenCompleted(IChannel channel)
     {
         if (channel.ChannelId.Equals(""))
         {
             Logger.Error($"Open client {channel.RemoteEndPoint} channelId is empty");
             return;
         }
-        if (_connectedChannels.Add(channel))
+        if (_connectedChannels.Add((Channel)channel))
         {
             Interlocked.Increment(ref _connectedCount);
             AcceptConnect?.Invoke(channel);
@@ -277,16 +278,16 @@ public class Server
             Logger.Error($"Channel {channel.RemoteEndPoint} {channel.ChannelId} add on failed");
         }
     }
-    private void CloseCompleted(Channel channel)
+    private void CloseCompleted(IChannel channel)
     {
         if (channel.ChannelId.Equals(""))
         {
             Logger.Error($"Close client {channel.RemoteEndPoint} channelId is empty");
             return;
         }
-        if (!_connectedChannels.Remove(channel))
+        if (!_connectedChannels.Remove((Channel)channel))
             Logger.Error($"Channel {channel.RemoteEndPoint} {channel.ChannelId} remove on failed");
-        _channelPool.Push(channel);
+        _channelPool.Push((Channel)channel);
         Interlocked.Decrement(ref _connectedCount);
         _maxAcceptedConnected.Release();
     }

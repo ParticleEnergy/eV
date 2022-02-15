@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using eV.EasyLog;
 using eV.Network.Core;
+using eV.Network.Core.Interface;
 namespace eV.Network.Client;
 
 public class Client
@@ -162,7 +163,7 @@ public class Client
     #endregion
 
     #region Channel
-    private void OpenCompleted(Channel channel)
+    private void OpenCompleted(IChannel channel)
     {
         if (channel.ChannelId.Equals(""))
         {
@@ -172,7 +173,7 @@ public class Client
         ConnectCompleted?.Invoke(channel);
         Logger.Info($"Connect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port} success");
     }
-    private void CloseCompleted(Channel channel)
+    private void CloseCompleted(IChannel channel)
     {
         if (channel.ChannelId.Equals(""))
         {

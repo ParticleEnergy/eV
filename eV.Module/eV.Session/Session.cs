@@ -4,17 +4,17 @@
 using System.Collections;
 using eV.EasyLog;
 using eV.Network.Core;
+using eV.Network.Core.Interface;
 using eV.Routing;
 using eV.Routing.Interface;
 namespace eV.Session;
 
-public class Session : ISession
+public sealed class Session : ISession
 {
-
-    private readonly Channel _channel;
+    private readonly IChannel _channel;
     private readonly DataParser _dataParser = new();
 
-    public Session(Channel channel)
+    public Session(IChannel channel)
     {
         SessionState = SessionState.Free;
         SessionData = new Hashtable();
@@ -25,7 +25,7 @@ public class Session : ISession
     }
 
     #region Channel
-    private void ChannelClose(Channel channel)
+    private void ChannelClose(IChannel channel)
     {
         Release();
     }
@@ -138,11 +138,11 @@ public class Session : ISession
             return null;
         }
     }
-    public virtual bool Send(byte[] data)
+    public bool Send(byte[] data)
     {
         return _channel.ChannelState == RunState.On && _channel.Send(data);
     }
-    public virtual bool Send<T>(T data)
+    public bool Send<T>(T data)
     {
         try
         {
@@ -155,7 +155,7 @@ public class Session : ISession
             return false;
         }
     }
-    public virtual bool Send<T>(string sessionId, T data)
+    public bool Send<T>(string sessionId, T data)
     {
         if (_sessionId is null or "")
         {
@@ -173,7 +173,7 @@ public class Session : ISession
             return false;
         }
     }
-    public virtual void SendGroup<T>(string groupId, T data)
+    public void SendGroup<T>(string groupId, T data)
     {
         if (_sessionId is null or "")
         {
@@ -192,7 +192,7 @@ public class Session : ISession
             Logger.Error(e.Message, e);
         }
     }
-    public virtual void SendBroadcast<T>(T data)
+    public void SendBroadcast<T>(T data)
     {
         if (_sessionId is null or "")
         {
@@ -227,7 +227,7 @@ public class Session : ISession
     #endregion
 
     #region Group
-    public virtual bool JoinGroup(string groupId)
+    public bool JoinGroup(string groupId)
     {
         if (JoinGroupAction == null || _sessionId is null or "")
             return false;
@@ -236,7 +236,7 @@ public class Session : ISession
         _group[groupId] = _sessionId;
         return true;
     }
-    public virtual bool LeaveGroup(string groupId)
+    public bool LeaveGroup(string groupId)
     {
         if (LeaveGroupAction == null || _sessionId is null or "")
             return false;

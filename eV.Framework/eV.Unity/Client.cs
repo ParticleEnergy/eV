@@ -5,7 +5,7 @@
 using eV.EasyLog;
 using eV.GameProfile;
 using eV.Network.Client;
-using eV.Network.Core;
+using eV.Network.Core.Interface;
 using eV.Routing;
 using eV.Routing.Interface;
 using eVNetworkClient = eV.Network.Client.Client;
@@ -46,14 +46,14 @@ public class Client
         _client.Connect();
     }
 
-    private void ClientOnConnectCompleted(Channel channel)
+    private void ClientOnConnectCompleted(IChannel channel)
     {
         Session.Session session = new(channel);
         SessionDispatch.Instance.SetClientSession(session);
         OnConnect?.Invoke(session);
         _keepalive.Start();
     }
-    private void ClientOnDisconnectCompleted(Channel _)
+    private void ClientOnDisconnectCompleted(IChannel _)
     {
         _keepalive.Stop();
         OnDisconnect?.Invoke();
