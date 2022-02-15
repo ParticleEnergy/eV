@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using System.Net;
+using System.Net.Sockets;
 using eV.Network.Core.Interface;
 namespace eV.Network.Core;
 
@@ -39,6 +40,10 @@ public class SecurityChannel : IChannel
         set;
     }
     public bool Send(byte[] data)
+    {
+        throw new NotImplementedException();
+    }
+    public void Open(Socket socket)
     {
         throw new NotImplementedException();
     }

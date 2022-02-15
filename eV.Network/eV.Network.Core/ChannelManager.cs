@@ -3,23 +3,24 @@
 
 
 using System.Collections.Concurrent;
+using eV.Network.Core.Interface;
 namespace eV.Network.Core;
 
 public class ChannelManager
 {
-    private readonly ConcurrentDictionary<string, Channel> _channels;
+    private readonly ConcurrentDictionary<string, IChannel> _channels;
 
     public ChannelManager()
     {
-        _channels = new ConcurrentDictionary<string, Channel>();
+        _channels = new ConcurrentDictionary<string, IChannel>();
     }
 
-    public Channel? GetChannel(string channelId)
+    public IChannel? GetChannel(string channelId)
     {
-        return _channels.TryGetValue(channelId, out Channel? result) ? result : null;
+        return _channels.TryGetValue(channelId, out IChannel? result) ? result : null;
     }
 
-    public ConcurrentDictionary<string, Channel> GetAllChannel()
+    public ConcurrentDictionary<string, IChannel> GetAllChannel()
     {
         return _channels;
     }
@@ -29,14 +30,14 @@ public class ChannelManager
         return _channels.Count;
     }
 
-    public bool Add(Channel channel)
+    public bool Add(IChannel channel)
     {
         _channels[channel.ChannelId] = channel;
         return true;
     }
 
-    public bool Remove(Channel channel)
+    public bool Remove(IChannel channel)
     {
-        return _channels.TryRemove(channel.ChannelId, out Channel? _);
+        return _channels.TryRemove(channel.ChannelId, out IChannel? _);
     }
 }

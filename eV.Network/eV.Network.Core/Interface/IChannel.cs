@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using System.Net;
+using System.Net.Sockets;
 namespace eV.Network.Core.Interface;
 
 public interface IChannel
@@ -33,5 +34,6 @@ public interface IChannel
     }
     public Action<byte[]?>? Receive { set; }
     public bool Send(byte[] data);
+    public void Open(Socket socket);
     public void Close();
 }

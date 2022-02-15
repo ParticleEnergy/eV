@@ -13,7 +13,6 @@ namespace eV.Unity;
 
 public class Client
 {
-
     private readonly eVNetworkClient _client;
 
     private readonly Keepalive _keepalive;

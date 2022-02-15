@@ -5,6 +5,7 @@
 using System.Collections.Concurrent;
 using eV.EasyLog;
 using eV.Network.Core;
+using eV.Network.Core.Interface;
 using eV.Session.Interface;
 namespace eV.Session;
 
@@ -14,7 +15,7 @@ public class SessionManager
     private readonly ConcurrentDictionary<string, Session> _sessions = new();
 
     #region Session
-    public Session GetSession(Channel channel, ISessionExtend? sessionExtend)
+    public Session GetSession(IChannel channel, ISessionExtend? sessionExtend)
     {
         Session session;
         if (_sessions.TryGetValue(channel.ChannelId, out Session? result))

@@ -59,7 +59,7 @@ public class Server
     {
         if (_server.ServerState != RunState.On)
             return;
-        Session.Session session = SessionDispatch.Instance.SessionManager.GetSession((Channel)channel, _sessionExtension);
+        Session.Session session = SessionDispatch.Instance.SessionManager.GetSession(channel, _sessionExtension);
         OnConnected?.Invoke(session);
     }
 

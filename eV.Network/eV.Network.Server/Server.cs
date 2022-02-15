@@ -29,7 +29,7 @@ public class Server
         _socketAsyncEventArgsCompleted.ProcessAccept += ProcessAccept;
 
         _acceptSocketAsyncEventArgsPool = new ObjectPool<SocketAsyncEventArgs>();
-        _channelPool = new ObjectPool<Channel>();
+        _channelPool = new ObjectPool<IChannel>();
         _maxAcceptedConnected = new Semaphore(_maxConnectionCount, _maxConnectionCount);
         _connectedChannels = new ChannelManager();
     }
@@ -91,7 +91,7 @@ public class Server
         }
         try
         {
-            Channel? channel = _channelPool.Pop();
+            IChannel? channel = _channelPool.Pop();
             if (channel != null)
             {
                 if (socketAsyncEventArgs.AcceptSocket.ProtocolType == ProtocolType.Tcp)
@@ -131,7 +131,7 @@ public class Server
     private readonly Socket _socket;
     private readonly SocketAsyncEventArgsCompleted _socketAsyncEventArgsCompleted;
     private readonly ObjectPool<SocketAsyncEventArgs> _acceptSocketAsyncEventArgsPool;
-    private readonly ObjectPool<Channel> _channelPool;
+    private readonly ObjectPool<IChannel> _channelPool;
     private readonly ChannelManager _connectedChannels;
     private readonly Semaphore _maxAcceptedConnected;
     #endregion
@@ -193,12 +193,8 @@ public class Server
     }
     private void Release()
     {
-        foreach (KeyValuePair<string, Channel> channel in _connectedChannels.GetAllChannel())
+        foreach (KeyValuePair<string, IChannel> channel in _connectedChannels.GetAllChannel())
             channel.Value.Close();
-        while (_connectedCount > 0)
-        {
-
-        }
         Logger.Info("Server shutdown");
     }
     private void Init()
@@ -215,7 +211,7 @@ public class Server
         }
     }
 
-    public Channel? GetConnectedChannel(string channelId)
+    public IChannel? GetConnectedChannel(string channelId)
     {
         return _connectedChannels.GetChannel(channelId);
     }
@@ -267,7 +263,7 @@ public class Server
             Logger.Error($"Open client {channel.RemoteEndPoint} channelId is empty");
             return;
         }
-        if (_connectedChannels.Add((Channel)channel))
+        if (_connectedChannels.Add(channel))
         {
             Interlocked.Increment(ref _connectedCount);
             AcceptConnect?.Invoke(channel);
@@ -285,9 +281,9 @@ public class Server
             Logger.Error($"Close client {channel.RemoteEndPoint} channelId is empty");
             return;
         }
-        if (!_connectedChannels.Remove((Channel)channel))
+        if (!_connectedChannels.Remove(channel))
             Logger.Error($"Channel {channel.RemoteEndPoint} {channel.ChannelId} remove on failed");
-        _channelPool.Push((Channel)channel);
+        _channelPool.Push(channel);
         Interlocked.Decrement(ref _connectedCount);
         _maxAcceptedConnected.Release();
     }
