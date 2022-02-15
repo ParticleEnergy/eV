@@ -35,5 +35,6 @@ public interface IChannel
     public Action<byte[]?>? Receive { set; }
     public bool Send(byte[] data);
     public void Open(Socket socket);
+    public void Open(TcpClient tcpClient);
     public void Close();
 }

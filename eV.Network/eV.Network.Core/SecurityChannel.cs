@@ -2,12 +2,19 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
+using eV.EasyLog;
 using eV.Network.Core.Interface;
 namespace eV.Network.Core;
 
 public class SecurityChannel : IChannel
 {
+    // private SslStream _sslStream;
+    // public SecurityChannel(int receiveBufferSize)
+    // {
+    //
+    // }
 
     public event ChannelEvent? CloseCompleted;
     public DateTime? ConnectedDateTime
@@ -45,7 +52,11 @@ public class SecurityChannel : IChannel
     }
     public void Open(Socket socket)
     {
-        throw new NotImplementedException();
+        Logger.Error("This method is not supported");
+    }
+    public void Open(TcpClient tcpClient)
+    {
+
     }
     public void Close()
     {

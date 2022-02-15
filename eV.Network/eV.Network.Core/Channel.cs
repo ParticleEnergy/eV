@@ -125,6 +125,10 @@ public class Channel : IChannel
             Logger.Error(e.Message, e);
         }
     }
+    public void Open(TcpClient tpClient)
+    {
+        Logger.Error("This method is not supported");
+    }
     public void Close()
     {
         if (ChannelState == RunState.Off)
