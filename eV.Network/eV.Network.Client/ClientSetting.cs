@@ -13,4 +13,10 @@ public class ClientSetting
     public SocketType SocketType { get; set; } = DefaultSetting.SocketType;
     public ProtocolType ProtocolType { get; set; } = DefaultSetting.ProtocolType;
     #endregion
+
+#if !NETSTANDARD
+    public int TcpKeepAliveTime { get; set; } = DefaultSetting.TcpKeepAliveTime;
+    public int TcpKeepAliveInterval { get; set; } = DefaultSetting.TcpKeepAliveInterval;
+    public int TcpKeepAliveRetryCount { get; set; } = DefaultSetting.TcpKeepAliveRetryCount;
+#endif
 }

@@ -44,6 +44,11 @@ public class Client
         _socketType = setting.SocketType;
         _protocolType = setting.ProtocolType;
         _receiveBufferSize = setting.ReceiveBufferSize;
+#if !NETSTANDARD
+        _tcpKeepAliveTime = setting.TcpKeepAliveTime;
+        _tcpKeepAliveInterval = setting.TcpKeepAliveInterval;
+        _tcpKeepAliveRetryCount = setting.TcpKeepAliveRetryCount;
+#endif
     }
     #region Event
     public event ChannelEvent? ConnectCompleted;
@@ -55,6 +60,11 @@ public class Client
     private SocketType _socketType;
     private ProtocolType _protocolType;
     private int _receiveBufferSize;
+    #if !NETSTANDARD
+    private int _tcpKeepAliveTime;
+    private int _tcpKeepAliveInterval;
+    private int _tcpKeepAliveRetryCount;
+    #endif
     #endregion
 
 
@@ -116,17 +126,33 @@ public class Client
     private void Init()
     {
         _socket = new Socket(_ipEndPoint!.AddressFamily, _socketType, _protocolType);
+#if !NETSTANDARD
         _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+        if (_protocolType != ProtocolType.Tcp)
+            return;
+        _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, _tcpKeepAliveInterval);
+        _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, _tcpKeepAliveRetryCount);
+#endif
     }
     #endregion
 
     #region Process
     private void ProcessConnect(SocketAsyncEventArgs socketAsyncEventArgs)
     {
+
         if (socketAsyncEventArgs.ConnectSocket != null)
+        {
+            #if !NETSTANDARD
+            if (socketAsyncEventArgs.ConnectSocket.ProtocolType == ProtocolType.Tcp)
+                socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Tcp,SocketOptionName.TcpKeepAliveTime,_tcpKeepAliveTime);
+            #endif
             _channel.Open(socketAsyncEventArgs.ConnectSocket);
+        }
         else
+        {
             Logger.Error($"Connect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port} failed");
+        }
+
     }
     private void ProcessDisconnect(SocketAsyncEventArgs socketAsyncEventArgs)
     {
