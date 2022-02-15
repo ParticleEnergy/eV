@@ -61,11 +61,11 @@ public class Client
     private SocketType _socketType;
     private ProtocolType _protocolType;
     private int _receiveBufferSize;
-    #if !NETSTANDARD
+#if !NETSTANDARD
     private int _tcpKeepAliveTime;
     private int _tcpKeepAliveInterval;
     private int _tcpKeepAliveRetryCount;
-    #endif
+#endif
     #endregion
 
 
@@ -143,10 +143,10 @@ public class Client
 
         if (socketAsyncEventArgs.ConnectSocket != null)
         {
-            #if !NETSTANDARD
+#if !NETSTANDARD
             if (socketAsyncEventArgs.ConnectSocket.ProtocolType == ProtocolType.Tcp)
                 socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Tcp,SocketOptionName.TcpKeepAliveTime,_tcpKeepAliveTime);
-            #endif
+#endif
             _channel.Open(socketAsyncEventArgs.ConnectSocket);
         }
         else
