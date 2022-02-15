@@ -7,7 +7,6 @@ namespace eV.Network.Core.Interface;
 
 public interface IChannel
 {
-    public event ChannelEvent? CloseCompleted;
     public DateTime? ConnectedDateTime
     {
         get;
@@ -33,6 +32,7 @@ public interface IChannel
         get;
     }
     public Action<byte[]?>? Receive { set; }
+    public event ChannelEvent? CloseCompleted;
     public bool Send(byte[] data);
     public void Open(Socket socket);
     public void Open(TcpClient tcpClient);
