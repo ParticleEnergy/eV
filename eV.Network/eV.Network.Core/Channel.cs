@@ -63,6 +63,22 @@ public class Channel : IChannel
     #endregion
 
     #region Public
+    public RunState ChannelState
+    {
+        get;
+        private set;
+    }
+    public string ChannelId
+    {
+        get;
+    }
+    public EndPoint? RemoteEndPoint
+    {
+        get;
+        private set;
+    }
+    #endregion
+
     #region Time
     public DateTime? ConnectedDateTime
     {
@@ -75,21 +91,6 @@ public class Channel : IChannel
         private set;
     }
     public DateTime? LastSendDateTime
-    {
-        get;
-        private set;
-    }
-    #endregion
-    public RunState ChannelState
-    {
-        get;
-        private set;
-    }
-    public string ChannelId
-    {
-        get;
-    }
-    public EndPoint? RemoteEndPoint
     {
         get;
         private set;
@@ -124,10 +125,6 @@ public class Channel : IChannel
         {
             Logger.Error(e.Message, e);
         }
-    }
-    public void Open(TcpClient tpClient)
-    {
-        Logger.Error("This method is not supported");
     }
     public void Close()
     {

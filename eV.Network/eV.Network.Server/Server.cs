@@ -29,7 +29,7 @@ public class Server
         _socketAsyncEventArgsCompleted.ProcessAccept += ProcessAccept;
 
         _acceptSocketAsyncEventArgsPool = new ObjectPool<SocketAsyncEventArgs>();
-        _channelPool = new ObjectPool<IChannel>();
+        _channelPool = new ObjectPool<Channel>();
         _maxAcceptedConnected = new Semaphore(_maxConnectionCount, _maxConnectionCount);
         _connectedChannels = new ChannelManager();
     }
@@ -91,7 +91,7 @@ public class Server
         }
         try
         {
-            IChannel? channel = _channelPool.Pop();
+            Channel? channel = _channelPool.Pop();
             if (channel != null)
             {
                 if (socketAsyncEventArgs.AcceptSocket.ProtocolType == ProtocolType.Tcp)
@@ -131,7 +131,7 @@ public class Server
     private readonly Socket _socket;
     private readonly SocketAsyncEventArgsCompleted _socketAsyncEventArgsCompleted;
     private readonly ObjectPool<SocketAsyncEventArgs> _acceptSocketAsyncEventArgsPool;
-    private readonly ObjectPool<IChannel> _channelPool;
+    private readonly ObjectPool<Channel> _channelPool;
     private readonly ChannelManager _connectedChannels;
     private readonly Semaphore _maxAcceptedConnected;
     #endregion
@@ -283,7 +283,7 @@ public class Server
         }
         if (!_connectedChannels.Remove(channel))
             Logger.Error($"Channel {channel.RemoteEndPoint} {channel.ChannelId} remove on failed");
-        _channelPool.Push(channel);
+        _channelPool.Push((Channel)channel);
         Interlocked.Decrement(ref _connectedCount);
         _maxAcceptedConnected.Release();
     }
