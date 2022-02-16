@@ -4,6 +4,7 @@
 using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using eV.EasyLog;
 using eV.Network.Core;
@@ -55,21 +56,23 @@ public class SecurityChannel : IChannel
     private CancellationTokenSource? _cancellationTokenSource;
     private Task? _task;
     private readonly byte[] _receiveBuffer;
+    private readonly SslProtocols _sslProtocols;
+    private readonly string _targetHost;
+    private readonly string _certFile;
     #endregion
-    public SecurityChannel(int receiveBufferSize)
+    public SecurityChannel(string targetHost, string certFile, SslProtocols sslProtocols, int receiveBufferSize)
     {
         ChannelId = Guid.NewGuid().ToString();
         ChannelState = RunState.Off;
+        _targetHost = targetHost;
+        _certFile = certFile;
+        _sslProtocols = sslProtocols;
 
         _receiveBuffer = new byte[receiveBufferSize];
     }
 
 
     #region Operate
-    public void Open(Socket socket)
-    {
-        Logger.Error("This method is not supported");
-    }
     public void Open(TcpClient tcpClient)
     {
         if (ChannelState == RunState.On)
@@ -80,6 +83,9 @@ public class SecurityChannel : IChannel
         try
         {
             Init(tcpClient);
+
+            if (!Authenticate())
+                return;
 
             OpenCompleted?.Invoke(this);
             Logger.Info($"Channel {ChannelId} {RemoteEndPoint} open");
@@ -113,13 +119,12 @@ public class SecurityChannel : IChannel
             Logger.Error(e.Message, e);
         }
     }
-
+#if !NETSTANDARD2_0_OR_GREATER
     private async void Release()
     {
-#if !NETSTANDARD2_0_OR_GREATER
         if (_sslStream != null)
             await _sslStream.ShutdownAsync();
-#endif
+
         _tcpClient?.Close();
         _sslStream?.Close();
         _cancellationTokenSource?.Cancel();
@@ -131,11 +136,25 @@ public class SecurityChannel : IChannel
         Logger.Info($"Channel {ChannelId} {RemoteEndPoint} close");
         CloseCompleted?.Invoke(this);
     }
+#else
+    private void Release()
+    {
+        _tcpClient?.Close();
+        _sslStream?.Close();
+        _cancellationTokenSource?.Cancel();
+        _sslStream = null;
+        _tcpClient = null;
 
+        Array.Clear(_receiveBuffer, 0, _receiveBuffer.Length);
+
+        Logger.Info($"Channel {ChannelId} {RemoteEndPoint} close");
+        CloseCompleted?.Invoke(this);
+    }
+#endif
     private void Init(TcpClient tcpClient)
     {
         _tcpClient = tcpClient;
-        _sslStream = new SslStream(tcpClient.GetStream(),false, ValidateServerCertificate, null);
+        _sslStream = new SslStream(tcpClient.GetStream(), false, ValidateServerCertificate, null);
         _cancellationTokenSource = new CancellationTokenSource();
         ChannelState = RunState.On;
         ConnectedDateTime = DateTime.Now;
@@ -247,9 +266,41 @@ public class SecurityChannel : IChannel
     }
     #endregion
 
-    private static bool ValidateServerCertificate(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
+    #region Auth
+    private bool ValidateServerCertificate(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
     {
-        return sslPolicyErrors == SslPolicyErrors.None;
+        if (sslPolicyErrors == SslPolicyErrors.None)
+            return true;
+
+        Logger.Error($"Channel {ChannelId} SslPolicyErrors [{sslPolicyErrors}]");
+        return false;
     }
 
+    private bool Authenticate()
+    {
+        if (_sslStream == null)
+        {
+            Close();
+            return false;
+        }
+        X509CertificateCollection certs = new();
+        X509Certificate cert = X509Certificate.CreateFromCertFile(_certFile);
+        certs.Add(cert);
+        try
+        {
+            _sslStream?.AuthenticateAsClient(_targetHost, certs, _sslProtocols, false);
+            return true;
+        }
+        catch (AuthenticationException e)
+        {
+            Logger.Error(e.Message, e);
+            if (e.InnerException != null)
+            {
+                Logger.Error(e.InnerException.Message, e.InnerException);
+            }
+            Close();
+            return false;
+        }
+    }
+    #endregion
 }

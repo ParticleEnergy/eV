@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using System.Net.Sockets;
+using System.Security.Authentication;
 namespace eV.Network.Security.Client;
 
 public class ClientSetting
@@ -12,6 +13,9 @@ public class ClientSetting
     public int Port { get; set; } = DefaultSetting.Port;
     public SocketType SocketType { get; set; } = DefaultSetting.SocketType;
     public ProtocolType ProtocolType { get; set; } = DefaultSetting.ProtocolType;
+    public string TargetHost { get; set; } = DefaultSetting.TargetHost;
+    public string CertFile { get; set; } = DefaultSetting.CertFile;
+    public SslProtocols SslProtocols { get; set; } = DefaultSetting.SslProtocols;
     #endregion
 
 #if !NETSTANDARD
