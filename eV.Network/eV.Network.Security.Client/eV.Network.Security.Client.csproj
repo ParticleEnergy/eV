@@ -15,7 +15,7 @@
     <PackageVersion>0.0.9</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\eV.Module\eV.EasyLog\eV.EasyLog.csproj" />
-    <ProjectReference Include="..\eV.Network.Core\eV.Network.Core.csproj" />
+    <ProjectReference Include="..\..\eV.Module\eV.EasyLog\eV.EasyLog.csproj"/>
+    <ProjectReference Include="..\eV.Network.Core\eV.Network.Core.csproj"/>
   </ItemGroup>
 </Project>

@@ -106,13 +106,9 @@ public class SecurityChannel : IChannel
         try
         {
             if (_tcpClient is { Connected: true })
-            {
                 _tcpClient.Client.Shutdown(SocketShutdown.Both);
-            }
             else
-            {
                 Release();
-            }
         }
         catch (Exception e)
         {
@@ -163,9 +159,7 @@ public class SecurityChannel : IChannel
         _task = new Task(delegate
         {
             if (!StartReceive())
-            {
                 Logger.Debug($"Channel {ChannelId} receive shutdown");
-            }
         }, _cancellationTokenSource!.Token);
 
     }
@@ -295,9 +289,7 @@ public class SecurityChannel : IChannel
         {
             Logger.Error(e.Message, e);
             if (e.InnerException != null)
-            {
                 Logger.Error(e.InnerException.Message, e.InnerException);
-            }
             Close();
             return false;
         }
