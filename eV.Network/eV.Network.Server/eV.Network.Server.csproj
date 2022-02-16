@@ -13,10 +13,11 @@
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
+    <PackageVersion>1.0.1</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\eV.Network.Core\eV.Network.Core.csproj"/>
+    <ProjectReference Include="..\eV.Network.Core\eV.Network.Core.csproj" />
   </ItemGroup>
 
 </Project>

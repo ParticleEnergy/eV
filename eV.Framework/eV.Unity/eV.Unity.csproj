@@ -13,15 +13,16 @@
     <LangVersion>10</LangVersion>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <Authors>绵羊</Authors>
+    <PackageVersion>1.0.1</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\eV.Module\eV.EasyLog\eV.EasyLog.csproj"/>
-    <ProjectReference Include="..\..\eV.Module\eV.GameProfile\eV.GameProfile.csproj"/>
-    <ProjectReference Include="..\..\eV.Module\eV.Routing\eV.Routing.csproj"/>
-    <ProjectReference Include="..\..\eV.Module\eV.Session\eV.Session.csproj"/>
-    <ProjectReference Include="..\..\eV.Network\eV.Network.Client\eV.Network.Client.csproj"/>
-    <ProjectReference Include="..\..\eV.Network\eV.Network.Security.Client\eV.Network.Security.Client.csproj"/>
+    <ProjectReference Include="..\..\eV.Module\eV.EasyLog\eV.EasyLog.csproj" />
+    <ProjectReference Include="..\..\eV.Module\eV.GameProfile\eV.GameProfile.csproj" />
+    <ProjectReference Include="..\..\eV.Module\eV.Routing\eV.Routing.csproj" />
+    <ProjectReference Include="..\..\eV.Module\eV.Session\eV.Session.csproj" />
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Client\eV.Network.Client.csproj" />
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Security.Client\eV.Network.Security.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +32,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UnityLib\2020.3.23f1c1"/>
+    <Folder Include="UnityLib\2020.3.23f1c1" />
   </ItemGroup>
 </Project>
