@@ -9,11 +9,13 @@ using eV.Network.Core.Interface;
 using eV.Routing;
 using eV.Routing.Interface;
 using eVNetworkClient = eV.Network.Client.Client;
+using eVNetworkSecurityClient = eV.Network.Security.Client.Client;
+
 namespace eV.Unity;
 
 public class Client
 {
-    private readonly eVNetworkClient _client;
+    private readonly IClient _client;
 
     private readonly Keepalive _keepalive;
     public Client(UnitySetting setting)
@@ -21,13 +23,31 @@ public class Client
         Logger.SetLogger(new Log());
         Logger.Info(DefaultSetting.Logo);
 
-        ClientSetting clientSetting = new()
+
+        if (setting.CertFile.Equals(""))
         {
-            Address = setting.Host,
-            Port = setting.Port,
-            ReceiveBufferSize = setting.ReceiveBufferSize
-        };
-        _client = new eVNetworkClient(clientSetting);
+            ClientSetting clientSetting = new()
+            {
+                Address = setting.Host,
+                Port = setting.Port,
+                ReceiveBufferSize = setting.ReceiveBufferSize
+            };
+            _client = new eVNetworkClient(clientSetting);
+        }
+        else
+        {
+            Network.Security.Client.ClientSetting clientSetting = new()
+            {
+                Address = setting.Host,
+                Port = setting.Port,
+                ReceiveBufferSize = setting.ReceiveBufferSize,
+                TargetHost = setting.TargetHost,
+                CertFile = setting.CertFile,
+                SslProtocols = setting.SslProtocols
+            };
+            _client = new eVNetworkSecurityClient(clientSetting);
+        }
+
         _client.ConnectCompleted += ClientOnConnectCompleted;
         _client.DisconnectCompleted += ClientOnDisconnectCompleted;
 

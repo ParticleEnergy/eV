@@ -8,7 +8,7 @@ using eV.Network.Core;
 using eV.Network.Core.Interface;
 namespace eV.Network.Client;
 
-public class Client
+public class Client : IClient
 {
     public Client(ClientSetting setting)
     {

@@ -21,6 +21,7 @@
     <ProjectReference Include="..\..\eV.Module\eV.Routing\eV.Routing.csproj"/>
     <ProjectReference Include="..\..\eV.Module\eV.Session\eV.Session.csproj"/>
     <ProjectReference Include="..\..\eV.Network\eV.Network.Client\eV.Network.Client.csproj"/>
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Security.Client\eV.Network.Security.Client.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

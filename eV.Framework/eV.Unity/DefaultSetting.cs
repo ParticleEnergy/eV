@@ -1,6 +1,7 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
+using System.Security.Authentication;
 namespace eV.Unity;
 
 internal class DefaultSetting
@@ -17,4 +18,6 @@ internal class DefaultSetting
     public const int Port = 8888;
     public const int ReceiveBufferSize = 2014;
     public const int TcpKeepAliveInterval = 60;
+    public const SslProtocols SslProtocols = (SslProtocols)192;
+    public const string TargetHost = "eV";
 }

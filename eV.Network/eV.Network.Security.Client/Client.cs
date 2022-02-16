@@ -8,7 +8,7 @@ using eV.Network.Core;
 using eV.Network.Core.Interface;
 namespace eV.Network.Security.Client;
 
-public class Client
+public class Client : IClient
 {
     #region Event
     public event ChannelEvent? ConnectCompleted;
