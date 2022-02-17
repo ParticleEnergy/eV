@@ -41,7 +41,7 @@ public class RedisManager
             try
             {
                 ConfigurationOptions config = GetConfig(redisOptions.Address, redisOptions.Database, redisOptions.User, redisOptions.Password);
-                ConnectionMultiplexer? conn = ConnectionMultiplexer.Connect(config);
+                ConnectionMultiplexer conn = ConnectionMultiplexer.Connect(config);
                 if (conn.IsConnected)
                 {
                     _redisConnection.Add(name, conn);
