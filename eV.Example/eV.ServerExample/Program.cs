@@ -12,18 +12,18 @@ Profile.OnLoad += delegate
     Profile.AssignmentConfigObject(GameProfile.Instance);
 };
 Server server = new();
-// server.OnConnected += delegate(ISession session)
-// {
-//
-// };
-// server.SessionOnActivate += delegate(ISession session)
-// {
-//
-// };
-// server.SessionOnRelease += delegate(ISession session)
-// {
-//
-// };
+server.OnConnected += delegate(ISession session)
+{
+
+};
+server.SessionOnActivate += delegate(ISession session)
+{
+
+};
+server.SessionOnRelease += delegate(ISession session)
+{
+
+};
 server.Start();
 
 Console.ReadLine();
