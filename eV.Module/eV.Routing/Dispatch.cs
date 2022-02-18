@@ -86,6 +86,6 @@ public static class Dispatch
     {
         if (Activator.CreateInstance(handlerType) is not IHandler handler)
             return;
-        s_receiveHandlers[handlerType.Name] = new Route(handler, contentType);
+        s_receiveHandlers[contentType.Name] = new Route(handler, contentType);
     }
 }

@@ -72,14 +72,12 @@ public sealed class Session : ISession
     }
     public DateTime? LastActiveDateTime
     {
-        get
-        {
-            if (_channel.LastSendDateTime == null && _channel.LastReceiveDateTime == null)
-                return _channel.ConnectedDateTime;
-            if (_channel.LastSendDateTime != null && _channel.LastReceiveDateTime != null)
-                return _channel.LastSendDateTime >= _channel.LastReceiveDateTime ? _channel.LastSendDateTime : _channel.LastReceiveDateTime;
-            return _channel.LastSendDateTime ?? _channel.LastReceiveDateTime;
-        }
+        get => _channel.LastSendDateTime;
+        // if (_channel.LastSendDateTime == null && _channel.LastReceiveDateTime == null)
+        //     return _channel.ConnectedDateTime;
+        // if (_channel.LastSendDateTime != null && _channel.LastReceiveDateTime != null)
+        //     return _channel.LastSendDateTime >= _channel.LastReceiveDateTime ? _channel.LastSendDateTime : _channel.LastReceiveDateTime;
+        // return _channel.LastSendDateTime ?? _channel.LastReceiveDateTime;
         set {}
     }
     #endregion
