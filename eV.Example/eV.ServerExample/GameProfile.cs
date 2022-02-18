@@ -1,7 +1,8 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
-namespace eV.ServerExample.GameProfileStructure;
+using eV.ServerExample.Object.Profile;
+namespace eV.ServerExample;
 
 public class GameProfile
 {
@@ -9,4 +10,6 @@ public class GameProfile
     private GameProfile()
     {
     }
+
+    public HelloProfile? HelloProfile { get; set; }
 }
