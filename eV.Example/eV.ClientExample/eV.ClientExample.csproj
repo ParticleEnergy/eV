@@ -14,7 +14,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\eV.Framework\eV.Server\eV.Server.csproj" />
       <ProjectReference Include="..\..\eV.Framework\eV.Unity\eV.Unity.csproj" />
     </ItemGroup>
 

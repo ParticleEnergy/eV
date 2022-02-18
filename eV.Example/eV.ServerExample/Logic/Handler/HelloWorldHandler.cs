@@ -10,18 +10,18 @@ using eV.ServerExample.Object.Send;
 namespace eV.ServerExample.Logic.Handler;
 
 [ReceiveMessageHandler]
-public class HelloWorldHandler : HandlerBase<HellolWorldReceive>
+public class HelloWorldHandler : HandlerBase<HellolReceive>
 {
     public HelloWorldHandler()
     {
         Skip = true;
     }
 
-    protected override void Handle(ISession session, HellolWorldReceive content)
+    protected override void Handle(ISession session, HellolReceive content)
     {
         if (content.Text == null)
             return;
-        HelloWorldSend helloWorldClient = new()
+        HelloSend helloWorldClient = new()
         {
             Text = content.Text
         };

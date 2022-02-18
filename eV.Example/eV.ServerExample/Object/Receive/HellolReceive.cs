@@ -3,7 +3,7 @@
 
 namespace eV.ServerExample.Object.Receive;
 
-public class HellolWorldReceive
+public class HellolReceive
 {
     public string? Text { get; set; }
 }

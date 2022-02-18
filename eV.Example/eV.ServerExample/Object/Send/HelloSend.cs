@@ -2,10 +2,10 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using eV.Routing.Attributes;
-namespace eV.ClientExample.Object.Send;
+namespace eV.ServerExample.Object.Send;
 
 [SendMessage]
-public class HelloWorldSend
+public class HelloSend
 {
     public string? Text { get; set; }
 }

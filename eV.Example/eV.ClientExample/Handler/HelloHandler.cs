@@ -6,22 +6,17 @@ using eV.ClientExample.Object.Send;
 using eV.EasyLog;
 using eV.Routing.Attributes;
 using eV.Routing.Interface;
-using eV.Server.Base;
+using eV.Unity;
 namespace eV.ClientExample.Handler;
 
 [ReceiveMessageHandler]
-public class HelloWorldHandler : HandlerBase<HellolWorldReceive>
+public class HelloHandler : HandlerBase<HelloSend>
 {
-    public HelloWorldHandler()
-    {
-        Skip = true;
-    }
-
-    protected override void Handle(ISession session, HellolWorldReceive content)
+    protected override void Handle(ISession session, HelloSend content)
     {
         if (content.Text == null)
             return;
-        HelloWorldSend helloWorldClient = new()
+        HellolReceive helloWorldClient = new()
         {
             Text = content.Text
         };
