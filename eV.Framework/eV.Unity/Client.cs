@@ -57,9 +57,6 @@ public class Client
         //     new GameProfileParser()
         // );
         Dispatch.Register(setting.ProjectNamespace);
-
-        _client.Connect();
-
         _keepalive = new Keepalive(setting.TcpKeepAliveInterval);
     }
     public void Start()
