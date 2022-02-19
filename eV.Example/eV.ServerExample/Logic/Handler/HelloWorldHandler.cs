@@ -26,6 +26,6 @@ public class HelloWorldHandler : HandlerBase<HellolReceive>
             Text = content.Text
         };
         session.Send(helloWorldClient);
-        Logger.Info(helloWorldClient.Text);
+        Logger.Info(helloWorldClient.Text + DateTime.Now);
     }
 }
