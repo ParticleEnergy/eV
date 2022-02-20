@@ -13,7 +13,6 @@ using eV.Unity;
 UnitySetting setting = new()
 {
     ProjectNamespace = "eV.ClientExample", GameProfilePath = "/Users/three.zhang/Projects/CSharp/eV/eV.Example/eV.ClientExample/ProfileJson"
-
 };
 Client client = new(setting);
 client.OnConnect += delegate(ISession session)
@@ -24,5 +23,5 @@ client.OnConnect += delegate(ISession session)
     };
     session.Send(helloWorldClient);
 };
-
+client.Start();
 Console.ReadLine();
