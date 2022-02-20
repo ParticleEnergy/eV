@@ -4,7 +4,7 @@
 using System.Security.Authentication;
 namespace eV.Unity;
 
-internal class DefaultSetting
+internal static class DefaultSetting
 {
     public const string Logo = @"
       _    __   __  __      _ __
