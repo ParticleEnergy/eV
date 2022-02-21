@@ -20,9 +20,8 @@ public class Client
     private readonly Keepalive _keepalive;
     public Client(UnitySetting setting)
     {
-        // Logger.SetLogger(new Log());
+        Logger.SetLogger(new Log());
         Logger.Info(DefaultSetting.Logo);
-
 
         if (setting.CertFile.Equals(""))
         {
@@ -51,11 +50,12 @@ public class Client
         _client.ConnectCompleted += ClientOnConnectCompleted;
         _client.DisconnectCompleted += ClientOnDisconnectCompleted;
 
-        // Profile.Init(
-        //     setting.ProjectNamespace,
-        //     setting.GameProfilePath,
-        //     new GameProfileParser()
-        // );
+        Profile.Init(
+            setting.ProjectNamespace,
+            setting.GameProfilePath,
+            new GameProfileParser()
+        );
+
         Dispatch.Register(setting.ProjectNamespace);
         _keepalive = new Keepalive(setting.TcpKeepAliveInterval);
     }
