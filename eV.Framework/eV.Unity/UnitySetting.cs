@@ -9,7 +9,8 @@ public class UnitySetting
     public string Host { get; set; } = DefaultSetting.Host;
     public int Port { get; set; } = DefaultSetting.Port;
     public int ReceiveBufferSize { get; set; } = DefaultSetting.ReceiveBufferSize;
-    public string ProjectNamespace { get; set; } = string.Empty;
+    public string HandlerNamespace { get; set; } = string.Empty;
+    public string DataStructNamespace { get; set; } = string.Empty;
     public string GameProfilePath { get; set; } = string.Empty;
 
     public SslProtocols SslProtocols { get; set; } = DefaultSetting.SslProtocols;

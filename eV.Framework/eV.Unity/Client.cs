@@ -51,12 +51,12 @@ public class Client
         _client.DisconnectCompleted += ClientOnDisconnectCompleted;
 
         Profile.Init(
-            setting.ProjectNamespace,
+            setting.DataStructNamespace,
             setting.GameProfilePath,
             new GameProfileParser()
         );
 
-        Dispatch.Register(setting.ProjectNamespace);
+        Dispatch.RegisterClient(setting.HandlerNamespace, setting.DataStructNamespace);
         _keepalive = new Keepalive(setting.TcpKeepAliveInterval);
     }
     public void Start()

@@ -4,6 +4,6 @@
 namespace eV.Routing.Attributes;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public class SendMessageAttribute : Attribute
+public class ClientMessageAttribute : Attribute
 {
 }

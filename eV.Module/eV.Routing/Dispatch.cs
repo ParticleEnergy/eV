@@ -13,38 +13,60 @@ public static class Dispatch
     private static readonly Dictionary<Type, string> s_sendMessages = new();
     private static bool s_registered;
 
-    public static void Register(string nsName)
+    private static void RegisterHandler(string nsName)
     {
-        if (s_registered)
-            return;
-        s_registered = true;
+        Type[] allTypes = Assembly.Load(nsName).GetExportedTypes();
+        foreach (Type type in allTypes)
+        {
+            object[] receiveMessageHandlerAttributes = type.GetCustomAttributes(typeof(ReceiveMessageHandlerAttribute), true);
 
+            if (receiveMessageHandlerAttributes.Length <= 0)
+                continue;
+            if (Activator.CreateInstance(type) is not IHandler handler)
+                continue;
+
+            Type[]? contentTypes = type.BaseType?.GenericTypeArguments;
+            if (contentTypes is not { Length: > 0 })
+                continue;
+
+            s_receiveHandlers[contentTypes[0].Name] = new Route(handler, contentTypes[0]);
+            Logger.Info($"ReceiveMessageHandler [{type.FullName}] registration succeeded");
+        }
+    }
+
+    private static void RegisterSendMessage(string nsName, Type sendMessageType)
+    {
         Type[] allTypes = Assembly.Load(nsName).GetExportedTypes();
 
         foreach (Type type in allTypes)
         {
-            object[] receiveMessageHandlerAttributes = type.GetCustomAttributes(typeof(ReceiveMessageHandlerAttribute), true);
-            object[] sendMessageAttributes = type.GetCustomAttributes(typeof(SendMessageAttribute), true);
+            object[] sendMessageAttributes = type.GetCustomAttributes(sendMessageType, true);
 
-            if (receiveMessageHandlerAttributes.Length > 0)
-            {
-                if (Activator.CreateInstance(type) is not IHandler handler)
-                    continue;
-
-                Type[]? contentTypes = type.BaseType?.GenericTypeArguments;
-                if (contentTypes is not { Length: > 0 })
-                    continue;
-
-                s_receiveHandlers[contentTypes[0].Name] = new Route(handler, contentTypes[0]);
-                Logger.Info($"ReceiveMessageHandler [{type.FullName}] registration succeeded");
-            }
-            else if (sendMessageAttributes.Length > 0)
-            {
-                s_sendMessages[type] = type.Name;
-                Logger.Info($"SendMessage [{type.FullName}] registration succeeded");
-            }
+            if (sendMessageAttributes.Length <= 0)
+                continue;
+            s_sendMessages[type] = type.Name;
+            Logger.Info($"SendMessage [{type.FullName}] registration succeeded");
         }
     }
+
+    public static void RegisterServer(string handlerNamespace, string messageNamespace)
+    {
+        if (s_registered)
+            return;
+        s_registered = true;
+        RegisterSendMessage(messageNamespace, typeof(ServerMessageAttribute));
+        RegisterHandler(handlerNamespace);
+    }
+
+    public static void RegisterClient(string handlerNamespace, string messageNamespace)
+    {
+        if (s_registered)
+            return;
+        s_registered = true;
+        RegisterSendMessage(messageNamespace, typeof(ClientMessageAttribute));
+        RegisterHandler(handlerNamespace);
+    }
+
     public static void Dispense(ISession session, IPacket packet)
     {
         if (packet.GetName().Equals("") || packet.GetContent().Length == 0)

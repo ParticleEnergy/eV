@@ -39,8 +39,8 @@ public static class Profile
             return;
         }
 
-        Dictionary<string, Type>? configType = RegisterConfig();
-        Dictionary<string, string>? configJsonString = LoadConfig();
+        Dictionary<string, Type> configType = RegisterConfig();
+        Dictionary<string, string> configJsonString = LoadConfig();
 
         Config = s_configParser.Parser(configType, configJsonString);
         OnLoad?.Invoke();

@@ -52,7 +52,7 @@ public class MongodbManager
     }
     public IMongoDatabase? GetDatabase(string database)
     {
-        return _clients.TryGetValue(database, out MongoClient? client) ? client.GetDatabase(database) : null;
+       return _clients.TryGetValue(database, out MongoClient? client) ? client.GetDatabase(database) : null;
     }
     public IMongoCollection<T>? GetCollection<T>(string database, string collection)
     {

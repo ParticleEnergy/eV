@@ -35,7 +35,7 @@ public class Server
     {
         Logger.Info(DefaultSetting.Logo);
         Profile.Init(
-            Configure.Instance.BaseOptions.ProjectNamespace,
+            Configure.Instance.BaseOptions.DataStructNamespace,
             Configure.Instance.BaseOptions.GameProfilePath,
             new GameProfileParser(),
             Configure.Instance.BaseOptions.GameProfileMonitoringChange
@@ -98,7 +98,7 @@ public class Server
 
     private static void RegisterHandler()
     {
-        Dispatch.Register(Configure.Instance.BaseOptions.ProjectNamespace);
+        Dispatch.RegisterServer(Configure.Instance.BaseOptions.HandlerNamespace, Configure.Instance.BaseOptions.DataStructNamespace);
 
         Dispatch.AddCustomHandler(typeof(ClientKeepaliveHandler), typeof(ClientKeepalive));
         Dispatch.AddCustomHandler(typeof(ClientJoinGroupHandler), typeof(ClientJoinGroup));
