@@ -11,9 +11,13 @@
       <None Update="ProfileJson\HelloProfile.json">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="log4net.config">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\eV.Framework\eV.Client\eV.Client.csproj" />
       <ProjectReference Include="..\..\eV.Framework\eV.Unity\eV.Unity.csproj" />
       <ProjectReference Include="..\eV.DataStruct\eV.DataStruct.csproj" />
     </ItemGroup>
