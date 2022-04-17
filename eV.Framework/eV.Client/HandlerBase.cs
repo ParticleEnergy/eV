@@ -3,7 +3,7 @@
 
 
 using eV.Routing.Interface;
-namespace eV.Clinet;
+namespace eV.Client;
 
 public abstract class HandlerBase<TContent> : IHandler
 {
