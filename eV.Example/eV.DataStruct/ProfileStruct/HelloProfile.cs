@@ -4,7 +4,7 @@
 using eV.GameProfile.Attributes;
 namespace eV.DataStruct.ProfileStruct;
 
-[ProfileStructure]
+[GameProfile]
 public class HelloProfile
 {
     public string? Text { get; set; }

@@ -90,7 +90,7 @@ public static class Profile
 
             foreach (Type type in allTypes)
             {
-                object[] profileAttributes = type.GetCustomAttributes(typeof(ProfileStructureAttribute), true);
+                object[] profileAttributes = type.GetCustomAttributes(typeof(GameProfileAttribute), true);
 
                 if (profileAttributes.Length <= 0)
                     continue;

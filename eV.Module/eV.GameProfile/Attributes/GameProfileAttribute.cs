@@ -4,6 +4,6 @@
 namespace eV.GameProfile.Attributes;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public class ProfileStructureAttribute : Attribute
+public class GameProfileAttribute : Attribute
 {
 }
