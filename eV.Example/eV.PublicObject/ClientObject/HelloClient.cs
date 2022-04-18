@@ -1,8 +1,8 @@
 using eV.Routing.Attributes;
-namespace eV.DataStruct.ClientStruct;
+namespace eV.PublicObject.ClientObject;
 
 [ClientMessage]
-public class HelloClient
+public class HelloClientMessage
 {
     public string? Text { get; set; }
 }

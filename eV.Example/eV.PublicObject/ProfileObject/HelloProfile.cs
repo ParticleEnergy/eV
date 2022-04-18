@@ -2,7 +2,7 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using eV.GameProfile.Attributes;
-namespace eV.DataStruct.ProfileStruct;
+namespace eV.PublicObject.ProfileObject;
 
 [GameProfile]
 public class HelloProfile

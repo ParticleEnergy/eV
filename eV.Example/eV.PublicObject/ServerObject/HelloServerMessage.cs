@@ -1,8 +1,8 @@
 using eV.Routing.Attributes;
-namespace eV.DataStruct.ServerStruct;
+namespace eV.PublicObject.ServerObject;
 
 [ServerMessage]
-public class HelloServer
+public class HelloServerMessage
 {
     public string? Text { get; set; }
 }

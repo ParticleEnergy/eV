@@ -2,7 +2,7 @@
 
 
 using eV.Client;
-using eV.DataStruct.ClientStruct;
+using eV.PublicObject.ClientObject;
 using eV.Routing.Interface;
 
 
@@ -13,13 +13,13 @@ using eV.Routing.Interface;
 ClientSetting setting = new()
 {
     HandlerNamespace = "eV.ClientExample",
-    DataStructNamespace = "eV.DataStruct",
+    DataStructNamespace = "eV.PublicObject",
     GameProfilePath = "/Users/three.zhang/Projects/CSharp/eV/eV.Example/eV.ClientExample/ProfileJson"
 };
 Client client = new(setting);
 client.OnConnect += delegate(ISession session)
 {
-    HelloClient helloWorldClient = new()
+    HelloClientMessage helloWorldClient = new()
     {
         Text = "测试测试"
     };
