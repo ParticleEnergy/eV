@@ -27,6 +27,7 @@
     <ItemGroup>
       <Folder Include="Logic\Dal" />
       <Folder Include="Logic\Service" />
+      <Folder Include="Object\ValueObject" />
     </ItemGroup>
 
 </Project>
