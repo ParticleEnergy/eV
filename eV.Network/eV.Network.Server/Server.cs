@@ -151,7 +151,7 @@ public class Server
 
             if (_ipEndPoint.AddressFamily == AddressFamily.InterNetworkV6)
             {
-                _socket.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, false);
+                _socket.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
                 _socket.Bind(_ipEndPoint);
             }
             else
