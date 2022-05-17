@@ -5,11 +5,11 @@ using System.Net;
 using System.Net.Sockets;
 using eV.EasyLog;
 using eV.Network.Core.Interface;
-namespace eV.Network.Core;
+namespace eV.Network.Core.Channel;
 
-public class Channel : IChannel
+public class TcpChannel : ITcpChannel
 {
-    public Channel(int receiveBufferSize)
+    public TcpChannel(int receiveBufferSize)
     {
         ChannelId = Guid.NewGuid().ToString();
         ChannelState = RunState.Off;
@@ -50,6 +50,10 @@ public class Channel : IChannel
             case ChannelError.SocketBytesTransferredIsZero:
                 Close();
                 break;
+            case ChannelError.TcpClientIsNull:
+            case ChannelError.TcpClientNotConnect:
+            case ChannelError.SslStreamIsNull:
+            case ChannelError.SslStreamIoError:
             default:
                 Logger.Error("ChannelError not found");
                 break;
@@ -58,8 +62,8 @@ public class Channel : IChannel
     #endregion
 
     #region Event
-    public event ChannelEvent? OpenCompleted;
-    public event ChannelEvent? CloseCompleted;
+    public event TcpChannelEvent? OpenCompleted;
+    public event TcpChannelEvent? CloseCompleted;
     #endregion
 
     #region Public

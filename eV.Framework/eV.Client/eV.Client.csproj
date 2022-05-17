@@ -13,7 +13,7 @@
     <LangVersion>10</LangVersion>
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.0.3</PackageVersion>
+    <PackageVersion>2.0.0</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,8 +21,8 @@
     <ProjectReference Include="..\..\eV.Module\eV.GameProfile\eV.GameProfile.csproj" />
     <ProjectReference Include="..\..\eV.Module\eV.Routing\eV.Routing.csproj" />
     <ProjectReference Include="..\..\eV.Module\eV.Session\eV.Session.csproj" />
-    <ProjectReference Include="..\..\eV.Network\eV.Network.Client\eV.Network.Client.csproj" />
-    <ProjectReference Include="..\..\eV.Network\eV.Network.Security.Client\eV.Network.Security.Client.csproj" />
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Tcp.Client\eV.Network.Tcp.Client.csproj" />
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Tcp.Security.Client\eV.Network.Tcp.Security.Client.csproj" />
   </ItemGroup>
 
   <ItemGroup>

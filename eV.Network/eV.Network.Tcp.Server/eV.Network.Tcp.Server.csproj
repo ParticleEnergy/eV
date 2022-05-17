@@ -5,19 +5,19 @@
         <Nullable>enable</Nullable>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Title>eV.Network.Core</Title>
-        <Description>eV.Network.Core</Description>
+        <Title>eV.Network.Server</Title>
+        <Description>eV.Network.Server</Description>
         <Copyright>Copyright (c) ParticleEnergy</Copyright>
         <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-        <TargetFrameworks>net5.0;net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+        <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
         <LangVersion>10</LangVersion>
         <Authors>绵羊</Authors>
         <PackageVersion>2.0.0</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\eV.Module\eV.EasyLog\eV.EasyLog.csproj" />
+        <ProjectReference Include="..\eV.Network.Core\eV.Network.Core.csproj" />
     </ItemGroup>
 
 </Project>

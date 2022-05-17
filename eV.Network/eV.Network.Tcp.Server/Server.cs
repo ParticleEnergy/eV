@@ -5,34 +5,12 @@ using System.Net;
 using System.Net.Sockets;
 using eV.EasyLog;
 using eV.Network.Core;
+using eV.Network.Core.Channel;
 using eV.Network.Core.Interface;
-namespace eV.Network.Server;
+namespace eV.Network.Tcp.Server;
 
-public class Server
+public class Server : IServer
 {
-
-    public Server(ServerSetting setting)
-    {
-        SetSetting(setting);
-        ServerState = RunState.Off;
-
-        _connectedCount = 0;
-
-        _socket = new Socket(_ipEndPoint!.AddressFamily, _socketType, _protocolType);
-        _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-        if (_protocolType == ProtocolType.Tcp)
-        {
-            _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, _tcpKeepAliveInterval);
-            _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, _tcpKeepAliveRetryCount);
-        }
-        _socketAsyncEventArgsCompleted = new SocketAsyncEventArgsCompleted();
-        _socketAsyncEventArgsCompleted.ProcessAccept += ProcessAccept;
-
-        _acceptSocketAsyncEventArgsPool = new ObjectPool<SocketAsyncEventArgs>();
-        _channelPool = new ObjectPool<Channel>();
-        _maxAcceptedConnected = new Semaphore(_maxConnectionCount, _maxConnectionCount);
-        _connectedChannels = new ChannelManager();
-    }
     #region Public
     public RunState ServerState
     {
@@ -41,17 +19,57 @@ public class Server
     }
     #endregion
     #region Event
-    public event ChannelEvent? AcceptConnect;
+    public event TcpChannelEvent? AcceptConnect;
     #endregion
+
+    #region Setting
+    private IPEndPoint _ipEndPoint;
+    private int _backlog;
+    private int _maxConnectionCount;
+    private int _receiveBufferSize;
+    private int _tcpKeepAliveTime;
+    private int _tcpKeepAliveInterval;
+    private int _tcpKeepAliveRetryCount;
+    #endregion
+
+    #region Resource
+    private int _connectedCount;
+    private readonly Socket _socket;
+    private readonly SocketAsyncEventArgsCompleted _socketAsyncEventArgsCompleted;
+    private readonly ObjectPool<SocketAsyncEventArgs> _acceptSocketAsyncEventArgsPool;
+    private readonly ObjectPool<TcpChannel> _channelPool;
+    private readonly ChannelManager _connectedChannels;
+    private readonly Semaphore _maxAcceptedConnected;
+    #endregion
+
+    #region Construct
+    public Server(ServerSetting setting)
+    {
+        SetSetting(setting);
+        ServerState = RunState.Off;
+
+        _connectedCount = 0;
+
+        _socket = new Socket(_ipEndPoint!.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+        _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+        _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, _tcpKeepAliveInterval);
+        _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, _tcpKeepAliveRetryCount);
+
+        _socketAsyncEventArgsCompleted = new SocketAsyncEventArgsCompleted();
+        _socketAsyncEventArgsCompleted.ProcessAccept += ProcessAccept;
+
+        _acceptSocketAsyncEventArgsPool = new ObjectPool<SocketAsyncEventArgs>();
+        _channelPool = new ObjectPool<TcpChannel>();
+        _maxAcceptedConnected = new Semaphore(_maxConnectionCount, _maxConnectionCount);
+        _connectedChannels = new ChannelManager();
+    }
 
     private void SetSetting(ServerSetting setting)
     {
         _ipEndPoint = new IPEndPoint(
-            IPAddress.Parse(setting.Address),
+            IPAddress.Parse(setting.Host),
             setting.Port
         );
-        _socketType = setting.SocketType;
-        _protocolType = setting.ProtocolType;
         _backlog = setting.Backlog;
 
         _maxConnectionCount = setting.MaxConnectionCount;
@@ -61,6 +79,7 @@ public class Server
         _tcpKeepAliveInterval = setting.TcpKeepAliveInterval;
         _tcpKeepAliveRetryCount = setting.TcpKeepAliveRetryCount;
     }
+    #endregion
 
     #region Process
     private void ProcessAccept(SocketAsyncEventArgs socketAsyncEventArgs)
@@ -91,7 +110,7 @@ public class Server
         }
         try
         {
-            Channel? channel = _channelPool.Pop();
+            var channel = _channelPool.Pop();
             if (channel != null)
             {
                 if (socketAsyncEventArgs.AcceptSocket.ProtocolType == ProtocolType.Tcp)
@@ -112,28 +131,6 @@ public class Server
             ResetAcceptSocketAsyncEventArgs(socketAsyncEventArgs);
         }
     }
-    #endregion
-
-    #region Setting
-    private IPEndPoint _ipEndPoint;
-    private SocketType _socketType;
-    private ProtocolType _protocolType;
-    private int _backlog;
-    private int _maxConnectionCount;
-    private int _receiveBufferSize;
-    private int _tcpKeepAliveTime;
-    private int _tcpKeepAliveInterval;
-    private int _tcpKeepAliveRetryCount;
-    #endregion
-
-    #region Resource
-    private int _connectedCount;
-    private readonly Socket _socket;
-    private readonly SocketAsyncEventArgsCompleted _socketAsyncEventArgsCompleted;
-    private readonly ObjectPool<SocketAsyncEventArgs> _acceptSocketAsyncEventArgsPool;
-    private readonly ObjectPool<Channel> _channelPool;
-    private readonly ChannelManager _connectedChannels;
-    private readonly Semaphore _maxAcceptedConnected;
     #endregion
 
     #region Operate
@@ -204,7 +201,7 @@ public class Server
 
         for (int i = 0; i < _maxConnectionCount; ++i)
         {
-            Channel channel = new(_receiveBufferSize);
+            TcpChannel channel = new(_receiveBufferSize);
             channel.OpenCompleted += OpenCompleted;
             channel.CloseCompleted += CloseCompleted;
             _channelPool.Push(channel);
@@ -256,7 +253,7 @@ public class Server
     #endregion
 
     #region Channel
-    private void OpenCompleted(IChannel channel)
+    private void OpenCompleted(ITcpChannel channel)
     {
         if (channel.ChannelId.Equals(""))
         {
@@ -274,7 +271,7 @@ public class Server
             Logger.Error($"Channel {channel.RemoteEndPoint} {channel.ChannelId} add on failed");
         }
     }
-    private void CloseCompleted(IChannel channel)
+    private void CloseCompleted(ITcpChannel channel)
     {
         if (channel.ChannelId.Equals(""))
         {
@@ -283,7 +280,7 @@ public class Server
         }
         if (!_connectedChannels.Remove(channel))
             Logger.Error($"Channel {channel.RemoteEndPoint} {channel.ChannelId} remove on failed");
-        _channelPool.Push((Channel)channel);
+        _channelPool.Push((TcpChannel)channel);
         Interlocked.Decrement(ref _connectedCount);
         _maxAcceptedConnected.Release();
     }

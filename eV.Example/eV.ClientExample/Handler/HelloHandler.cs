@@ -2,12 +2,12 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 
+using eV.Client;
 using eV.PublicObject.ClientObject;
 using eV.PublicObject.ServerObject;
 using eV.EasyLog;
 using eV.Routing.Attributes;
 using eV.Routing.Interface;
-using eV.Unity;
 namespace eV.ClientExample.Handler;
 
 [ReceiveMessageHandler]
@@ -21,7 +21,7 @@ public class HelloHandler : HandlerBase<HelloServerMessage>
         {
             Text = content.Text
         };
-        session.Send(helloWorldClient);
+        // session.Send(helloWorldClient);
         Logger.Info(helloWorldClient.Text);
     }
 }

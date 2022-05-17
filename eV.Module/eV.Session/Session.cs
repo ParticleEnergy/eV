@@ -11,10 +11,10 @@ namespace eV.Session;
 
 public sealed class Session : ISession
 {
-    private readonly IChannel _channel;
+    private readonly ITcpChannel _channel;
     private readonly DataParser _dataParser = new();
 
-    public Session(IChannel channel)
+    public Session(ITcpChannel channel)
     {
         SessionState = SessionState.Free;
         SessionData = new Hashtable();
@@ -25,7 +25,7 @@ public sealed class Session : ISession
     }
 
     #region Channel
-    private void ChannelClose(IChannel channel)
+    private void ChannelClose(ITcpChannel channel)
     {
         Release();
     }

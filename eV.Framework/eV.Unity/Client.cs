@@ -4,18 +4,18 @@
 
 using eV.EasyLog;
 using eV.GameProfile;
-using eV.Network.Client;
+using eV.Network.Tcp.Client;
 using eV.Network.Core.Interface;
 using eV.Routing;
 using eV.Routing.Interface;
-using eVNetworkClient = eV.Network.Client.Client;
-using eVNetworkSecurityClient = eV.Network.Security.Client.Client;
+using eVNetworkClient = eV.Network.Tcp.Client.Client;
+using eVNetworkSecurityClient = eV.Network.Tcp.Security.Client.Client;
 
 namespace eV.Unity;
 
 public class Client
 {
-    private readonly IClient _client;
+    private readonly ITcpClient _client;
 
     private readonly Keepalive _keepalive;
     public Client(UnitySetting setting)
@@ -27,7 +27,7 @@ public class Client
         {
             ClientSetting clientSetting = new()
             {
-                Address = setting.Host,
+                Host = setting.Host,
                 Port = setting.Port,
                 ReceiveBufferSize = setting.ReceiveBufferSize
             };
@@ -35,9 +35,9 @@ public class Client
         }
         else
         {
-            Network.Security.Client.ClientSetting clientSetting = new()
+            Network.Tcp.Security.Client.ClientSetting clientSetting = new()
             {
-                Address = setting.Host,
+                Host = setting.Host,
                 Port = setting.Port,
                 ReceiveBufferSize = setting.ReceiveBufferSize,
                 TargetHost = setting.TargetHost,
@@ -64,14 +64,14 @@ public class Client
         _client.Connect();
     }
 
-    private void ClientOnConnectCompleted(IChannel channel)
+    private void ClientOnConnectCompleted(ITcpChannel channel)
     {
         Session.Session session = new(channel);
         SessionDispatch.Instance.SetClientSession(session);
         OnConnect?.Invoke(session);
         _keepalive.Start();
     }
-    private void ClientOnDisconnectCompleted(IChannel _)
+    private void ClientOnDisconnectCompleted(ITcpChannel _)
     {
         _keepalive.Stop();
         OnDisconnect?.Invoke();

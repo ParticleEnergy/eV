@@ -7,15 +7,14 @@ using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using eV.EasyLog;
-using eV.Network.Core;
 using eV.Network.Core.Interface;
-namespace eV.Network.Security.Client;
+namespace eV.Network.Core.Channel;
 
-public class SecurityChannel : IChannel
+public class TcpSecurityChannel : ITcpChannel
 {
     #region Event
-    public event ChannelEvent? OpenCompleted;
-    public event ChannelEvent? CloseCompleted;
+    public event TcpChannelEvent? OpenCompleted;
+    public event TcpChannelEvent? CloseCompleted;
     #endregion
     #region Time
     public DateTime? ConnectedDateTime
@@ -60,7 +59,7 @@ public class SecurityChannel : IChannel
     private readonly string _targetHost;
     private readonly string _certFile;
     #endregion
-    public SecurityChannel(string targetHost, string certFile, SslProtocols sslProtocols, int receiveBufferSize)
+    public TcpSecurityChannel(string targetHost, string certFile, SslProtocols sslProtocols, int receiveBufferSize)
     {
         ChannelId = Guid.NewGuid().ToString();
         ChannelState = RunState.Off;
@@ -120,21 +119,10 @@ public class SecurityChannel : IChannel
     {
         if (_sslStream != null)
             await _sslStream.ShutdownAsync();
-
-        _tcpClient?.Close();
-        _sslStream?.Close();
-        _cancellationTokenSource?.Cancel();
-        _sslStream = null;
-        _tcpClient = null;
-
-        Array.Clear(_receiveBuffer, 0, _receiveBuffer.Length);
-
-        Logger.Info($"Channel {ChannelId} {RemoteEndPoint} close");
-        CloseCompleted?.Invoke(this);
-    }
 #else
     private void Release()
     {
+#endif
         _tcpClient?.Close();
         _sslStream?.Close();
         _cancellationTokenSource?.Cancel();
@@ -146,7 +134,7 @@ public class SecurityChannel : IChannel
         Logger.Info($"Channel {ChannelId} {RemoteEndPoint} close");
         CloseCompleted?.Invoke(this);
     }
-#endif
+
     private void Init(TcpClient tcpClient)
     {
         _tcpClient = tcpClient;
@@ -174,22 +162,22 @@ public class SecurityChannel : IChannel
                 return false;
             if (_tcpClient == null)
             {
-                Error(SecurityChannelError.TcpClientIsNull);
+                Error(ChannelError.TcpClientIsNull);
                 return false;
             }
             if (!_tcpClient.Connected)
             {
-                Error(SecurityChannelError.TcpClientNotConnect);
+                Error(ChannelError.TcpClientNotConnect);
                 return false;
             }
             if (_sslStream == null)
             {
-                Error(SecurityChannelError.SslStreamIsNull);
+                Error(ChannelError.SslStreamIsNull);
                 return false;
             }
             if (!_sslStream.CanRead)
             {
-                Error(SecurityChannelError.SslStreamIoError);
+                Error(ChannelError.SslStreamIoError);
                 return false;
             }
             while (true)
@@ -211,22 +199,22 @@ public class SecurityChannel : IChannel
             return false;
         if (_tcpClient == null)
         {
-            Error(SecurityChannelError.TcpClientIsNull);
+            Error(ChannelError.TcpClientIsNull);
             return false;
         }
         if (!_tcpClient.Connected)
         {
-            Error(SecurityChannelError.TcpClientNotConnect);
+            Error(ChannelError.TcpClientNotConnect);
             return false;
         }
         if (_sslStream == null)
         {
-            Error(SecurityChannelError.SslStreamIsNull);
+            Error(ChannelError.SslStreamIsNull);
             return false;
         }
         if (!_sslStream.CanWrite)
         {
-            Error(SecurityChannelError.SslStreamIoError);
+            Error(ChannelError.SslStreamIoError);
             return false;
         }
         _sslStream.WriteAsync(data, 0, data.Length);
@@ -237,24 +225,28 @@ public class SecurityChannel : IChannel
     #endregion
 
     #region Error
-    private void Error(SecurityChannelError securityChannelError)
+    private void Error(ChannelError channelError)
     {
-        switch (securityChannelError)
+        switch (channelError)
         {
-            case SecurityChannelError.TcpClientIsNull:
+            case ChannelError.TcpClientIsNull:
                 Close();
                 break;
-            case SecurityChannelError.TcpClientNotConnect:
+            case ChannelError.TcpClientNotConnect:
                 Close();
                 break;
-            case SecurityChannelError.SslStreamIsNull:
+            case ChannelError.SslStreamIsNull:
                 Close();
                 break;
-            case SecurityChannelError.SslStreamIoError:
+            case ChannelError.SslStreamIoError:
                 Close();
                 break;
+            case ChannelError.SocketIsNull:
+            case ChannelError.SocketNotConnect:
+            case ChannelError.SocketError:
+            case ChannelError.SocketBytesTransferredIsZero:
             default:
-                Logger.Error("SecurityChannelError not found");
+                Logger.Error("ChannelError not found");
                 break;
         }
     }

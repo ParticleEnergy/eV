@@ -43,8 +43,16 @@ public class SessionExtension : ISessionExtend
     }
     public void OnRelease(ISession session)
     {
-        if (!ServerSession.Release(session) && session.SessionId is null or "")
-            Logger.Error($"Session {session.SessionId} Session remove active group error");
+        if (session.SessionId is not (null or ""))
+        {
+            if (!ServerSession.Release(session))
+                Logger.Warn($"Session {session.SessionId} Session remove active group error");
+        }
+        else
+        {
+            Logger.Warn("Session not active");
+        }
+
         OnReleaseEvent?.Invoke(session);
     }
     public event SessionEvent? OnActivateEvent;

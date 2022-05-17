@@ -3,8 +3,8 @@
 
 namespace eV.Network.Core.Interface;
 
-public interface IClient
+public interface IServer
 {
-    public void Connect();
-    public void Disconnect();
+    public void Start();
+    public void Stop();
 }

@@ -3,8 +3,8 @@
 
 namespace eV.Network.Core.Interface;
 
-public interface IClient
+public interface ITcpClient : IClient
 {
-    public void Connect();
-    public void Disconnect();
+    public event TcpChannelEvent? ConnectCompleted;
+    public event TcpChannelEvent? DisconnectCompleted;
 }

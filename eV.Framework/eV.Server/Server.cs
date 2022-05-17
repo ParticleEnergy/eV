@@ -6,12 +6,12 @@ using eV.EasyLog;
 using eV.GameProfile;
 using eV.Network.Core;
 using eV.Network.Core.Interface;
-using eV.Network.Server;
+using eV.Network.Tcp.Server;
 using eV.Routing;
 using eV.Routing.Interface;
 using eV.Server.Storage;
 using eV.Server.SystemHandler;
-using eVNetworkServer = eV.Network.Server.Server;
+using eVNetworkServer = eV.Network.Tcp.Server.Server;
 namespace eV.Server;
 
 public class Server
@@ -35,7 +35,7 @@ public class Server
     {
         Logger.Info(DefaultSetting.Logo);
         Profile.Init(
-            Configure.Instance.BaseOptions.DataStructNamespace,
+            Configure.Instance.BaseOptions.PublicObjectNamespace,
             Configure.Instance.BaseOptions.GameProfilePath,
             new GameProfileParser(),
             Configure.Instance.BaseOptions.GameProfileMonitoringChange
@@ -55,7 +55,7 @@ public class Server
         RedisManager.Instance.Stop();
     }
 
-    private void ServerOnAcceptConnect(IChannel channel)
+    private void ServerOnAcceptConnect(ITcpChannel channel)
     {
         if (_server.ServerState != RunState.On)
             return;
@@ -67,10 +67,7 @@ public class Server
     {
         ServerSetting serverSetting = new();
         if (!Configure.Instance.ServerOptions.Host.Equals(""))
-            serverSetting.Address = Configure.Instance.ServerOptions.Host;
-
-        if (!Configure.Instance.ServerOptions.Host.Equals(""))
-            serverSetting.Address = Configure.Instance.ServerOptions.Host;
+            serverSetting.Host = Configure.Instance.ServerOptions.Host;
 
         if (Configure.Instance.ServerOptions.Port > 0)
             serverSetting.Port = Configure.Instance.ServerOptions.Port;
@@ -98,7 +95,7 @@ public class Server
 
     private static void RegisterHandler()
     {
-        Dispatch.RegisterServer(Configure.Instance.BaseOptions.HandlerNamespace, Configure.Instance.BaseOptions.DataStructNamespace);
+        Dispatch.RegisterServer(Configure.Instance.BaseOptions.HandlerNamespace, Configure.Instance.BaseOptions.PublicObjectNamespace);
 
         Dispatch.AddCustomHandler(typeof(ClientKeepaliveHandler), typeof(ClientKeepalive));
         Dispatch.AddCustomHandler(typeof(ClientJoinGroupHandler), typeof(ClientJoinGroup));

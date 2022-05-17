@@ -5,10 +5,11 @@ using System.Net;
 using System.Net.Sockets;
 using eV.EasyLog;
 using eV.Network.Core;
+using eV.Network.Core.Channel;
 using eV.Network.Core.Interface;
-namespace eV.Network.Client;
+namespace eV.Network.Tcp.Client;
 
-public class Client : IClient
+public class Client : ITcpClient
 {
     public Client(ClientSetting setting)
     {
@@ -19,7 +20,7 @@ public class Client : IClient
         socketAsyncEventArgsCompleted.ProcessConnect += ProcessConnect;
         socketAsyncEventArgsCompleted.ProcessDisconnect += ProcessDisconnect;
 
-        _channel = new Channel(_receiveBufferSize);
+        _channel = new TcpChannel(_receiveBufferSize);
         _channel.OpenCompleted += OpenCompleted;
         _channel.CloseCompleted += CloseCompleted;
 
@@ -39,11 +40,9 @@ public class Client : IClient
     private void SetSetting(ClientSetting setting)
     {
         _ipEndPoint = new IPEndPoint(
-            IPAddress.Parse(setting.Address),
+            IPAddress.Parse(setting.Host),
             setting.Port
         );
-        _socketType = setting.SocketType;
-        _protocolType = setting.ProtocolType;
         _receiveBufferSize = setting.ReceiveBufferSize;
 #if !NETSTANDARD
         _tcpKeepAliveTime = setting.TcpKeepAliveTime;
@@ -52,14 +51,12 @@ public class Client : IClient
 #endif
     }
     #region Event
-    public event ChannelEvent? ConnectCompleted;
-    public event ChannelEvent? DisconnectCompleted;
+    public event TcpChannelEvent? ConnectCompleted;
+    public event TcpChannelEvent? DisconnectCompleted;
     #endregion
 
     #region Setting
     private IPEndPoint? _ipEndPoint;
-    private SocketType _socketType;
-    private ProtocolType _protocolType;
     private int _receiveBufferSize;
 #if !NETSTANDARD
     private int _tcpKeepAliveTime;
@@ -71,7 +68,7 @@ public class Client : IClient
 
     #region Resource
     private Socket? _socket;
-    private readonly Channel _channel;
+    private readonly TcpChannel _channel;
     private readonly SocketAsyncEventArgs _connectSocketAsyncEventArgs;
     #endregion
 
@@ -126,11 +123,9 @@ public class Client : IClient
     }
     private void Init()
     {
-        _socket = new Socket(_ipEndPoint!.AddressFamily, _socketType, _protocolType);
+        _socket = new Socket(_ipEndPoint!.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 #if !NETSTANDARD
         _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-        if (_protocolType != ProtocolType.Tcp)
-            return;
         _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, _tcpKeepAliveInterval);
         _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, _tcpKeepAliveRetryCount);
 #endif
@@ -145,7 +140,7 @@ public class Client : IClient
         {
 #if !NETSTANDARD
             if (socketAsyncEventArgs.ConnectSocket.ProtocolType == ProtocolType.Tcp)
-                socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Tcp,SocketOptionName.TcpKeepAliveTime,_tcpKeepAliveTime);
+                socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, _tcpKeepAliveTime);
 #endif
             _channel.Open(socketAsyncEventArgs.ConnectSocket);
         }
@@ -163,7 +158,7 @@ public class Client : IClient
     #endregion
 
     #region Channel
-    private void OpenCompleted(IChannel channel)
+    private void OpenCompleted(ITcpChannel channel)
     {
         if (channel.ChannelId.Equals(""))
         {
@@ -173,7 +168,7 @@ public class Client : IClient
         ConnectCompleted?.Invoke(channel);
         Logger.Info($"Connect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port} success");
     }
-    private void CloseCompleted(IChannel channel)
+    private void CloseCompleted(ITcpChannel channel)
     {
         if (channel.ChannelId.Equals(""))
         {

@@ -5,14 +5,15 @@ using System.Net.Sockets;
 using eV.EasyLog;
 namespace eV.Network.Core;
 
-public delegate void AsyncCompleted(SocketAsyncEventArgs socketAsyncEventArgs);
 public class SocketAsyncEventArgsCompleted
 {
-    public event AsyncCompleted? ProcessAccept;
-    public event AsyncCompleted? ProcessConnect;
-    public event AsyncCompleted? ProcessDisconnect;
-    public event AsyncCompleted? ProcessReceive;
-    public event AsyncCompleted? ProcessSend;
+    public event AsyncCompletedEvent? ProcessAccept;
+    public event AsyncCompletedEvent? ProcessConnect;
+    public event AsyncCompletedEvent? ProcessDisconnect;
+    public event AsyncCompletedEvent? ProcessReceive;
+    public event AsyncCompletedEvent? ProcessSend;
+    public event AsyncCompletedEvent? ProcessReceiveFrom;
+    public event AsyncCompletedEvent? ProcessSendTo;
 
     public void OnCompleted(object? sender, SocketAsyncEventArgs socketAsyncEventArgs)
     {
@@ -33,6 +34,7 @@ public class SocketAsyncEventArgsCompleted
                 ProcessReceive?.Invoke(socketAsyncEventArgs);
                 break;
             case SocketAsyncOperation.ReceiveFrom:
+                ProcessReceiveFrom?.Invoke(socketAsyncEventArgs);
                 break;
             case SocketAsyncOperation.ReceiveMessageFrom:
                 break;
@@ -42,6 +44,7 @@ public class SocketAsyncEventArgsCompleted
             case SocketAsyncOperation.SendPackets:
                 break;
             case SocketAsyncOperation.SendTo:
+                ProcessSendTo?.Invoke(socketAsyncEventArgs);
                 break;
             default:
                 Logger.Warn(

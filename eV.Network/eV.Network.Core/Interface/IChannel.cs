@@ -31,8 +31,6 @@ public interface IChannel
         get;
     }
     public Action<byte[]?>? Receive { set; }
-    public event ChannelEvent? OpenCompleted;
-    public event ChannelEvent? CloseCompleted;
     public bool Send(byte[] data);
     public void Close();
 }

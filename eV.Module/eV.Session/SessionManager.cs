@@ -14,7 +14,7 @@ public class SessionManager
     private readonly ConcurrentDictionary<string, Session> _sessions = new();
 
     #region Session
-    public Session GetSession(IChannel channel, ISessionExtend? sessionExtend)
+    public Session GetSession(ITcpChannel channel, ISessionExtend? sessionExtend)
     {
         Session session;
         if (_sessions.TryGetValue(channel.ChannelId, out Session? result))

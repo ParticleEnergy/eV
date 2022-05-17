@@ -8,5 +8,9 @@ public enum ChannelError
     SocketIsNull = 0,
     SocketNotConnect = 1,
     SocketError = 2,
-    SocketBytesTransferredIsZero = 3 // 检查远程主机是否关闭了连接。
+    SocketBytesTransferredIsZero = 3, // 检查远程主机是否关闭了连接。
+    TcpClientIsNull = 4,
+    TcpClientNotConnect = 5,
+    SslStreamIsNull = 6,
+    SslStreamIoError = 7
 }

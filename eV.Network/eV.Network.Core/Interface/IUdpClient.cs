@@ -3,8 +3,7 @@
 
 namespace eV.Network.Core.Interface;
 
-public interface IClient
+public interface IUdpClient : IClient
 {
-    public void Connect();
-    public void Disconnect();
+    
 }

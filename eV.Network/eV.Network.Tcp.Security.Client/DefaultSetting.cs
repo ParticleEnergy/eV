@@ -2,11 +2,11 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using System.Security.Authentication;
-namespace eV.Network.Security.Client;
+namespace eV.Network.Tcp.Security.Client;
 
 internal static class DefaultSetting
 {
-    public const string Address = "127.0.0.1";
+    public const string Host = "127.0.0.1";
     public const int Port = 8888;
     public const int ReceiveBufferSize = 2048;
     public const SslProtocols SslProtocols = (SslProtocols)192;

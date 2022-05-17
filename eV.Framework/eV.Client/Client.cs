@@ -7,14 +7,14 @@ using eV.GameProfile;
 using eV.Network.Core.Interface;
 using eV.Routing;
 using eV.Routing.Interface;
-using eVNetworkClient = eV.Network.Client.Client;
-using eVNetworkSecurityClient = eV.Network.Security.Client.Client;
+using eVNetworkClient = eV.Network.Tcp.Client.Client;
+using eVNetworkSecurityClient = eV.Network.Tcp.Security.Client.Client;
 
 namespace eV.Client;
 
 public class Client
 {
-    private readonly IClient _client;
+    private readonly ITcpClient _client;
 
     public Client(ClientSetting setting)
     {
@@ -23,9 +23,9 @@ public class Client
 
         if (setting.CertFile.Equals(""))
         {
-            Network.Client.ClientSetting clientSetting = new()
+            Network.Tcp.Client.ClientSetting clientSetting = new()
             {
-                Address = setting.Host,
+                Host = setting.Host,
                 Port = setting.Port,
                 ReceiveBufferSize = setting.ReceiveBufferSize
             };
@@ -33,9 +33,9 @@ public class Client
         }
         else
         {
-            Network.Security.Client.ClientSetting clientSetting = new()
+            Network.Tcp.Security.Client.ClientSetting clientSetting = new()
             {
-                Address = setting.Host,
+                Host = setting.Host,
                 Port = setting.Port,
                 ReceiveBufferSize = setting.ReceiveBufferSize,
                 TargetHost = setting.TargetHost,
@@ -61,13 +61,13 @@ public class Client
         _client.Connect();
     }
 
-    private void ClientOnConnectCompleted(IChannel channel)
+    private void ClientOnConnectCompleted(ITcpChannel channel)
     {
         Session.Session session = new(channel);
         SessionDispatch.Instance.SetClientSession(session);
         OnConnect?.Invoke(session);
     }
-    private void ClientOnDisconnectCompleted(IChannel _)
+    private void ClientOnDisconnectCompleted(ITcpChannel _)
     {
         OnDisconnect?.Invoke();
     }

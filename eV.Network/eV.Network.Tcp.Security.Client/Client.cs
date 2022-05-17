@@ -5,14 +5,15 @@ using System.Net;
 using System.Net.Sockets;
 using eV.EasyLog;
 using eV.Network.Core;
+using eV.Network.Core.Channel;
 using eV.Network.Core.Interface;
-namespace eV.Network.Security.Client;
+namespace eV.Network.Tcp.Security.Client;
 
-public class Client : IClient
+public class Client : ITcpClient
 {
     #region Event
-    public event ChannelEvent? ConnectCompleted;
-    public event ChannelEvent? DisconnectCompleted;
+    public event TcpChannelEvent? ConnectCompleted;
+    public event TcpChannelEvent? DisconnectCompleted;
     #endregion
 
     #region Public
@@ -34,14 +35,14 @@ public class Client : IClient
 
     #region Resource
     private TcpClient? _tcpClient;
-    private readonly SecurityChannel _channel;
+    private readonly TcpSecurityChannel _channel;
     #endregion
     public Client(ClientSetting setting)
     {
         SetSetting(setting);
         ClientState = RunState.Off;
 
-        _channel = new SecurityChannel(setting.TargetHost, setting.CertFile, setting.SslProtocols, setting.ReceiveBufferSize);
+        _channel = new TcpSecurityChannel(setting.TargetHost, setting.CertFile, setting.SslProtocols, setting.ReceiveBufferSize);
         _channel.OpenCompleted += OpenCompleted;
         _channel.CloseCompleted += CloseCompleted;
     }
@@ -49,7 +50,7 @@ public class Client : IClient
     private void SetSetting(ClientSetting setting)
     {
         _ipEndPoint = new IPEndPoint(
-            IPAddress.Parse(setting.Address),
+            IPAddress.Parse(setting.Host),
             setting.Port
         );
 #if !NETSTANDARD
@@ -120,7 +121,7 @@ public class Client : IClient
     }
 
     #region Channel
-    private void OpenCompleted(IChannel channel)
+    private void OpenCompleted(ITcpChannel channel)
     {
         if (channel.ChannelId.Equals(""))
         {
@@ -130,7 +131,7 @@ public class Client : IClient
         ConnectCompleted?.Invoke(channel);
         Logger.Info($"Connect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port} success");
     }
-    private void CloseCompleted(IChannel channel)
+    private void CloseCompleted(ITcpChannel channel)
     {
         if (channel.ChannelId.Equals(""))
         {

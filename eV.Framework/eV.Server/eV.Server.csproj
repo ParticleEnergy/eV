@@ -20,7 +20,7 @@
     <ProjectReference Include="..\..\eV.Module\eV.GameProfile\eV.GameProfile.csproj" />
     <ProjectReference Include="..\..\eV.Module\eV.Routing\eV.Routing.csproj" />
     <ProjectReference Include="..\..\eV.Module\eV.Session\eV.Session.csproj" />
-    <ProjectReference Include="..\..\eV.Network\eV.Network.Server\eV.Network.Server.csproj" />
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Tcp.Server\eV.Network.Tcp.Server.csproj" />
   </ItemGroup>
 
   <ItemGroup>
