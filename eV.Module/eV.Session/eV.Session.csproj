@@ -14,6 +14,7 @@
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
     <PackageVersion>2.0.0</PackageVersion>
+    <RootNamespace>eV.Session</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
