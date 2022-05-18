@@ -5,8 +5,8 @@
         <Nullable>enable</Nullable>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Title>eV.Network.Server</Title>
-        <Description>eV.Network.Server</Description>
+        <Title>eV.Network.Tcp.Server</Title>
+        <Description>eV.Network.Tcp.Server</Description>
         <Copyright>Copyright (c) ParticleEnergy</Copyright>
         <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
         <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>

@@ -162,22 +162,22 @@ public class TcpSecurityChannel : ITcpChannel
                 return false;
             if (_tcpClient == null)
             {
-                Error(ChannelError.TcpClientIsNull);
+                ChannelError.Error(ChannelError.ErrorCode.TcpClientIsNull, Close);
                 return false;
             }
             if (!_tcpClient.Connected)
             {
-                Error(ChannelError.TcpClientNotConnect);
+                ChannelError.Error(ChannelError.ErrorCode.TcpClientNotConnect, Close);
                 return false;
             }
             if (_sslStream == null)
             {
-                Error(ChannelError.SslStreamIsNull);
+                ChannelError.Error(ChannelError.ErrorCode.SslStreamIsNull, Close);
                 return false;
             }
             if (!_sslStream.CanRead)
             {
-                Error(ChannelError.SslStreamIoError);
+                ChannelError.Error(ChannelError.ErrorCode.SslStreamIoError, Close);
                 return false;
             }
             while (true)
@@ -199,56 +199,28 @@ public class TcpSecurityChannel : ITcpChannel
             return false;
         if (_tcpClient == null)
         {
-            Error(ChannelError.TcpClientIsNull);
+            ChannelError.Error(ChannelError.ErrorCode.TcpClientIsNull, Close);
             return false;
         }
         if (!_tcpClient.Connected)
         {
-            Error(ChannelError.TcpClientNotConnect);
+            ChannelError.Error(ChannelError.ErrorCode.TcpClientNotConnect, Close);
             return false;
         }
         if (_sslStream == null)
         {
-            Error(ChannelError.SslStreamIsNull);
+            ChannelError.Error(ChannelError.ErrorCode.SslStreamIsNull, Close);
             return false;
         }
         if (!_sslStream.CanWrite)
         {
-            Error(ChannelError.SslStreamIoError);
+            ChannelError.Error(ChannelError.ErrorCode.SslStreamIoError, Close);
             return false;
         }
         _sslStream.WriteAsync(data, 0, data.Length);
         _sslStream.Flush();
         LastSendDateTime = DateTime.Now;
         return true;
-    }
-    #endregion
-
-    #region Error
-    private void Error(ChannelError channelError)
-    {
-        switch (channelError)
-        {
-            case ChannelError.TcpClientIsNull:
-                Close();
-                break;
-            case ChannelError.TcpClientNotConnect:
-                Close();
-                break;
-            case ChannelError.SslStreamIsNull:
-                Close();
-                break;
-            case ChannelError.SslStreamIoError:
-                Close();
-                break;
-            case ChannelError.SocketIsNull:
-            case ChannelError.SocketNotConnect:
-            case ChannelError.SocketError:
-            case ChannelError.SocketBytesTransferredIsZero:
-            default:
-                Logger.Error("ChannelError not found");
-                break;
-        }
     }
     #endregion
 

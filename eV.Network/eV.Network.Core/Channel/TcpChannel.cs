@@ -33,34 +33,6 @@ public class TcpChannel : ITcpChannel
         _disconnectSocketAsyncEventArgs.DisconnectReuseSocket = false;
     }
 
-    #region Error
-    private void Error(ChannelError channelError)
-    {
-        switch (channelError)
-        {
-            case ChannelError.SocketIsNull:
-                Close();
-                break;
-            case ChannelError.SocketNotConnect:
-                Close();
-                break;
-            case ChannelError.SocketError:
-                Close();
-                break;
-            case ChannelError.SocketBytesTransferredIsZero:
-                Close();
-                break;
-            case ChannelError.TcpClientIsNull:
-            case ChannelError.TcpClientNotConnect:
-            case ChannelError.SslStreamIsNull:
-            case ChannelError.SslStreamIoError:
-            default:
-                Logger.Error("ChannelError not found");
-                break;
-        }
-    }
-    #endregion
-
     #region Event
     public event TcpChannelEvent? OpenCompleted;
     public event TcpChannelEvent? CloseCompleted;
@@ -158,14 +130,24 @@ public class TcpChannel : ITcpChannel
     /// </summary>
     private void Release()
     {
-        _socket?.Close();
-        _socket = null;
-        _receiveSocketAsyncEventArgs.AcceptSocket = null;
-        _sendSocketAsyncEventArgs.AcceptSocket = null;
-        Array.Clear(_receiveBuffer, 0, _receiveBuffer.Length);
+        try
+        {
+            _socket?.Close();
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e.Message, e);
+        }
+        finally
+        {
+            _socket = null;
+            _receiveSocketAsyncEventArgs.AcceptSocket = null;
+            _sendSocketAsyncEventArgs.AcceptSocket = null;
+            Array.Clear(_receiveBuffer, 0, _receiveBuffer.Length);
 
-        Logger.Info($"Channel {ChannelId} {RemoteEndPoint} close");
-        CloseCompleted?.Invoke(this);
+            Logger.Info($"Channel {ChannelId} {RemoteEndPoint} close");
+            CloseCompleted?.Invoke(this);
+        }
     }
     /// <summary>
     ///     重置Channel
@@ -186,12 +168,12 @@ public class TcpChannel : ITcpChannel
             return false;
         if (_socket == null)
         {
-            Error(ChannelError.SocketIsNull);
+            ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
             return false;
         }
         if (!_socket.Connected)
         {
-            Error(ChannelError.SocketNotConnect);
+            ChannelError.Error(ChannelError.ErrorCode.SocketNotConnect, Close);
             return false;
         }
         if (!_socket.ReceiveAsync(_receiveSocketAsyncEventArgs))
@@ -206,12 +188,12 @@ public class TcpChannel : ITcpChannel
             return false;
         if (_socket == null)
         {
-            Error(ChannelError.SocketIsNull);
+            ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
             return false;
         }
         if (!_socket.Connected)
         {
-            Error(ChannelError.SocketNotConnect);
+            ChannelError.Error(ChannelError.ErrorCode.SocketNotConnect, Close);
             return false;
         }
         lock (_sendSocketAsyncEventArgs)
@@ -229,23 +211,24 @@ public class TcpChannel : ITcpChannel
     {
         if (_socket == null)
         {
-            Error(ChannelError.SocketIsNull);
+            ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
             return;
         }
         if (!_socket.Connected)
         {
-            Error(ChannelError.SocketNotConnect);
+            ChannelError.Error(ChannelError.ErrorCode.SocketNotConnect, Close);
             return;
         }
         if (socketAsyncEventArgs.SocketError != SocketError.Success)
         {
             Logger.Debug($"Channel {ChannelId} Error {socketAsyncEventArgs.SocketError}");
-            Error(ChannelError.SocketError);
+            ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
+
             return;
         }
         if (socketAsyncEventArgs.BytesTransferred == 0)
         {
-            Error(ChannelError.SocketBytesTransferredIsZero);
+            ChannelError.Error(ChannelError.ErrorCode.SocketBytesTransferredIsZero, Close);
             return;
         }
         Receive?.Invoke(socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset).Take(socketAsyncEventArgs.BytesTransferred).ToArray());
@@ -256,17 +239,17 @@ public class TcpChannel : ITcpChannel
     {
         if (_socket == null)
         {
-            Error(ChannelError.SocketIsNull);
+            ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
             return;
         }
         if (!_socket.Connected)
         {
-            Error(ChannelError.SocketNotConnect);
+            ChannelError.Error(ChannelError.ErrorCode.SocketNotConnect, Close);
             return;
         }
         if (socketAsyncEventArgs.SocketError != SocketError.Success)
         {
-            Error(ChannelError.SocketError);
+            ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
             return;
         }
         LastSendDateTime = DateTime.Now;

@@ -7,4 +7,5 @@ public interface ITcpChannel : IChannel
 {
     public event TcpChannelEvent? OpenCompleted;
     public event TcpChannelEvent? CloseCompleted;
+    public bool Send(byte[] data);
 }

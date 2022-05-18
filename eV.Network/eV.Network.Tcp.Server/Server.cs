@@ -18,6 +18,7 @@ public class Server : IServer
         private set;
     }
     #endregion
+
     #region Event
     public event TcpChannelEvent? AcceptConnect;
     #endregion
@@ -113,8 +114,7 @@ public class Server : IServer
             var channel = _channelPool.Pop();
             if (channel != null)
             {
-                if (socketAsyncEventArgs.AcceptSocket.ProtocolType == ProtocolType.Tcp)
-                    socketAsyncEventArgs.AcceptSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, _tcpKeepAliveTime);
+                socketAsyncEventArgs.AcceptSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, _tcpKeepAliveTime);
                 channel.Open(socketAsyncEventArgs.AcceptSocket);
             }
             else
