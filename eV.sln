@@ -46,7 +46,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eV.Http", "eV.Module\eV.Htt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eV.Unity", "eV.Framework\eV.Unity\eV.Unity.csproj", "{EAF010A7-971D-4AAC-B247-CE859F3041B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eV.Network.Udp.Server", "eV.Network\eV.Network.Udp.Server\eV.Network.Udp.Server.csproj", "{C667ACE9-BC7C-4631-B909-F1489B9BAFD6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eV.Network.Udp", "eV.Network\eV.Network.Udp\eV.Network.Udp.csproj", "{C667ACE9-BC7C-4631-B909-F1489B9BAFD6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

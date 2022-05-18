@@ -30,6 +30,5 @@ public interface IChannel
     {
         get;
     }
-    public Action<byte[]?>? Receive { set; }
     public void Close();
 }

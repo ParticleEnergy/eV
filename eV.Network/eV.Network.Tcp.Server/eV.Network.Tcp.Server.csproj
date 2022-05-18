@@ -1,23 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Title>eV.Network.Tcp.Server</Title>
-        <Description>eV.Network.Tcp.Server</Description>
-        <Copyright>Copyright (c) ParticleEnergy</Copyright>
-        <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
-        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-        <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
-        <LangVersion>10</LangVersion>
-        <Authors>绵羊</Authors>
-        <PackageVersion>2.0.0</PackageVersion>
-    </PropertyGroup>
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>eV.Network.Tcp.Server</Title>
+    <Description>eV.Network.Tcp.Server</Description>
+    <Copyright>Copyright (c) ParticleEnergy</Copyright>
+    <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+    <LangVersion>10</LangVersion>
+    <Authors>绵羊</Authors>
+    <PackageVersion>2.0.0</PackageVersion>
+    <RootNamespace>eV.Network.Tcp.Server</RootNamespace>
 
-    <ItemGroup>
-        <ProjectReference Include="..\eV.Network.Core\eV.Network.Core.csproj" />
-    </ItemGroup>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\eV.Network.Core\eV.Network.Core.csproj"/>
+  </ItemGroup>
 
 </Project>

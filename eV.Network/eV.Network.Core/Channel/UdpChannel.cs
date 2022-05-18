@@ -196,7 +196,7 @@ public class UdpChannel : IUdpChannel
             ProcessReceiveFrom(_receiveSocketAsyncEventArgs);
         return true;
     }
-    public Action<byte[]?>? Receive { get; set; }
+    public Action<byte[]?, EndPoint?>? Receive { get; set; }
 
     public bool SendBroadcast(byte[] data)
     {
@@ -260,7 +260,7 @@ public class UdpChannel : IUdpChannel
             ChannelError.Error(ChannelError.ErrorCode.SocketBytesTransferredIsZero, Close);
             return;
         }
-        Receive?.Invoke(socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset).Take(socketAsyncEventArgs.BytesTransferred).ToArray());
+        Receive?.Invoke(socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset).Take(socketAsyncEventArgs.BytesTransferred).ToArray(), socketAsyncEventArgs.RemoteEndPoint);
         LastReceiveDateTime = DateTime.Now;
         StartReceiveFrom();
 

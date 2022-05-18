@@ -5,8 +5,6 @@ using eV.GameProfile;
 using eV.Routing.Interface;
 using eV.Server;
 using eV.ServerExample;
-
-
 Profile.OnLoad += delegate
 {
     Profile.AssignmentConfigObject(GameProfile.Instance);

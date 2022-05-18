@@ -8,9 +8,9 @@ using eV.EasyLog;
 using eV.Network.Core;
 using eV.Network.Core.Channel;
 using eV.Network.Core.Interface;
-namespace eV.Network.Udp.Server;
+namespace eV.Network.Udp;
 
-public class Server : IServer
+public class Service : IServer
 {
     #region Public
     public RunState ServerState
@@ -26,6 +26,7 @@ public class Server : IServer
     private IPEndPoint? _broadcastEndPoint;
     private MulticastOption? _multicastOption;
     private int _receiveBufferSize;
+    private int _multicastTimeToLive;
     #endregion
 
     #region Resource
@@ -39,7 +40,7 @@ public class Server : IServer
     #endregion
 
     #region Construct
-    public Server(ServerSetting setting)
+    public Service(ServerSetting setting)
     {
         SetSetting(setting);
         ServerState = RunState.Off;
@@ -51,8 +52,8 @@ public class Server : IServer
         //设置多播
         _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastLoopback, true);
         _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, _multicastOption!);
-
-        _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+        // IP 多路广播生存时间
+        _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, _multicastTimeToLive);
 
         _channel = new UdpChannel(_receiveBufferSize, _broadcastEndPoint!, _multiCastEndPoint!);
         _channel.OpenCompleted += OpenCompleted;
@@ -74,6 +75,7 @@ public class Server : IServer
         );
         _multicastOption = new MulticastOption(IPAddress.Parse(setting.MultiCastHost), IPAddress.Parse(setting.Host));
         _receiveBufferSize = setting.ReceiveBufferSize;
+        _multicastTimeToLive = setting.MulticastTimeToLive;
     }
     #endregion
 

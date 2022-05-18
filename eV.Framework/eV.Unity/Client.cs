@@ -4,8 +4,8 @@
 
 using eV.EasyLog;
 using eV.GameProfile;
-using eV.Network.Tcp.Client;
 using eV.Network.Core.Interface;
+using eV.Network.Tcp.Client;
 using eV.Routing;
 using eV.Routing.Interface;
 using eVNetworkClient = eV.Network.Tcp.Client.Client;

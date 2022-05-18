@@ -6,9 +6,8 @@ namespace eV.Network.Core.Interface;
 
 public interface IUdpChannel : IChannel
 {
+    public Action<byte[]?, EndPoint?>? Receive { set; }
     public bool SendBroadcast(byte[] data);
-
     public bool SendMulticast(byte[] data);
-
     public bool Send(byte[] data, EndPoint destEndPoint);
 }

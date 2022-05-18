@@ -1,5 +1,7 @@
+// Copyright (c) ParticleEnergy. All rights reserved.
+// Licensed under the Apache license. See LICENSE file in the project root for full license information.
+
 using Quartz.Logging;
-using LogLevel = Quartz.Logging.LogLevel;
 using EasyLogger = eV.EasyLog.Logger;
 namespace eV.Job;
 
