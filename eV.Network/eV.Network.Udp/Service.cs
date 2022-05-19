@@ -53,8 +53,8 @@ public class Service : IServer
         _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
         //设置多播
         _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastLoopback, _multicastLoopback);
-        _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, _multicastTimeToLive);
         _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, _multicastOption!);
+        _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, _multicastTimeToLive);
 
         _channel = new UdpChannel(_receiveBufferSize, _broadcastEndPoint!, _multiCastEndPoint!);
         _channel.OpenCompleted += OpenCompleted;
@@ -65,11 +65,11 @@ public class Service : IServer
     {
         _broadcastEndPoint = new IPEndPoint(
             IPAddress.Broadcast,
-            setting.ListenPort
+            setting.CommPort
         );
         _multiCastEndPoint = new IPEndPoint(
             IPAddress.Parse(setting.MultiCastHost),
-            setting.ListenPort
+            setting.CommPort
         );
         _listenEndPoint = new IPEndPoint(
             IPAddress.Any,

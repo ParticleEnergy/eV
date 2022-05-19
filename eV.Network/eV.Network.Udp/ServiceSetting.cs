@@ -14,4 +14,6 @@ public class ServiceSetting
     public int MulticastTimeToLive { get; set; } = DefaultSetting.MulticastTimeToLive;
     public bool MulticastLoopback { get; set; } = DefaultSetting.MulticastLoopback;
     #endregion
+
+    public int CommPort { get; set; } = DefaultSetting.CommPort;
 }

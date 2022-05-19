@@ -6,11 +6,13 @@ namespace eV.Network.Udp;
 internal static class DefaultSetting
 {
     public const int ListenPort = 8888;
-    public const string Localhost = "127.0.0.1";
-    public const string MultiCastHost = "234.66.66.66";
+    public const string Localhost = "192.168.2.108";
+    public const string MultiCastHost = "234.5.6.7";
     public const int MulticastTimeToLive = 10;
     public const bool MulticastLoopback = false;
 
     public const int MaxConcurrentSend = 100;
     public const int ReceiveBufferSize = 2048;
+
+    public const int CommPort = 6666;
 }
