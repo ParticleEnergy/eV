@@ -59,9 +59,14 @@ public class Client
         Dispatch.RegisterClient(setting.HandlerNamespace, setting.DataStructNamespace);
         _keepalive = new Keepalive(setting.TcpKeepAliveInterval);
     }
-    public void Start()
+    public void Connect()
     {
         _client.Connect();
+    }
+
+    public void Disconnect()
+    {
+        _client.Disconnect();
     }
 
     private void ClientOnConnectCompleted(ITcpChannel channel)
@@ -69,7 +74,7 @@ public class Client
         Session.Session session = new(channel);
         SessionDispatch.Instance.SetClientSession(session);
         OnConnect?.Invoke(session);
-        _keepalive.Start();
+        _keepalive.Start(session);
     }
     private void ClientOnDisconnectCompleted(ITcpChannel _)
     {

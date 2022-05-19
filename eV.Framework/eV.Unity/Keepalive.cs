@@ -14,7 +14,7 @@ public class Keepalive
         _keepAliveInterval = keepAliveInterval;
     }
 
-    public void Start()
+    public void Start(Session.Session session)
     {
         _timer = new Timer(delegate
         {
@@ -23,7 +23,7 @@ public class Keepalive
             packet.SetContent(Serializer.Serialize(new
             {
             }));
-            ClientSession.Send(Package.Pack(packet));
+            session.Send(Package.Pack(packet));
         }, 0, 0, _keepAliveInterval * 1000);
     }
 

@@ -56,9 +56,14 @@ public class Client
 
         Dispatch.RegisterClient(setting.HandlerNamespace, setting.DataStructNamespace);
     }
-    public void Start()
+    public void Connect()
     {
         _client.Connect();
+    }
+
+    public void Disconnect()
+    {
+        _client.Disconnect();
     }
 
     private void ClientOnConnectCompleted(ITcpChannel channel)
