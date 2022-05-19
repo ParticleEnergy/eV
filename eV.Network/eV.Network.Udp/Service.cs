@@ -13,7 +13,7 @@ namespace eV.Network.Udp;
 public class Service : IServer
 {
     #region Public
-    public RunState ServerState
+    public RunState ServiceState
     {
         get;
         private set;
@@ -21,12 +21,14 @@ public class Service : IServer
     #endregion
 
     #region Setting
-    private IPEndPoint? _ipEndPoint;
+    private IPEndPoint? _listenEndPoint;
     private IPEndPoint? _multiCastEndPoint;
     private IPEndPoint? _broadcastEndPoint;
     private MulticastOption? _multicastOption;
-    private int _receiveBufferSize;
     private int _multicastTimeToLive;
+    private bool _multicastLoopback;
+    private int _receiveBufferSize;
+    private int _maxConcurrentSend;
     #endregion
 
     #region Resource
@@ -36,73 +38,74 @@ public class Service : IServer
 
     #region Event
     public event UdpChannelEvent? OnBind;
-    public event Action? OnRelease;
+    public event UdpChannelEvent? OnRelease;
     #endregion
 
     #region Construct
-    public Service(ServerSetting setting)
+    public Service(ServiceSetting setting)
     {
         SetSetting(setting);
-        ServerState = RunState.Off;
+        ServiceState = RunState.Off;
 
         _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
         // 广播
         _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
         //设置多播
-        _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastLoopback, true);
-        _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, _multicastOption!);
-        // IP 多路广播生存时间
+        _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastLoopback, _multicastLoopback);
         _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, _multicastTimeToLive);
+        _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.AddMembership, _multicastOption!);
 
         _channel = new UdpChannel(_receiveBufferSize, _broadcastEndPoint!, _multiCastEndPoint!);
         _channel.OpenCompleted += OpenCompleted;
+        _channel.CloseCompleted += CloseCompleted;
     }
 
-    private void SetSetting(ServerSetting setting)
+    private void SetSetting(ServiceSetting setting)
     {
         _broadcastEndPoint = new IPEndPoint(
             IPAddress.Broadcast,
-            setting.Port
+            setting.ListenPort
         );
         _multiCastEndPoint = new IPEndPoint(
             IPAddress.Parse(setting.MultiCastHost),
-            setting.MultiCastPort
+            setting.ListenPort
         );
-        _ipEndPoint = new IPEndPoint(
-            IPAddress.Parse(setting.Host),
-            setting.Port
+        _listenEndPoint = new IPEndPoint(
+            IPAddress.Any,
+            setting.ListenPort
         );
-        _multicastOption = new MulticastOption(IPAddress.Parse(setting.MultiCastHost), IPAddress.Parse(setting.Host));
-        _receiveBufferSize = setting.ReceiveBufferSize;
+        _multicastOption = new MulticastOption(IPAddress.Parse(setting.MultiCastHost), IPAddress.Parse(setting.Localhost));
         _multicastTimeToLive = setting.MulticastTimeToLive;
+        _multicastLoopback  =setting.MulticastLoopback;
+        _receiveBufferSize = setting.ReceiveBufferSize;
+        _maxConcurrentSend = setting.MaxConcurrentSend;
     }
     #endregion
 
     #region Operate
     public void Start()
     {
-        if (ServerState == RunState.On)
+        if (ServiceState == RunState.On)
         {
             Logger.Warn("The server is already turned on");
             return;
         }
         try
         {
-            ServerState = RunState.On;
-            Init();
+            ServiceState = RunState.On;
 
-            if (_ipEndPoint!.AddressFamily == AddressFamily.InterNetworkV6)
+            if (_listenEndPoint!.AddressFamily == AddressFamily.InterNetworkV6)
             {
                 _socket.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
-                _socket.Bind(_ipEndPoint);
+                _socket.Bind(_listenEndPoint);
             }
             else
             {
-                _socket.Bind(_ipEndPoint);
+                _socket.Bind(_listenEndPoint);
             }
 
-            _channel.Open(_socket);
+            _channel.Open(_socket, _maxConcurrentSend);
         }
         catch (Exception e)
         {
@@ -111,15 +114,16 @@ public class Service : IServer
     }
     public void Stop()
     {
-        if (ServerState == RunState.Off)
+        if (ServiceState == RunState.Off)
         {
             Logger.Warn("The server is already turned off");
             return;
         }
-        ServerState = RunState.Off;
+        ServiceState = RunState.Off;
         try
         {
-            _channel.Close();
+            _socket.Shutdown(SocketShutdown.Both);
+            _socket.Close();
         }
         catch (Exception e)
         {
@@ -133,11 +137,7 @@ public class Service : IServer
     }
     private void Release()
     {
-        OnRelease?.Invoke();
-    }
-    private void Init()
-    {
-        _channel.Open(_socket);
+        _channel.Close();
     }
     #endregion
 
@@ -145,6 +145,10 @@ public class Service : IServer
     private void OpenCompleted(IUdpChannel channel)
     {
         OnBind?.Invoke(channel);
+    }
+    private void CloseCompleted(IUdpChannel channel)
+    {
+        OnRelease?.Invoke(channel);
     }
     #endregion
 }

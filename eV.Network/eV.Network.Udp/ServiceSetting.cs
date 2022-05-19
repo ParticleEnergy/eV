@@ -3,16 +3,15 @@
 
 namespace eV.Network.Udp;
 
-public class ServerSetting
+public class ServiceSetting
 {
     public int ReceiveBufferSize { get; set; } = DefaultSetting.ReceiveBufferSize;
-
+    public int MaxConcurrentSend { get; set; } = DefaultSetting.MaxConcurrentSend;
     #region Socket
-    public string Host { get; set; } = DefaultSetting.Host;
-    public int Port { get; set; } = DefaultSetting.Port;
+    public int ListenPort { get; set; } = DefaultSetting.ListenPort;
+    public string Localhost { get; set; } = DefaultSetting.Localhost;
     public string MultiCastHost { get; set; } = DefaultSetting.MultiCastHost;
-    public int MultiCastPort { get; set; } = DefaultSetting.MultiCastPort;
-
     public int MulticastTimeToLive { get; set; } = DefaultSetting.MulticastTimeToLive;
+    public bool MulticastLoopback { get; set; } = DefaultSetting.MulticastLoopback;
     #endregion
 }
