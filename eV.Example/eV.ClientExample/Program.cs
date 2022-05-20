@@ -25,5 +25,5 @@ client.OnConnect += delegate(ISession session)
     };
     session.Send(helloWorldClient);
 };
-client.Start();
+client.Connect();
 Console.ReadLine();
