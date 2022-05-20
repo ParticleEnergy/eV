@@ -72,7 +72,7 @@ public class Client
     private void ClientOnConnectCompleted(ITcpChannel channel)
     {
         Session.Session session = new(channel);
-        SessionDispatch.Instance.SetClientSession(session);
+        ExtensionSession(session);
         OnConnect?.Invoke(session);
         _keepalive.Start(session);
     }
@@ -84,5 +84,66 @@ public class Client
     #region event
     public event SessionEvent? OnConnect;
     public event Action? OnDisconnect;
+    #endregion
+
+
+    #region Session
+    private static void ExtensionSession(Session.Session session)
+    {
+        session.SendAction = (sessionId, data) =>
+        {
+            Packet packet = new();
+            packet.SetName("ClientSendBySessionId");
+            packet.SetContent(Serializer.Serialize(new
+            {
+                ClientSendBySessionId = sessionId, Data = data
+            }));
+            return session.Send(Package.Pack(packet));
+        };
+
+        session.SendGroupAction = (_, groupId, data) =>
+        {
+            Packet packet = new();
+            packet.SetName("ClientSendGroup");
+            packet.SetContent(Serializer.Serialize(new
+            {
+                GroupId = groupId, Data = data
+            }));
+            session.Send(Package.Pack(packet));
+        };
+
+        session.SendBroadcastAction = (_, data) =>
+        {
+            Packet packet = new();
+            packet.SetName("ClientSendBroadcast");
+            packet.SetContent(Serializer.Serialize(new
+            {
+                Data = data
+            }));
+            session.Send(Package.Pack(packet));
+        };
+
+        session.JoinGroupAction = (groupId, sessionId) =>
+        {
+            Packet packet = new();
+            packet.SetName("ClientJoinGroup");
+            packet.SetContent(Serializer.Serialize(new
+            {
+                GroupId = groupId, SessionId = sessionId
+            }));
+            return session.Send(Package.Pack(packet));
+        };
+
+        session.LeaveGroupAction = (groupId, sessionId) =>
+        {
+            Packet packet = new();
+            packet.SetName("ClientLeaveGroup");
+            packet.SetContent(Serializer.Serialize(new
+            {
+                GroupId = groupId, SessionId = sessionId
+            }));
+            return session.Send(Package.Pack(packet));
+        };
+    }
     #endregion
 }

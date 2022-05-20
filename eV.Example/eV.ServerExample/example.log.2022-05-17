@@ -1,0 +1,430 @@
+INFO 1 eV.Server - 
+      _    __   _____
+  ___| |  / /  / ___/___  ______   _____  _____
+ / _ \ | / /   \__ \/ _ \/ ___/ | / / _ \/ ___/
+/  __/ |/ /   ___/ /  __/ /   | |/ /  __/ /
+\___/|___/   /____/\___/_/    |___/\___/_/
+
+INFO 1 eV.Server - 
+      _    __   _____
+  ___| |  / /  / ___/___  ______   _____  _____
+ / _ \ | / /   \__ \/ _ \/ ___/ | / / _ \/ ___/
+/  __/ |/ /   ___/ /  __/ /   | |/ /  __/ /
+\___/|___/   /____/\___/_/    |___/\___/_/
+
+INFO 1 eV.Server - Game profile load
+INFO 1 eV.Server - Mongodb [eV] connected success
+ERROR 1 eV.Server - It was not possible to connect to the redis server(s). Error connecting right now. To allow this multiplexer to continue retrying until it's able to connect, use abortConnect=false in your connection string or AbortOnConnectFail=false; in your code.
+StackExchange.Redis.RedisConnectionException: It was not possible to connect to the redis server(s). Error connecting right now. To allow this multiplexer to continue retrying until it's able to connect, use abortConnect=false in your connection string or AbortOnConnectFail=false; in your code.
+   at StackExchange.Redis.ConnectionMultiplexer.ConnectImpl(ConfigurationOptions configuration, TextWriter log) in /_/src/StackExchange.Redis/ConnectionMultiplexer.cs:line 1194
+   at eV.Server.Storage.RedisManager.Start() in /Users/three.zhang/Projects/CSharp/eV/eV.Framework/eV.Server/Storage/RedisManager.cs:line 27
+INFO 1 eV.Server - SendMessage [eV.PublicObject.ServerObject.HelloServerMessage] registration succeeded
+INFO 1 eV.Server - ReceiveMessageHandler [eV.ServerExample.Logic.Handler.HelloWorldHandler] registration succeeded
+INFO 1 eV.Server - Server 0.0.0.0:8888 start listen
+INFO 1 eV.Server - Idle detection start
+INFO 28 eV.Server - Channel 479786a7-6d18-41e3-a211-d5902f9728fd bind session success
+INFO 28 eV.Server - Client 127.0.0.1:53536 connected
+INFO 28 eV.Server - Channel 479786a7-6d18-41e3-a211-d5902f9728fd 127.0.0.1:53536 open
+INFO 28 eV.Server - Channel 479786a7-6d18-41e3-a211-d5902f9728fd 127.0.0.1:53536 start receive
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:54
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:55
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:56
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:57
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:57
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:57
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:57
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:57
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:57
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:57
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:57
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:57
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:57
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:57
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:58
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:58
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:58
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:58
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:58
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:58
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:58
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:58
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:59
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:59
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:59
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:59
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:59
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:14:59
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 1 eV.Server - 
+      _    __   _____
+  ___| |  / /  / ___/___  ______   _____  _____
+ / _ \ | / /   \__ \/ _ \/ ___/ | / / _ \/ ___/
+/  __/ |/ /   ___/ /  __/ /   | |/ /  __/ /
+\___/|___/   /____/\___/_/    |___/\___/_/
+
+INFO 1 eV.Server - Game profile load
+INFO 1 eV.Server - Mongodb [eV] connected success
+ERROR 1 eV.Server - It was not possible to connect to the redis server(s). Error connecting right now. To allow this multiplexer to continue retrying until it's able to connect, use abortConnect=false in your connection string or AbortOnConnectFail=false; in your code.
+StackExchange.Redis.RedisConnectionException: It was not possible to connect to the redis server(s). Error connecting right now. To allow this multiplexer to continue retrying until it's able to connect, use abortConnect=false in your connection string or AbortOnConnectFail=false; in your code.
+   at StackExchange.Redis.ConnectionMultiplexer.ConnectImpl(ConfigurationOptions configuration, TextWriter log) in /_/src/StackExchange.Redis/ConnectionMultiplexer.cs:line 1194
+   at eV.Server.Storage.RedisManager.Start() in /Users/three.zhang/Projects/CSharp/eV/eV.Framework/eV.Server/Storage/RedisManager.cs:line 27
+INFO 1 eV.Server - SendMessage [eV.PublicObject.ServerObject.HelloServerMessage] registration succeeded
+INFO 1 eV.Server - ReceiveMessageHandler [eV.ServerExample.Logic.Handler.HelloWorldHandler] registration succeeded
+INFO 1 eV.Server - Server 0.0.0.0:8888 start listen
+INFO 1 eV.Server - Idle detection start
+INFO 28 eV.Server - Channel c99f3c2b-e3ad-49b4-81d0-5f93be35ef3b bind session success
+INFO 28 eV.Server - Client 127.0.0.1:53605 connected
+INFO 28 eV.Server - Channel c99f3c2b-e3ad-49b4-81d0-5f93be35ef3b 127.0.0.1:53605 open
+INFO 28 eV.Server - Channel c99f3c2b-e3ad-49b4-81d0-5f93be35ef3b 127.0.0.1:53605 start receive
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:35
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - 测试测试05/17/2022 19:15:36
+INFO 28 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - Channel c99f3c2b-e3ad-49b4-81d0-5f93be35ef3b 127.0.0.1:53605 close
+ERROR 28 eV.Server - Session  Session remove active group error
+INFO 1 eV.Server - 
+      _    __   _____
+  ___| |  / /  / ___/___  ______   _____  _____
+ / _ \ | / /   \__ \/ _ \/ ___/ | / / _ \/ ___/
+/  __/ |/ /   ___/ /  __/ /   | |/ /  __/ /
+\___/|___/   /____/\___/_/    |___/\___/_/
+
+INFO 1 eV.Server - Game profile load
+INFO 1 eV.Server - Mongodb [eV] connected success
+ERROR 1 eV.Server - It was not possible to connect to the redis server(s). Error connecting right now. To allow this multiplexer to continue retrying until it's able to connect, use abortConnect=false in your connection string or AbortOnConnectFail=false; in your code.
+StackExchange.Redis.RedisConnectionException: It was not possible to connect to the redis server(s). Error connecting right now. To allow this multiplexer to continue retrying until it's able to connect, use abortConnect=false in your connection string or AbortOnConnectFail=false; in your code.
+   at StackExchange.Redis.ConnectionMultiplexer.ConnectImpl(ConfigurationOptions configuration, TextWriter log) in /_/src/StackExchange.Redis/ConnectionMultiplexer.cs:line 1194
+   at eV.Server.Storage.RedisManager.Start() in /Users/three.zhang/Projects/CSharp/eV/eV.Framework/eV.Server/Storage/RedisManager.cs:line 27
+INFO 1 eV.Server - SendMessage [eV.PublicObject.ServerObject.HelloServerMessage] registration succeeded
+INFO 1 eV.Server - ReceiveMessageHandler [eV.ServerExample.Logic.Handler.HelloWorldHandler] registration succeeded
+INFO 1 eV.Server - Server 0.0.0.0:8888 start listen
+INFO 1 eV.Server - Idle detection start
+INFO 1 eV.Server - 
+      _    __   _____
+  ___| |  / /  / ___/___  ______   _____  _____
+ / _ \ | / /   \__ \/ _ \/ ___/ | / / _ \/ ___/
+/  __/ |/ /   ___/ /  __/ /   | |/ /  __/ /
+\___/|___/   /____/\___/_/    |___/\___/_/
+
+INFO 1 eV.Server - Game profile load
+INFO 1 eV.Server - Mongodb [eV] connected success
+INFO 1 eV.Server - SendMessage [eV.PublicObject.ServerObject.HelloServerMessage] registration succeeded
+INFO 1 eV.Server - ReceiveMessageHandler [eV.ServerExample.Logic.Handler.HelloWorldHandler] registration succeeded
+INFO 1 eV.Server - Server 0.0.0.0:8888 start listen
+INFO 1 eV.Server - Idle detection start
+INFO 11 eV.Server - Channel f7b5e03f-a03d-4bd6-b970-f0b3952fc4d4 bind session success
+INFO 11 eV.Server - Client 127.0.0.1:53722 connected
+INFO 11 eV.Server - Channel f7b5e03f-a03d-4bd6-b970-f0b3952fc4d4 127.0.0.1:53722 open
+INFO 11 eV.Server - Channel f7b5e03f-a03d-4bd6-b970-f0b3952fc4d4 127.0.0.1:53722 start receive
+INFO 11 eV.Server - 测试测试05/17/2022 19:17:35
+INFO 11 eV.Server - Message [HelloClientMessage] handle access
+INFO 12 eV.Server - Channel f7b5e03f-a03d-4bd6-b970-f0b3952fc4d4 127.0.0.1:53722 disconnect
+INFO 12 eV.Server - Channel f7b5e03f-a03d-4bd6-b970-f0b3952fc4d4 127.0.0.1:53722 close
+ERROR 12 eV.Server - Session  Session remove active group error
+INFO 1 eV.Server - 
+      _    __   _____
+  ___| |  / /  / ___/___  ______   _____  _____
+ / _ \ | / /   \__ \/ _ \/ ___/ | / / _ \/ ___/
+/  __/ |/ /   ___/ /  __/ /   | |/ /  __/ /
+\___/|___/   /____/\___/_/    |___/\___/_/
+
+INFO 1 eV.Server - Game profile load
+INFO 1 eV.Server - Mongodb [eV] connected success
+ERROR 1 eV.Server - It was not possible to connect to the redis server(s). Error connecting right now. To allow this multiplexer to continue retrying until it's able to connect, use abortConnect=false in your connection string or AbortOnConnectFail=false; in your code.
+StackExchange.Redis.RedisConnectionException: It was not possible to connect to the redis server(s). Error connecting right now. To allow this multiplexer to continue retrying until it's able to connect, use abortConnect=false in your connection string or AbortOnConnectFail=false; in your code.
+   at StackExchange.Redis.ConnectionMultiplexer.ConnectImpl(ConfigurationOptions configuration, TextWriter log) in /_/src/StackExchange.Redis/ConnectionMultiplexer.cs:line 1194
+   at eV.Server.Storage.RedisManager.Start() in /Users/three.zhang/Projects/CSharp/eV/eV.Framework/eV.Server/Storage/RedisManager.cs:line 27
+INFO 1 eV.Server - SendMessage [eV.PublicObject.ServerObject.HelloServerMessage] registration succeeded
+INFO 1 eV.Server - ReceiveMessageHandler [eV.ServerExample.Logic.Handler.HelloWorldHandler] registration succeeded
+INFO 1 eV.Server - Server 0.0.0.0:8888 start listen
+INFO 1 eV.Server - Idle detection start
+INFO 16 eV.Server - Channel 3b1e7b87-824c-477a-91a2-4471f07834df bind session success
+INFO 16 eV.Server - Client 127.0.0.1:53983 connected
+INFO 16 eV.Server - Channel 3b1e7b87-824c-477a-91a2-4471f07834df 127.0.0.1:53983 open
+INFO 16 eV.Server - Channel 3b1e7b87-824c-477a-91a2-4471f07834df 127.0.0.1:53983 start receive
+INFO 16 eV.Server - 测试测试05/17/2022 19:20:42
+INFO 16 eV.Server - Message [HelloClientMessage] handle access
+INFO 28 eV.Server - Channel 3b1e7b87-824c-477a-91a2-4471f07834df 127.0.0.1:53983 disconnect
+INFO 28 eV.Server - Channel 3b1e7b87-824c-477a-91a2-4471f07834df 127.0.0.1:53983 close
+WARN 28 eV.Server - Session  Session remove active group error
