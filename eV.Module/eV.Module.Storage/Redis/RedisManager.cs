@@ -2,9 +2,9 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using eV.Module.EasyLog;
-using eV.Framework.Server.Options;
+using eV.Module.Storage.Redis.Interface;
 using StackExchange.Redis;
-namespace eV.Framework.Server.Storage;
+namespace eV.Module.Storage.Redis;
 
 public class RedisManager
 {
@@ -22,31 +22,22 @@ public class RedisManager
         get;
     } = new();
 
-    public void Start()
+    public void Start(Dictionary<string, IRedisSetting> redisSettings)
     {
         if (_isStart)
             return;
         _isStart = true;
 
-        if (Configure.Instance.StorageOptions.Redis == null)
-            return;
-
-        foreach ((string? name, RedisOptions? redisOptions) in Configure.Instance.StorageOptions.Redis)
+        foreach ((string name, IRedisSetting setting) in redisSettings)
         {
-            if (redisOptions.Address == null)
-            {
-                Logger.Warn($"Redis {name} address is null");
-                return;
-            }
             try
             {
-                ConfigurationOptions config = GetConfig(redisOptions.Address, redisOptions.Database, redisOptions.User, redisOptions.Password);
+                ConfigurationOptions config = GetConfig(setting.Address, setting.Database, setting.User, setting.Password);
                 ConnectionMultiplexer conn = ConnectionMultiplexer.Connect(config);
-                if (conn.IsConnected)
-                {
-                    _redisConnection.Add(name, conn);
-                    Logger.Info($"Redis [{name}] connected success");
-                }
+                if (!conn.IsConnected)
+                    continue;
+                _redisConnection.Add(name, conn);
+                Logger.Info($"Redis [{name}] connected success");
             }
             catch (Exception e)
             {
@@ -69,10 +60,10 @@ public class RedisManager
             }
     }
 
-    private static ConfigurationOptions GetConfig(List<AddressOptions> addressList, int? database, string? user, string? password)
+    private static ConfigurationOptions GetConfig(List<IAddress> addressList, int? database, string? user, string? password)
     {
         ConfigurationOptions config = new();
-        foreach (AddressOptions? address in addressList)
+        foreach (IAddress? address in addressList)
             config.EndPoints.Add(address.Host, address.Port);
         if (user != null)
             config.User = user;

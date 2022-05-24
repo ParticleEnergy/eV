@@ -1,9 +1,10 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
+
 using eV.Module.EasyLog;
 using MongoDB.Driver;
-namespace eV.Framework.Server.Storage;
+namespace eV.Module.Storage.Mongo;
 
 public class MongodbManager
 {
@@ -21,18 +22,13 @@ public class MongodbManager
         get;
     } = new();
 
-    public void Start()
+    public void Start(Dictionary<string, string> config)
     {
         if (_isStart)
             return;
         _isStart = true;
 
-        if (Configure.Instance.StorageOptions.Mongodb == null)
-        {
-            Logger.Warn("Mongodb config is null");
-            return;
-        }
-        foreach ((string? dbName, string? connString) in Configure.Instance.StorageOptions.Mongodb)
+        foreach ((string dbName, string connString) in config)
             try
             {
                 MongoClient client = new(connString);
@@ -52,7 +48,7 @@ public class MongodbManager
     }
     public IMongoDatabase? GetDatabase(string database)
     {
-       return _clients.TryGetValue(database, out MongoClient? client) ? client.GetDatabase(database) : null;
+        return _clients.TryGetValue(database, out MongoClient? client) ? client.GetDatabase(database) : null;
     }
     public IMongoCollection<T>? GetCollection<T>(string database, string collection)
     {

@@ -1,7 +1,7 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
-using eV.Framework.Server.Interface;
+using eV.Module.Storage.Mongo.Interface;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 namespace eV.Framework.Server.Base;

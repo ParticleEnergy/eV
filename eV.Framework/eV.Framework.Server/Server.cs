@@ -10,8 +10,9 @@ using eV.Network.Tcp.Server;
 using eV.Module.Routing;
 using eV.Module.Routing.Interface;
 using eV.Module.Session;
-using eV.Framework.Server.Storage;
 using eV.Framework.Server.SystemHandler;
+using eV.Module.Storage.Mongo;
+using eV.Module.Storage.Redis;
 using eVNetworkServer = eV.Network.Tcp.Server.Server;
 namespace eV.Framework.Server;
 
@@ -41,8 +42,10 @@ public class Server
             new GameProfileParser(),
             Configure.Instance.BaseOptions.GameProfileMonitoringChange
         );
-        MongodbManager.Instance.Start();
-        RedisManager.Instance.Start();
+        if (Configure.Instance.StorageOptions.Mongodb != null)
+            MongodbManager.Instance.Start(Configure.Instance.StorageOptions.Mongodb);
+        if (Configure.Instance.StorageOptions.Redis != null)
+            RedisManager.Instance.Start(Configure.Instance.StorageOptions.Redis);
         RegisterHandler();
 
         _server.Start();

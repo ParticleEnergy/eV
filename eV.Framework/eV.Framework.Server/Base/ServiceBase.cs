@@ -2,7 +2,7 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 
-using eV.Framework.Server.Storage;
+using eV.Module.Storage.Redis;
 using StackExchange.Redis;
 namespace eV.Framework.Server.Base;
 

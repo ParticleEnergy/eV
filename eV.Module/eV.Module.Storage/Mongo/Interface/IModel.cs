@@ -2,7 +2,7 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using MongoDB.Bson;
-namespace eV.Framework.Server.Interface;
+namespace eV.Module.Storage.Mongo.Interface;
 
 public interface IModel
 {

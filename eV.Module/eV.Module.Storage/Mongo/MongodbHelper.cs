@@ -2,13 +2,13 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 using eV.Module.EasyLog;
-using eV.Framework.Server.Interface;
+using eV.Module.Storage.Mongo.Interface;
 using MongoDB.Driver;
-namespace eV.Framework.Server.Storage;
+namespace eV.Module.Storage.Mongo;
 
 public static class MongodbHelper
 {
-    #region Resource
+#region Resource
     public static IMongoClient? GetMongoClient(string name)
     {
         MongoClient? client = MongodbManager.Instance.GetClient(name);
