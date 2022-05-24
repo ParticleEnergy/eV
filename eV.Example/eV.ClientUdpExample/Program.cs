@@ -6,23 +6,32 @@ using eV.Network.Core.Interface;
 using eV.Network.Udp;
 
 
-Service service = new(new ServiceSetting
-{
-    ListenPort = 1234,
-    CommPort = 8888
-});
+// Service service = new(new ServiceSetting
+// {
+//     ListenPort = 1234,
+//     CommPort = 8888
+// });
+//
+// service.OnBind += delegate(IUdpChannel channel)
+// {
+//     channel.SendBroadcast(Encoding.Unicode.GetBytes("SendBroadcast"));
+//     channel.SendMulticast(Encoding.Unicode.GetBytes("SendMulticast"));
+//     channel.Send(Encoding.Unicode.GetBytes("Send"), new IPEndPoint(IPAddress.Parse("234.5.6.7"), 8888));
+//
+// };
+//
+// service.Start();
+//
+// Console.ReadLine();
+//
 
-service.OnBind += delegate(IUdpChannel channel)
-{
-    channel.SendBroadcast(Encoding.Unicode.GetBytes("SendBroadcast"));
-    channel.SendMulticast(Encoding.Unicode.GetBytes("SendMulticast"));
-    channel.Send(Encoding.Unicode.GetBytes("Send"), new IPEndPoint(IPAddress.Parse("234.5.6.7"), 8888));
 
-};
+string b = Dns.GetHostName();
+string d = Dns.GetHostEntry("localhost").HostName;
 
-service.Start();
+Console.WriteLine(b);
+Console.WriteLine(d);
 
-Console.ReadLine();
 
 // using System.Net;
 // using System.Net.Sockets;

@@ -8,8 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\eV.Module\eV.GameProfile\eV.GameProfile.csproj" />
-      <ProjectReference Include="..\..\eV.Module\eV.Routing\eV.Routing.csproj" />
+      <ProjectReference Include="..\..\eV.Module\eV.Module.GameProfile\eV.Module.GameProfile.csproj" />
+      <ProjectReference Include="..\..\eV.Module\eV.Module.Routing\eV.Module.Routing.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>eV.Module.Session</Title>
+    <Description>eV.Module.Session</Description>
+    <Copyright>Copyright (c) ParticleEnergy</Copyright>
+    <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <TargetFrameworks>net5.0;net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <LangVersion>10</LangVersion>
+    <Authors>绵羊</Authors>
+    <PackageVersion>1.1.0</PackageVersion>
+    <RootNamespace>eV.Module.Session</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Core\eV.Network.Core.csproj" />
+    <ProjectReference Include="..\eV.Module.Routing\eV.Module.Routing.csproj" />
+  </ItemGroup>
+
+</Project>

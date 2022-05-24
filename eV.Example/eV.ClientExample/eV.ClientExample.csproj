@@ -17,8 +17,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\eV.Framework\eV.Client\eV.Client.csproj" />
-      <ProjectReference Include="..\..\eV.Framework\eV.Unity\eV.Unity.csproj" />
+      <ProjectReference Include="..\..\eV.Framework\eV.Framework.Client\eV.Framework.Client.csproj" />
+      <ProjectReference Include="..\..\eV.Framework\eV.Framework.Unity\eV.Framework.Unity.csproj" />
       <ProjectReference Include="..\eV.PublicObject\eV.PublicObject.csproj" />
     </ItemGroup>
 

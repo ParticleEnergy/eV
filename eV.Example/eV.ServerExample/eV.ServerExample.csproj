@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\eV.Framework\eV.Server\eV.Server.csproj" />
+      <ProjectReference Include="..\..\eV.Framework\eV.Framework.Server\eV.Framework.Server.csproj" />
       <ProjectReference Include="..\eV.PublicObject\eV.PublicObject.csproj" />
     </ItemGroup>
 

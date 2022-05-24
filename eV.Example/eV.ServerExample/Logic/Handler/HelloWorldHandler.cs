@@ -1,12 +1,12 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
-using eV.EasyLog;
+using eV.Module.EasyLog;
 using eV.PublicObject.ClientObject;
 using eV.PublicObject.ServerObject;
-using eV.Routing.Attributes;
-using eV.Routing.Interface;
-using eV.Server.Base;
+using eV.Module.Routing.Attributes;
+using eV.Module.Routing.Interface;
+using eV.Framework.Server.Base;
 namespace eV.ServerExample.Logic.Handler;
 
 [ReceiveMessageHandler]

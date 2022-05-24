@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Title>eV.Framework.Client</Title>
+    <Description>eV.Framework.Client</Description>
+    <Copyright>Copyright (c) ParticleEnergy</Copyright>
+    <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <LangVersion>10</LangVersion>
+    <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+    <Authors>绵羊</Authors>
+    <PackageVersion>1.1.0</PackageVersion>
+    <RootNamespace>eV.Framework.Client</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\eV.Module\eV.Module.EasyLog\eV.Module.EasyLog.csproj" />
+    <ProjectReference Include="..\..\eV.Module\eV.Module.GameProfile\eV.Module.GameProfile.csproj" />
+    <ProjectReference Include="..\..\eV.Module\eV.Module.Routing\eV.Module.Routing.csproj" />
+    <ProjectReference Include="..\..\eV.Module\eV.Module.Session\eV.Module.Session.csproj" />
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Tcp.Client\eV.Network.Tcp.Client.csproj" />
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Tcp.Security.Client\eV.Network.Tcp.Security.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.14" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+</Project>

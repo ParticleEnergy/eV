@@ -3,7 +3,7 @@
 
 using System.Net;
 using System.Net.Sockets;
-using eV.EasyLog;
+using eV.Module.EasyLog;
 using eV.Network.Core.Interface;
 namespace eV.Network.Core.Channel;
 

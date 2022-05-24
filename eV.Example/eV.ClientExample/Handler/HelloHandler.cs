@@ -2,12 +2,12 @@
 // Licensed under the Apache license. See LICENSE file in the project root for full license information.
 
 
-using eV.Client;
-using eV.EasyLog;
+using eV.Framework.Client;
+using eV.Module.EasyLog;
 using eV.PublicObject.ClientObject;
 using eV.PublicObject.ServerObject;
-using eV.Routing.Attributes;
-using eV.Routing.Interface;
+using eV.Module.Routing.Attributes;
+using eV.Module.Routing.Interface;
 namespace eV.ClientExample.Handler;
 
 [ReceiveMessageHandler]

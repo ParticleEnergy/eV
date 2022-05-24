@@ -1,9 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 
-using eV.Client;
+using eV.Framework.Client;
 using eV.PublicObject.ClientObject;
-using eV.Routing.Interface;
+using eV.Module.Routing.Interface;
 
 
 // Profile.OnLoad += delegate
