@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+<PropertyGroup>
+  <ImplicitUsings>enable</ImplicitUsings>
+  <Nullable>enable</Nullable>
+  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  <Title>eV.Module.Storage</Title>
+  <Description>eV.Module.Storage</Description>
+  <Copyright>Copyright (c) ParticleEnergy</Copyright>
+  <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
+  <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+  <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+  <LangVersion>10</LangVersion>
+  <PackageVersion>1.1.0</PackageVersion>
+  <Authors>绵羊</Authors>
+  <RootNamespace>eV.Module.Storage</RootNamespace>
+</PropertyGroup>
+<ItemGroup>
+  <ProjectReference Include="..\eV.Module.EasyLog\eV.Module.EasyLog.csproj" />
+</ItemGroup>
+</Project>
