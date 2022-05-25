@@ -1,4 +1,3 @@
-
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -28,8 +27,6 @@ public class Send
     private void ProcessSendTo(SocketAsyncEventArgs socketAsyncEventArgs)
     {
         if (socketAsyncEventArgs.SocketError != SocketError.Success)
-        {
             Console.WriteLine(socketAsyncEventArgs.SocketError);
-        }
     }
 }

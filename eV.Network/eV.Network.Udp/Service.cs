@@ -77,7 +77,7 @@ public class Service : IServer
         );
         _multicastOption = new MulticastOption(IPAddress.Parse(setting.MultiCastHost), IPAddress.Parse(setting.Localhost));
         _multicastTimeToLive = setting.MulticastTimeToLive;
-        _multicastLoopback  =setting.MulticastLoopback;
+        _multicastLoopback = setting.MulticastLoopback;
         _receiveBufferSize = setting.ReceiveBufferSize;
         _maxConcurrentSend = setting.MaxConcurrentSend;
     }

@@ -18,8 +18,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\eV.Network\eV.Network.Core\eV.Network.Core.csproj" />
-    <ProjectReference Include="..\eV.Module.Routing\eV.Module.Routing.csproj" />
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Core\eV.Network.Core.csproj"/>
+    <ProjectReference Include="..\eV.Module.Routing\eV.Module.Routing.csproj"/>
   </ItemGroup>
 
 </Project>

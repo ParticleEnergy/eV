@@ -4,10 +4,10 @@
 
 using eV.Module.EasyLog;
 using eV.Module.GameProfile;
-using eV.Network.Core.Interface;
 using eV.Module.Routing;
 using eV.Module.Routing.Interface;
 using eV.Module.Session;
+using eV.Network.Core.Interface;
 using eVNetworkClient = eV.Network.Tcp.Client.Client;
 using eVNetworkSecurityClient = eV.Network.Tcp.Security.Client.Client;
 

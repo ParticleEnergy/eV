@@ -1,9 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 using System.Net;
-using System.Text;
-using eV.Network.Core.Interface;
-using eV.Network.Udp;
 
 
 // Service service = new(new ServiceSetting

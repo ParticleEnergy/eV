@@ -1,33 +1,33 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\eV.Framework\eV.Framework.Server\eV.Framework.Server.csproj" />
-      <ProjectReference Include="..\eV.PublicObject\eV.PublicObject.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\eV.Framework\eV.Framework.Server\eV.Framework.Server.csproj"/>
+    <ProjectReference Include="..\eV.PublicObject\eV.PublicObject.csproj"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <None Update="appsettings.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="log4net.config">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="ProfileJson\HelloProfile.json">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ProfileJson\HelloProfile.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Logic\Dal" />
-      <Folder Include="Logic\Service" />
-      <Folder Include="Object\ValueObject" />
-    </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Logic\Dal"/>
+    <Folder Include="Logic\Service"/>
+    <Folder Include="Object\ValueObject"/>
+  </ItemGroup>
 
 </Project>

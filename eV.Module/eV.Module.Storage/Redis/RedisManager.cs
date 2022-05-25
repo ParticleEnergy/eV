@@ -29,7 +29,6 @@ public class RedisManager
         _isStart = true;
 
         foreach ((string name, IRedisSetting setting) in redisSettings)
-        {
             try
             {
                 ConfigurationOptions config = GetConfig(setting.Address, setting.Database, setting.User, setting.Password);
@@ -43,7 +42,6 @@ public class RedisManager
             {
                 Logger.Error(e.Message, e);
             }
-        }
     }
 
     public void Stop()

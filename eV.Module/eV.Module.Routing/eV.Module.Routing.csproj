@@ -18,10 +18,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MongoDB.Bson" Version="2.14.1" />
+    <PackageReference Include="MongoDB.Bson" Version="2.14.1"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\eV.Module.EasyLog\eV.Module.EasyLog.csproj" />
+    <ProjectReference Include="..\eV.Module.EasyLog\eV.Module.EasyLog.csproj"/>
   </ItemGroup>
 </Project>

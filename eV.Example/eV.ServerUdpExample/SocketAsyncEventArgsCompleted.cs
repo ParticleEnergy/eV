@@ -6,7 +6,6 @@ using eV.Module.EasyLog;
 namespace eV.ServerUdpExample;
 
 public delegate void AsyncCompletedEvent(SocketAsyncEventArgs socketAsyncEventArgs);
-
 public class SocketAsyncEventArgsCompleted
 {
     public event AsyncCompletedEvent? ProcessAccept;

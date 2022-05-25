@@ -1,15 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <RootNamespace>eV.DataStruct</RootNamespace>
-    </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>eV.DataStruct</RootNamespace>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\eV.Module\eV.Module.GameProfile\eV.Module.GameProfile.csproj" />
-      <ProjectReference Include="..\..\eV.Module\eV.Module.Routing\eV.Module.Routing.csproj" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\eV.Module\eV.Module.GameProfile\eV.Module.GameProfile.csproj"/>
+    <ProjectReference Include="..\..\eV.Module\eV.Module.Routing\eV.Module.Routing.csproj"/>
+  </ItemGroup>
 
 </Project>

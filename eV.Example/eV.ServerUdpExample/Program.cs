@@ -2,13 +2,9 @@
 
 
 using System.Net;
-using System.Net.Sockets;
 using System.Text;
 using eV.Network.Core.Interface;
 using eV.Network.Udp;
-using eV.ServerUdpExample;
-
-
 Service service = new(new ServiceSetting());
 
 service.OnBind += delegate(IUdpChannel channel)

@@ -18,12 +18,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\eV.Module\eV.Module.EasyLog\eV.Module.EasyLog.csproj" />
-    <ProjectReference Include="..\..\eV.Module\eV.Module.GameProfile\eV.Module.GameProfile.csproj" />
-    <ProjectReference Include="..\..\eV.Module\eV.Module.Routing\eV.Module.Routing.csproj" />
-    <ProjectReference Include="..\..\eV.Module\eV.Module.Session\eV.Module.Session.csproj" />
-    <ProjectReference Include="..\..\eV.Network\eV.Network.Tcp.Client\eV.Network.Tcp.Client.csproj" />
-    <ProjectReference Include="..\..\eV.Network\eV.Network.Tcp.Security.Client\eV.Network.Tcp.Security.Client.csproj" />
+    <ProjectReference Include="..\..\eV.Module\eV.Module.EasyLog\eV.Module.EasyLog.csproj"/>
+    <ProjectReference Include="..\..\eV.Module\eV.Module.GameProfile\eV.Module.GameProfile.csproj"/>
+    <ProjectReference Include="..\..\eV.Module\eV.Module.Routing\eV.Module.Routing.csproj"/>
+    <ProjectReference Include="..\..\eV.Module\eV.Module.Session\eV.Module.Session.csproj"/>
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Tcp.Client\eV.Network.Tcp.Client.csproj"/>
+    <ProjectReference Include="..\..\eV.Network\eV.Network.Tcp.Security.Client\eV.Network.Tcp.Security.Client.csproj"/>
   </ItemGroup>
 
   <ItemGroup>

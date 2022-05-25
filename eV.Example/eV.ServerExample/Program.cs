@@ -1,9 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 
+using eV.Framework.Server;
 using eV.Module.GameProfile;
 using eV.Module.Routing.Interface;
-using eV.Framework.Server;
 using eV.ServerExample;
 Profile.OnLoad += delegate
 {

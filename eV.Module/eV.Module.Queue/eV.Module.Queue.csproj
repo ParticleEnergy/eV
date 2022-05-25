@@ -16,12 +16,12 @@
     <RootNamespace>eV.Module.Queue</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\eV.Module.EasyLog\eV.Module.EasyLog.csproj" />
+    <ProjectReference Include="..\eV.Module.EasyLog\eV.Module.EasyLog.csproj"/>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Kafka" />
+    <Folder Include="Kafka"/>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="1.8.2" />
+    <PackageReference Include="Confluent.Kafka" Version="1.8.2"/>
   </ItemGroup>
 </Project>

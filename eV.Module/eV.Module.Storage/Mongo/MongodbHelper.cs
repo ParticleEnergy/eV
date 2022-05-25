@@ -8,7 +8,7 @@ namespace eV.Module.Storage.Mongo;
 
 public static class MongodbHelper
 {
-#region Resource
+    #region Resource
     public static IMongoClient? GetMongoClient(string name)
     {
         MongoClient? client = MongodbManager.Instance.GetClient(name);

@@ -111,7 +111,7 @@ public class Server : IServer
         }
         try
         {
-            var channel = _channelPool.Pop();
+            TcpChannel? channel = _channelPool.Pop();
             if (channel != null)
             {
                 socketAsyncEventArgs.AcceptSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, _tcpKeepAliveTime);
