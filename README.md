@@ -1,10 +1,9 @@
 # eV
-```c#
+```C#
 todo list
 
 module
-   eV.AppPushNotification
-   eV.Storage
-   eV.Queue
+   eV.Module.PushNotification
+   eV.Module.Queue
 ```
 

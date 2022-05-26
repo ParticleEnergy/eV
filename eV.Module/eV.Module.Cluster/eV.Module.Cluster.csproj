@@ -16,10 +16,13 @@
     <RootNamespace>eV.Module.Cluster</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="KubernetesClient" Version="8.0.4"/>
-    <PackageReference Include="StackExchange.Redis" Version="2.5.61"/>
+    <PackageReference Include="KubernetesClient" Version="8.0.4" />
+    <PackageReference Include="StackExchange.Redis" Version="2.5.61" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\eV.Module.EasyLog\eV.Module.EasyLog.csproj"/>
+    <ProjectReference Include="..\eV.Module.EasyLog\eV.Module.EasyLog.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interface" />
   </ItemGroup>
 </Project>
