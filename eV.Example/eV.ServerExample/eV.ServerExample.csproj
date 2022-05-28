@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\eV.Framework\eV.Framework.Server\eV.Framework.Server.csproj"/>
-    <ProjectReference Include="..\eV.PublicObject\eV.PublicObject.csproj"/>
+    <ProjectReference Include="..\..\eV.Framework\eV.Framework.Server\eV.Framework.Server.csproj" />
+    <ProjectReference Include="..\eV.PublicObject\eV.PublicObject.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,9 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Logic\Dal"/>
-    <Folder Include="Logic\Service"/>
-    <Folder Include="Object\ValueObject"/>
+    <Folder Include="Logic\Dal" />
+    <Folder Include="Logic\Service" />
+    <Folder Include="Object\ValueObject" />
   </ItemGroup>
 
 </Project>
