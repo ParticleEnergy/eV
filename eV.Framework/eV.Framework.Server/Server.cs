@@ -25,7 +25,7 @@ public class Server
 
     public Server()
     {
-        Logger.SetLogger(new Log());
+        Logger.SetLogger(new Log(Configure.Instance.BaseOptions.ProjectName));
 
         _sessionExtension.OnActivateEvent += SessionOnActivate;
         _sessionExtension.OnReleaseEvent += SessionOnRelease;
