@@ -8,18 +8,27 @@ namespace eV.Framework.Server;
 
 public class Configure
 {
+    private const string ProjectNameKey = "ProjectName";
+    private const string BaseOptionKey = "Base";
+    private const string ServerOptionKey = "Server";
+    private const string ClusterOptionKey = "Cluster";
+    private const string MongodbOptionKey = "Mongodb";
+    private const string RedisOptionKey = "Redis";
+    private const string KafkaOptionKey = "Kafka";
 
     private Configure()
     {
-        ConfigurationBuilder builder = new();
-
         object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyConfigurationAttribute), false);
+
+        ConfigurationBuilder builder = new();
         builder.AddJsonFile(attributes.Length == 0 ? "appsettings.json" : ((AssemblyConfigurationAttribute)attributes[0]).Configuration);
         Config = builder.Build();
 
-        BaseOptions = Config.GetSection(BaseOptions.Keyword).Get<BaseOptions>();
-        ServerOptions = Config.GetSection(ServerOptions.Keyword).Get<ServerOptions>();
-        StorageOptions = Config.GetSection(StorageOptions.Keyword).Get<StorageOptions>();
+        ProjectName = Config.GetSection(ProjectNameKey).Value;
+        BaseOption = Config.GetSection(BaseOptionKey).Get<BaseOption>();
+        ServerOption = Config.GetSection(ServerOptionKey).Get<ServerOption>();
+        MongodbOption = Config.GetSection(MongodbOptionKey).Get<Dictionary<string, string>>();
+        RedisOption = Config.GetSection(RedisOptionKey).Get<Dictionary<string, RedisOption>>();
     }
 
     public IConfiguration Config
@@ -31,8 +40,10 @@ public class Configure
         get;
     } = new();
     #region Options
-    public BaseOptions BaseOptions { get; }
-    public ServerOptions ServerOptions { get; }
-    public StorageOptions StorageOptions { get; }
+    public string ProjectName { get; }
+    public BaseOption BaseOption { get; }
+    public ServerOption ServerOption { get; }
+    public Dictionary<string, string>? MongodbOption { get; }
+    public Dictionary<string, RedisOption>? RedisOption { get; }
     #endregion
 }

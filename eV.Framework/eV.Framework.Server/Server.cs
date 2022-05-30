@@ -13,19 +13,20 @@ using eV.Module.Storage.Redis;
 using eV.Network.Core;
 using eV.Network.Core.Interface;
 using eV.Network.Tcp.Server;
+using StackExchange.Redis;
 using eVNetworkServer = eV.Network.Tcp.Server.Server;
 namespace eV.Framework.Server;
 
 public class Server
 {
-    private readonly IdleDetection _idleDetection = new(Configure.Instance.ServerOptions.SessionMaximumIdleTime);
+    private readonly IdleDetection _idleDetection = new(Configure.Instance.ServerOption.SessionMaximumIdleTime);
     private readonly eVNetworkServer _server = new(GetServerSetting());
 
     private readonly SessionExtension _sessionExtension = new();
 
     public Server()
     {
-        Logger.SetLogger(new Log(Configure.Instance.BaseOptions.ProjectName));
+        Logger.SetLogger(new Log(Configure.Instance.ProjectName));
 
         _sessionExtension.OnActivateEvent += SessionOnActivate;
         _sessionExtension.OnReleaseEvent += SessionOnRelease;
@@ -37,15 +38,13 @@ public class Server
     {
         Logger.Info(DefaultSetting.Logo);
         Profile.Init(
-            Configure.Instance.BaseOptions.PublicObjectNamespace,
-            Configure.Instance.BaseOptions.GameProfilePath,
+            Configure.Instance.BaseOption.PublicObjectNamespace,
+            Configure.Instance.BaseOption.GameProfilePath,
             new GameProfileParser(),
-            Configure.Instance.BaseOptions.GameProfileMonitoringChange
+            Configure.Instance.BaseOption.GameProfileMonitoringChange
         );
-        if (Configure.Instance.StorageOptions.Mongodb != null)
-            MongodbManager.Instance.Start(Configure.Instance.StorageOptions.Mongodb);
-        if (Configure.Instance.StorageOptions.Redis != null)
-            RedisManager.Instance.Start(Configure.Instance.StorageOptions.Redis);
+        LoadMongodb();
+        LoadRedis();
         RegisterHandler();
 
         _server.Start();
@@ -70,36 +69,36 @@ public class Server
     private static ServerSetting GetServerSetting()
     {
         ServerSetting serverSetting = new();
-        if (!Configure.Instance.ServerOptions.Host.Equals(""))
-            serverSetting.Host = Configure.Instance.ServerOptions.Host;
+        if (!Configure.Instance.ServerOption.Host.Equals(""))
+            serverSetting.Host = Configure.Instance.ServerOption.Host;
 
-        if (Configure.Instance.ServerOptions.Port > 0)
-            serverSetting.Port = Configure.Instance.ServerOptions.Port;
+        if (Configure.Instance.ServerOption.Port > 0)
+            serverSetting.Port = Configure.Instance.ServerOption.Port;
 
-        if (Configure.Instance.ServerOptions.Backlog > 0)
-            serverSetting.Backlog = Configure.Instance.ServerOptions.Backlog;
+        if (Configure.Instance.ServerOption.Backlog > 0)
+            serverSetting.Backlog = Configure.Instance.ServerOption.Backlog;
 
-        if (Configure.Instance.ServerOptions.MaxConnectionCount > 0)
-            serverSetting.MaxConnectionCount = Configure.Instance.ServerOptions.MaxConnectionCount;
+        if (Configure.Instance.ServerOption.MaxConnectionCount > 0)
+            serverSetting.MaxConnectionCount = Configure.Instance.ServerOption.MaxConnectionCount;
 
-        if (Configure.Instance.ServerOptions.ReceiveBufferSize > 0)
-            serverSetting.ReceiveBufferSize = Configure.Instance.ServerOptions.ReceiveBufferSize;
+        if (Configure.Instance.ServerOption.ReceiveBufferSize > 0)
+            serverSetting.ReceiveBufferSize = Configure.Instance.ServerOption.ReceiveBufferSize;
 
-        if (Configure.Instance.ServerOptions.TcpKeepAliveTime > 0)
-            serverSetting.TcpKeepAliveTime = Configure.Instance.ServerOptions.TcpKeepAliveTime;
+        if (Configure.Instance.ServerOption.TcpKeepAliveTime > 0)
+            serverSetting.TcpKeepAliveTime = Configure.Instance.ServerOption.TcpKeepAliveTime;
 
-        if (Configure.Instance.ServerOptions.TcpKeepAliveInterval > 0)
-            serverSetting.TcpKeepAliveInterval = Configure.Instance.ServerOptions.TcpKeepAliveInterval;
+        if (Configure.Instance.ServerOption.TcpKeepAliveInterval > 0)
+            serverSetting.TcpKeepAliveInterval = Configure.Instance.ServerOption.TcpKeepAliveInterval;
 
-        if (Configure.Instance.ServerOptions.TcpKeepAliveRetryCount > 0)
-            serverSetting.TcpKeepAliveRetryCount = Configure.Instance.ServerOptions.TcpKeepAliveRetryCount;
+        if (Configure.Instance.ServerOption.TcpKeepAliveRetryCount > 0)
+            serverSetting.TcpKeepAliveRetryCount = Configure.Instance.ServerOption.TcpKeepAliveRetryCount;
 
         return serverSetting;
     }
 
     private static void RegisterHandler()
     {
-        Dispatch.RegisterServer(Configure.Instance.BaseOptions.HandlerNamespace, Configure.Instance.BaseOptions.PublicObjectNamespace);
+        Dispatch.RegisterServer(Configure.Instance.BaseOption.HandlerNamespace, Configure.Instance.BaseOption.PublicObjectNamespace);
 
         Dispatch.AddCustomHandler(typeof(ClientKeepaliveHandler), typeof(ClientKeepalive));
         Dispatch.AddCustomHandler(typeof(ClientJoinGroupHandler), typeof(ClientJoinGroup));
@@ -112,5 +111,45 @@ public class Server
     public event SessionEvent? OnConnected;
     public event SessionEvent? SessionOnActivate;
     public event SessionEvent? SessionOnRelease;
+    #endregion
+
+
+    #region Storage
+    private static void LoadRedis()
+    {
+        if (Configure.Instance.RedisOption == null)
+            return;
+        Dictionary<string, ConfigurationOptions> configs = new();
+
+        foreach ((string name, var option) in Configure.Instance.RedisOption)
+        {
+            if (option.Address.Length <= 0)
+                return;
+
+            ConfigurationOptions config = new();
+            foreach (string[] address in option.Address.Select(address => address.Split(":")))
+            {
+                config.EndPoints.Add(address[0] , Convert.ToInt32(address[1]));
+            }
+
+            if (option.User != null)
+                config.User = option.User;
+            if (option.Password != null)
+                config.Password = option.Password;
+            if (option.Keepalive != null)
+                config.KeepAlive = (int)option.Keepalive;
+            config.DefaultVersion = new Version(4, 0, 9);
+            config.DefaultDatabase = option.Address.Length == 1 && option.Database != null ? option.Database : 0;
+
+            configs[name] = config;
+        }
+        RedisManager.Instance.Start(configs);
+    }
+
+    private static void LoadMongodb()
+    {
+        if (Configure.Instance.MongodbOption != null)
+            MongodbManager.Instance.Start(Configure.Instance.MongodbOption);
+    }
     #endregion
 }

@@ -3,11 +3,8 @@
 
 namespace eV.Framework.Server.Options;
 
-public class BaseOptions
+public class BaseOption
 {
-    public const string Keyword = "Base";
-
-    public string ProjectName { get; set; } = string.Empty;
     public string HandlerNamespace { get; set; } = string.Empty;
     public string PublicObjectNamespace { get; set; } = string.Empty;
     public string GameProfilePath { get; set; } = string.Empty;

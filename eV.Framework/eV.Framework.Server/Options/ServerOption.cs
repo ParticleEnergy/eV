@@ -3,10 +3,8 @@
 
 namespace eV.Framework.Server.Options;
 
-public class ServerOptions
+public class ServerOption
 {
-    public const string Keyword = "Server";
-
     public string Host { get; set; } = string.Empty;
     public int Port { get; set; }
     public int Backlog { get; set; }
