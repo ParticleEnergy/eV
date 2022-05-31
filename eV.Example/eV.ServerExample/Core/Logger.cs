@@ -14,9 +14,9 @@ public class Logger : ILogger
         {
             case LogLevel.Trace:
                 if (exception == null)
-                    EasyLogger.Fatal(message);
+                    EasyLogger.Debug(message);
                 else
-                    EasyLogger.Fatal(message, exception);
+                    EasyLogger.Debug(message, exception);
                 break;
             case LogLevel.Debug:
                 if (exception == null)
@@ -44,9 +44,9 @@ public class Logger : ILogger
                 break;
             case LogLevel.Critical:
                 if (exception == null)
-                    EasyLogger.Fatal(message);
+                    EasyLogger.Debug(message);
                 else
-                    EasyLogger.Fatal(message, exception);
+                    EasyLogger.Debug(message, exception);
                 break;
             case LogLevel.None:
                 if (exception == null)

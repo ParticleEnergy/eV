@@ -31,7 +31,7 @@ public class Log : ILogProvider
                     break;
                 case LogLevel.Trace:
                 default:
-                    EasyLogger.Fatal(message, exception);
+                    EasyLogger.Debug(message, exception);
                     break;
             }
             return true;

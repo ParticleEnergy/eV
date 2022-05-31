@@ -29,6 +29,8 @@ public class Configure
         ServerOption = Config.GetSection(ServerOptionKey).Get<ServerOption>();
         MongodbOption = Config.GetSection(MongodbOptionKey).Get<Dictionary<string, string>>();
         RedisOption = Config.GetSection(RedisOptionKey).Get<Dictionary<string, RedisOption>>();
+        KafkaOption = Config.GetSection(KafkaOptionKey).Get<KafkaOption>();
+        ClusterOption = Config.GetSection(ClusterOptionKey).Get<ClusterOption>();
     }
 
     public IConfiguration Config
@@ -45,5 +47,7 @@ public class Configure
     public ServerOption ServerOption { get; }
     public Dictionary<string, string>? MongodbOption { get; }
     public Dictionary<string, RedisOption>? RedisOption { get; }
+    public KafkaOption? KafkaOption { get; }
+    public ClusterOption? ClusterOption { get; }
     #endregion
 }
