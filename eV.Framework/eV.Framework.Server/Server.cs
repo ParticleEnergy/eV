@@ -2,9 +2,12 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 
+using System.Net;
+using Confluent.Kafka;
 using eV.Framework.Server.SystemHandler;
 using eV.Module.EasyLog;
 using eV.Module.GameProfile;
+using eV.Module.Queue.Kafka;
 using eV.Module.Routing;
 using eV.Module.Routing.Interface;
 using eV.Module.Session;
@@ -45,6 +48,7 @@ public class Server
         );
         LoadMongodb();
         LoadRedis();
+        LoadKafka();
         RegisterHandler();
 
         _server.Start();
@@ -56,6 +60,7 @@ public class Server
         _idleDetection.Stop();
         _server.Stop();
         RedisManager.Instance.Stop();
+        KafkaManger<string, object>.Instance.Stop();
     }
 
     private void ServerOnAcceptConnect(ITcpChannel channel)
@@ -129,7 +134,7 @@ public class Server
             ConfigurationOptions config = new();
             foreach (string[] address in option.Address.Select(address => address.Split(":")))
             {
-                config.EndPoints.Add(address[0] , Convert.ToInt32(address[1]));
+                config.EndPoints.Add(address[0], Convert.ToInt32(address[1]));
             }
 
             if (option.User != null)
@@ -150,6 +155,129 @@ public class Server
     {
         if (Configure.Instance.MongodbOption != null)
             MongodbManager.Instance.Start(Configure.Instance.MongodbOption);
+    }
+    #endregion
+
+    #region Queue
+    private static void LoadKafka()
+    {
+        if (Configure.Instance.KafkaOption == null)
+            return;
+
+        Dictionary<string, KeyValuePair<ProducerConfig, ConsumerConfig>> configs = new();
+        foreach ((string name, var option) in Configure.Instance.KafkaOption)
+        {
+            ProducerConfig producerConfig = new()
+            {
+                BootstrapServers = option.Address,
+                ClientId = Dns.GetHostName(),
+                SocketKeepaliveEnable = true
+
+            };
+            ConsumerConfig consumerConfig = new()
+            {
+                BootstrapServers = option.Address,
+                GroupId = Configure.Instance.ProjectName,
+                AutoOffsetReset = AutoOffsetReset.Earliest,
+                EnableAutoCommit = true,
+                EnablePartitionEof = true,
+                SocketKeepaliveEnable = true
+            };
+            if (!option.SaslMechanism.Equals(""))
+            {
+                switch (option.SaslMechanism)
+                {
+                    case "Gssapi":
+                        producerConfig.SaslMechanism = SaslMechanism.Gssapi;
+                        producerConfig.SaslMechanism = SaslMechanism.Gssapi;
+                        break;
+                    case "Plain":
+                        producerConfig.SaslMechanism = SaslMechanism.Plain;
+                        consumerConfig.SaslMechanism = SaslMechanism.Plain;
+                        break;
+                    case "ScramSha256":
+                        producerConfig.SaslMechanism = SaslMechanism.ScramSha256;
+                        consumerConfig.SaslMechanism = SaslMechanism.ScramSha256;
+                        break;
+                    case "ScramSha512":
+                        producerConfig.SaslMechanism = SaslMechanism.ScramSha512;
+                        consumerConfig.SaslMechanism = SaslMechanism.ScramSha512;
+                        break;
+                    case "OAuthBearer":
+                        producerConfig.SaslMechanism = SaslMechanism.OAuthBearer;
+                        consumerConfig.SaslMechanism = SaslMechanism.OAuthBearer;
+                        break;
+                    default:
+                        producerConfig.SaslMechanism = SaslMechanism.Plain;
+                        consumerConfig.SaslMechanism = SaslMechanism.Plain;
+                        break;
+                }
+            }
+            if (!option.SecurityProtocol.Equals(""))
+            {
+                switch (option.SecurityProtocol)
+                {
+                    case "Plaintext":
+                        producerConfig.SecurityProtocol = SecurityProtocol.Plaintext;
+                        producerConfig.SecurityProtocol = SecurityProtocol.Plaintext;
+                        break;
+                    case "Ssl":
+                        producerConfig.SecurityProtocol = SecurityProtocol.Ssl;
+                        consumerConfig.SecurityProtocol = SecurityProtocol.Ssl;
+                        break;
+                    case "SaslPlaintext":
+                        producerConfig.SecurityProtocol = SecurityProtocol.SaslPlaintext;
+                        consumerConfig.SecurityProtocol = SecurityProtocol.SaslPlaintext;
+                        break;
+                    case "SaslSsl":
+                        producerConfig.SecurityProtocol = SecurityProtocol.SaslSsl;
+                        consumerConfig.SecurityProtocol = SecurityProtocol.SaslSsl;
+                        break;
+                    default:
+                        producerConfig.SecurityProtocol = SecurityProtocol.SaslSsl;
+                        consumerConfig.SecurityProtocol = SecurityProtocol.SaslSsl;
+                        break;
+                }
+            }
+            if (!option.SaslUsername.Equals(""))
+            {
+                producerConfig.SaslUsername = option.SaslUsername;
+                consumerConfig.SaslUsername = option.SaslUsername;
+            }
+            if (!option.SaslPassword.Equals(""))
+            {
+                producerConfig.SaslPassword = option.SaslPassword;
+                consumerConfig.SaslPassword = option.SaslPassword;
+            }
+            if (option.SocketTimeoutMs > 0)
+            {
+                producerConfig.SocketTimeoutMs = option.SocketTimeoutMs;
+                consumerConfig.SocketTimeoutMs = option.SocketTimeoutMs;
+            }
+            if (option.SocketReceiveBufferBytes > 0)
+            {
+                producerConfig.SocketReceiveBufferBytes = option.SocketReceiveBufferBytes;
+                consumerConfig.SocketReceiveBufferBytes = option.SocketReceiveBufferBytes;
+            }
+            if (option.SocketSendBufferBytes > 0)
+            {
+                producerConfig.SocketSendBufferBytes = option.SocketSendBufferBytes;
+                consumerConfig.SocketSendBufferBytes = option.SocketSendBufferBytes;
+            }
+
+            if (option.HeartbeatIntervalMs > 0)
+            {
+                consumerConfig.HeartbeatIntervalMs = option.HeartbeatIntervalMs;
+            }
+            if (option.SessionTimeoutMs > 0)
+            {
+                consumerConfig.SessionTimeoutMs = option.SessionTimeoutMs;
+            }
+
+            configs[name] = KeyValuePair.Create(producerConfig, consumerConfig);
+        }
+
+        KafkaManger<string, object>.Instance.Start(configs);
     }
     #endregion
 }

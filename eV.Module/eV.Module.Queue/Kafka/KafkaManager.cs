@@ -38,6 +38,7 @@ public class KafkaManger<TKey, TValue>
         {
             Kafka<TKey, TValue> kafka = new(CreateProducer(config.Key), config.Value, CreateConsumer);
             _kafka[name] = kafka;
+            Logger.Info($"Kafka [{name}] connected success");
         }
     }
 
@@ -51,8 +52,10 @@ public class KafkaManger<TKey, TValue>
     {
         foreach ((string name, var kafka) in _kafka)
         {
+            kafka.Producer.Flush();
+            kafka.Producer.Dispose();
             kafka.CancellationTokenSource.Cancel();
-            Logger.Info($"Kafka {name} Stop");
+            Logger.Info($"Kafka [{name}] stop");
         }
     }
 
