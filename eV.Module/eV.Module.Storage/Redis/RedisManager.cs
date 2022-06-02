@@ -27,10 +27,10 @@ public class RedisManager
             return;
         _isStart = true;
 
-        foreach ((string name, ConfigurationOptions options) in redisOptions)
+        foreach ((string name, ConfigurationOptions option) in redisOptions)
             try
             {
-                ConnectionMultiplexer conn = ConnectionMultiplexer.Connect(options);
+                ConnectionMultiplexer conn = ConnectionMultiplexer.Connect(option);
                 if (!conn.IsConnected)
                     continue;
                 _redisConnection.Add(name, conn);

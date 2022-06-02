@@ -73,13 +73,13 @@ config["test"] = KeyValuePair.Create(
     }
 );
 
-KafkaManger<string, object>.Instance.Start(config);
+KafkaManger.Instance.Start(config);
 
-KafkaManger<string, object>.Instance.GetKafka("test")!.Produce("test_topic", "testKey", "123", Console.WriteLine);
+KafkaManger.Instance.GetKafka("test")!.Produce("test_topic", "testKey", "123", Console.WriteLine);
 
 // KafkaManger<string, object>.Instance.GetKafka("test")!.Producer.Flush();
 
-KafkaManger<string, object>.Instance.GetKafka("test")!.Consume(delegate(IConsumer<string, object> consumer)
+KafkaManger.Instance.GetKafka("test")!.Consume(delegate(IConsumer<string, object> consumer)
 {
     consumer.Subscribe("test_topic");
 }, delegate(ConsumeResult<string, object>? result )

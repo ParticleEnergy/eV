@@ -7,25 +7,19 @@ using eV.Module.Queue.Kafka.Handler;
 using eV.Module.Queue.Kafka.Serializer;
 namespace eV.Module.Queue.Kafka;
 
-public class KafkaManger<TKey, TValue>
+public class KafkaManger
 {
-    private readonly Dictionary<string, Kafka<TKey, TValue>> _kafka;
-    private readonly ErrorHandler<TKey, TValue> _errorHandler;
-    private readonly LogHandler<TKey, TValue> _logHandler;
-
+    private readonly Dictionary<string, Kafka<string, object>> _kafka;
     private bool _isStart;
 
-    public static KafkaManger<TKey, TValue> Instance
+    public static KafkaManger Instance
     {
         get;
     } = new();
 
-
-    public KafkaManger()
+    private KafkaManger()
     {
-        _errorHandler = new ErrorHandler<TKey, TValue>();
-        _logHandler = new LogHandler<TKey, TValue>();
-        _kafka = new Dictionary<string, Kafka<TKey, TValue>>();
+        _kafka = new Dictionary<string, Kafka<string, object>>();
         _isStart = false;
     }
 
@@ -34,38 +28,44 @@ public class KafkaManger<TKey, TValue>
         if (_isStart)
             return;
         _isStart = true;
-        foreach ((string name, KeyValuePair<ProducerConfig, ConsumerConfig> config)in kafkaConfigs)
-        {
-            Kafka<TKey, TValue> kafka = new(CreateProducer(config.Key), config.Value, CreateConsumer);
-            _kafka[name] = kafka;
-            Logger.Info($"Kafka [{name}] connected success");
-        }
-    }
 
-    public Kafka<TKey, TValue>? GetKafka(string name)
-    {
-        _kafka.TryGetValue(name, out Kafka<TKey, TValue>? kafka);
-        return kafka;
+        foreach ((string name, (ProducerConfig? producerConfig, ConsumerConfig? consumerConfig))in kafkaConfigs)
+            try
+            {
+                Kafka<string, object> kafka = new(CreateProducer(producerConfig), consumerConfig, CreateConsumer);
+                _kafka[name] = kafka;
+                Logger.Info($"Kafka [{name}] connected success");
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e.Message, e);
+            }
     }
 
     public void Stop()
     {
         foreach ((string name, var kafka) in _kafka)
         {
+            kafka.CancellationTokenSource.Cancel();
             kafka.Producer.Flush();
             kafka.Producer.Dispose();
-            kafka.CancellationTokenSource.Cancel();
             Logger.Info($"Kafka [{name}] stop");
         }
     }
 
-    private IProducer<TKey, TValue> CreateProducer(ProducerConfig config)
+    private static IProducer<string, object> CreateProducer(ProducerConfig config)
     {
-        return new ProducerBuilder<TKey, TValue>(config).SetValueSerializer(new SerializeBson<TValue>()).SetErrorHandler(_errorHandler.ProducerErrorHandler).SetLogHandler(_logHandler.ProducerErrorHandler).Build();
+        return new ProducerBuilder<string, object>(config).SetErrorHandler(ErrorHandler.ProducerErrorHandler).SetLogHandler(LogHandler.ProducerErrorHandler).SetValueSerializer(new SerializeBson<object>()).Build();
     }
 
-    private IConsumer<TKey, TValue> CreateConsumer(ConsumerConfig config)
+    private static IConsumer<string, object> CreateConsumer(ConsumerConfig config)
     {
-        return new ConsumerBuilder<TKey, TValue>(config).SetValueDeserializer(new SerializeBson<TValue>()).SetErrorHandler(_errorHandler.ConsumerErrorHandler).SetLogHandler(_logHandler.ConsumerErrorHandler).Build();
+        return new ConsumerBuilder<string, object>(config).SetErrorHandler(ErrorHandler.ConsumerErrorHandler).SetLogHandler(LogHandler.ConsumerErrorHandler).SetValueDeserializer(new SerializeBson<object>()).Build();
+    }
+
+    public Kafka<string, object>? GetKafka(string name)
+    {
+        _kafka.TryGetValue(name, out Kafka<string, object>? kafka);
+        return kafka;
     }
 }

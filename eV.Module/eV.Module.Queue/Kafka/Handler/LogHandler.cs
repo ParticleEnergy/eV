@@ -5,11 +5,11 @@ using Confluent.Kafka;
 using eV.Module.EasyLog;
 namespace eV.Module.Queue.Kafka.Handler;
 
-public class LogHandler<TKey, TValue>
+public static class LogHandler
 {
-    public void ProducerErrorHandler(IProducer<TKey, TValue> _, LogMessage message) => Log(message);
+    public static void ProducerErrorHandler<TKey, TValue>(IProducer<TKey, TValue> _, LogMessage message) => Log(message);
 
-    public void ConsumerErrorHandler(IConsumer<TKey, TValue> _, LogMessage message) => Log(message);
+    public static void ConsumerErrorHandler<TKey, TValue>(IConsumer<TKey, TValue> _, LogMessage message) => Log(message);
 
     private static void Log(LogMessage message)
     {

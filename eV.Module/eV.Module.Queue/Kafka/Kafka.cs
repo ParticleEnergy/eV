@@ -74,7 +74,6 @@ public class Kafka<TKey, TValue>
         );
     }
 
-
     public void Consume(ConsumerConfig config, Action<IConsumer<TKey, TValue>> preparation, Func<ConsumeResult<TKey, TValue>, bool> consume, Action<IConsumer<TKey, TValue>, bool>? result = null)
     {
         config.BootstrapServers = _consumerConfig.BootstrapServers;

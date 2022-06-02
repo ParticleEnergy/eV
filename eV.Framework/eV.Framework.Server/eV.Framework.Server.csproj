@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\eV.Module\eV.Module.Cluster\eV.Module.Cluster.csproj" />
     <ProjectReference Include="..\..\eV.Module\eV.Module.GameProfile\eV.Module.GameProfile.csproj" />
+    <ProjectReference Include="..\..\eV.Module\eV.Module.Queue\eV.Module.Queue.csproj" />
     <ProjectReference Include="..\..\eV.Module\eV.Module.Routing\eV.Module.Routing.csproj" />
     <ProjectReference Include="..\..\eV.Module\eV.Module.Session\eV.Module.Session.csproj" />
     <ProjectReference Include="..\..\eV.Module\eV.Module.Storage\eV.Module.Storage.csproj" />

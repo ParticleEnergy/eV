@@ -5,5 +5,7 @@ namespace eV.Module.Cluster;
 
 public class Cluster
 {
-
+    public Cluster(ClusterSetting setting)
+    {
+    }
 }

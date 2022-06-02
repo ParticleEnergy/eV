@@ -5,6 +5,8 @@ namespace eV.Module.Cluster.Interface;
 
 public interface ISessionRegistrationAuthority
 {
-    public void Registry(string pod, string sessionId);
-    public void Deregister(string pod, string sessionId);
+    // public void Registry(string nodeName, string sessionId);
+    // public void Deregister(string nodeName, string sessionId);
+    // public string GetNodeName(string sessionId);
+    // public List<string> GetSessionIdList(string nodeName);
 }
