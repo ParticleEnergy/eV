@@ -8,136 +8,146 @@ namespace eV.Module.Cluster;
 
 public class CommunicationQueue : ICommunicationQueue
 {
-    // private readonly string _clusterName;
-    // private readonly string _nodeName;
-    // private event Func<string, byte[], bool>? SendAction;
-    // private event Action<string, byte[]>? SendGroupAction;
-    // private event Action<byte[]>? SendBroadcastAction;
-    //
-    // private readonly int _pipelineNumber;
-    //
-    // private IProducer<string, byte[]>? _producer;
-    // private IConsumer<string, byte[]>? _consumerSend;
-    // private IConsumer<string, byte[]>? _consumerSendGroup;
-    // private IConsumer<string, byte[]>? _consumerSendBroadcast;
-    //
-    // public readonly string QueueSend;
-    // public readonly string QueueSendGroup;
-    // public readonly string QueueSendBroadcast;
-    // public CommunicationQueue(string clusterName, string nodeName, int pipelineNumber, KeyValuePair<ProducerConfig, ConsumerConfig> kafkaOption)
-    // {
-    //     _clusterName = clusterName;
-    //     _nodeName = nodeName;
-    //     _pipelineNumber = pipelineNumber;
-    //
-    //     QueueSend = string.Format(Define.TopicQueueSend, _clusterName, _nodeName);
-    //     QueueSendGroup = string.Format(Define.TopicQueueSendGroup, _clusterName);
-    //     QueueSendBroadcast = string.Format(Define.TopicQueueSendBroadcast, _clusterName);
-    //
-    //     InitKafka(kafkaOption);
-    // }
-    //
-    // public void SendProducer(string sessionId, byte[] data)
-    // {
-    // }
-    //
-    // public void SendGroupProducer(string groupId, byte[] data)
-    // {
-    //     _producer.Produce(QueueSendGroup, new Message<string, byte[]>{Key = groupId, Value = data});
-    // }
-    //
-    // public void SendBroadcastProducer(byte[] data)
-    // {
-    //     _producer.Produce(QueueSendBroadcast, new Message<string, byte[]>{Value = data});
-    // }
-    //
-    // private void Consumer()
-    // {
-    //
-    // }
-    //
-    // private void InitKafka(KeyValuePair<ProducerConfig, ConsumerConfig> kafkaOption)
-    // {
-    //     (ProducerConfig? producerConfig, ConsumerConfig? consumerConfig) = kafkaOption;
-    //
-    //     _producer = new ProducerBuilder<string, byte[]>(producerConfig).SetErrorHandler(
-    //         delegate(IProducer<string, byte[]> _, Error error)
-    //         {
-    //             Logger.Error($"Cluster [{_clusterName}] [{_nodeName}] Kafka Error code:{error.Code} reason: {error.Reason}");
-    //         }
-    //     ).SetLogHandler(delegate(IProducer<string, byte[]> _, LogMessage message) { Log(message); }).Build();
-    //
-    //     _consumerSend = GetConsumerConfig(consumerConfig, _clusterName);
-    //     _consumerSendGroup = GetConsumerConfig(consumerConfig, _nodeName);
-    //     _consumerSendBroadcast = GetConsumerConfig(consumerConfig, _nodeName);
-    // }
-    //
-    // private IConsumer<string, byte[]> GetConsumerConfig(ConsumerConfig config, string groupId)
-    // {
-    //     ConsumerConfig consumerConfig = new()
-    //     {
-    //         AutoOffsetReset = AutoOffsetReset.Earliest,
-    //         EnableAutoCommit = true,
-    //         EnablePartitionEof = true,
-    //         SocketKeepaliveEnable = true,
-    //         BootstrapServers = config.BootstrapServers,
-    //
-    //         SaslMechanism = config.SaslMechanism,
-    //         SecurityProtocol = config.SecurityProtocol,
-    //         SaslUsername = config.SaslUsername,
-    //         SaslPassword = config.SaslPassword,
-    //
-    //         SocketTimeoutMs = config.SocketTimeoutMs,
-    //         SocketReceiveBufferBytes = config.SocketReceiveBufferBytes,
-    //         SocketSendBufferBytes = config.SocketSendBufferBytes,
-    //
-    //         HeartbeatIntervalMs = config.HeartbeatIntervalMs,
-    //         SessionTimeoutMs = config.SessionTimeoutMs,
-    //
-    //         GroupId = groupId
-    //     };
-    //
-    //    return  new ConsumerBuilder<string, byte[]>(consumerConfig).SetErrorHandler(
-    //         delegate(IConsumer<string, byte[]> _, Error error)
-    //         {
-    //             Logger.Error($"Cluster [{_clusterName}] [{_nodeName}] Kafka Error code:{error.Code} reason: {error.Reason}");
-    //         }
-    //     ).SetLogHandler(delegate(IConsumer<string, byte[]> _, LogMessage message) { Log(message); }).Build();
-    // }
-    //
-    //
-    // private void Log(LogMessage logMessage)
-    // {
-    //     string message = $"Cluster [{_clusterName}] [{_nodeName}] Kafka {logMessage.Message}";
-    //     switch (logMessage.Level)
-    //     {
-    //         case SyslogLevel.Emergency:
-    //             Logger.Fatal(message);
-    //             break;
-    //         case SyslogLevel.Alert:
-    //             Logger.Warn(message);
-    //             break;
-    //         case SyslogLevel.Critical:
-    //             Logger.Debug(message);
-    //             break;
-    //         case SyslogLevel.Error:
-    //             Logger.Error(message);
-    //             break;
-    //         case SyslogLevel.Warning:
-    //             Logger.Warn(message);
-    //             break;
-    //         case SyslogLevel.Notice:
-    //             Logger.Debug(message);
-    //             break;
-    //         case SyslogLevel.Info:
-    //             Logger.Info(message);
-    //             break;
-    //         case SyslogLevel.Debug:
-    //             Logger.Debug(message);
-    //             break;
-    //         default:
-    //             Logger.Info(message);
-    //             break;
-    //     }
-    // }
+    private readonly string _clusterName;
+    private readonly string _nodeName;
+
+    public event Func<string, byte[], bool>? SendAction;
+    public event Action<string, byte[]>? SendGroupAction;
+    public event Action<byte[]>? SendBroadcastAction;
+
+    private const string GroupIdPrefix = "eV-Cluster-GroupId";
+    private const string TopicPrefix = "eV-Cluster-Topic";
+
+    private static readonly string s_sendTopicFormat = $"{0}-Cluster:{1}-Node:{2}-Send";
+
+    private readonly string _sendTopic;
+    private readonly string _sendGroupTopic;
+    private readonly string _sendBroadcastTopic;
+
+    private readonly int _consumeSendPipelineNumber;
+    private readonly int _consumeSendGroupPipelineNumber;
+    private readonly int _consumeSendBroadcastPipelineNumber;
+
+    private readonly ISessionRegistrationAuthority _sessionRegistrationAuthority;
+
+    private readonly Kafka _kafka;
+
+    public CommunicationQueue(string clusterName, string nodeName, int consumeSendPipelineNumber, int consumeSendGroupPipelineNumber, int consumeSendBroadcastPipelineNumber, ISessionRegistrationAuthority sessionRegistrationAuthority, KeyValuePair<ProducerConfig, ConsumerConfig> kafkaOption)
+    {
+        _clusterName = clusterName;
+        _nodeName = nodeName;
+
+        _consumeSendPipelineNumber = consumeSendPipelineNumber;
+        _consumeSendGroupPipelineNumber = consumeSendGroupPipelineNumber;
+        _consumeSendBroadcastPipelineNumber = consumeSendBroadcastPipelineNumber;
+
+        _sessionRegistrationAuthority = sessionRegistrationAuthority;
+
+        _sendTopic = string.Format(s_sendTopicFormat, TopicPrefix, _clusterName, _nodeName);
+        _sendGroupTopic = $"{GroupIdPrefix}-Cluster:{_clusterName}-SendGroup";
+        _sendBroadcastTopic = $"{GroupIdPrefix}-Cluster:{_clusterName}-SendBroadcast";
+
+        _kafka = new Kafka(_clusterName, _nodeName, kafkaOption);
+    }
+
+    public void Send(string sessionId, byte[] data)
+    {
+        if (SendAction == null)
+            return;
+
+        string nodeName = _sessionRegistrationAuthority.GetNodeName(sessionId);
+        if (!nodeName.Equals(""))
+        {
+            _kafka.Produce(string.Format(s_sendTopicFormat, TopicPrefix, _clusterName, nodeName), sessionId, data);
+        }
+        else
+        {
+            Logger.Warn("The session: {sessionId} was not found in the registry");
+        }
+    }
+
+    public void SendGroup(string groupId, byte[] data)
+    {
+        _kafka.Produce(_sendGroupTopic, $"{_nodeName}:{groupId}", data);
+    }
+
+    public void SendBroadcast(byte[] data)
+    {
+        _kafka.Produce(_sendBroadcastTopic, _nodeName, data);
+    }
+
+    public void Start()
+    {
+        for (int i = 0; i < _consumeSendPipelineNumber;)
+        {
+            new Task(ConsumeSend).Start();
+        }
+
+        for (int i = 0; i < _consumeSendGroupPipelineNumber;)
+        {
+            new Task(ConsumeSendGroup).Start();
+        }
+
+        for (int i = 0; i < _consumeSendBroadcastPipelineNumber;)
+        {
+            new Task(ConsumeSendBroadcast).Start();
+        }
+    }
+
+    public void Stop()
+    {
+        _kafka.Stop();
+    }
+
+    private void ConsumeSend()
+    {
+        _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-Node:{_nodeName}-Send", _sendTopic, delegate(ConsumeResult<string, byte[]> result)
+        {
+            if (SendAction != null)
+            {
+                SendAction.Invoke(result.Message.Key, result.Message.Value);
+            }
+            else
+            {
+                Logger.Error("SendAction not defined");
+            }
+        });
+    }
+
+    private void ConsumeSendGroup()
+    {
+        _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendGroup", _sendGroupTopic, delegate(ConsumeResult<string, byte[]> result)
+        {
+            string[] queueData = result.Message.Key.Split(":");
+            if (queueData[0] == _nodeName)
+                return;
+            if (SendGroupAction != null)
+            {
+                SendGroupAction.Invoke(queueData[1], result.Message.Value);
+            }
+            else
+            {
+                Logger.Error("SendGroupAction not defined");
+            }
+        });
+    }
+
+    private void ConsumeSendBroadcast()
+    {
+        _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendBroadcast", _sendBroadcastTopic, delegate(ConsumeResult<string, byte[]> result)
+        {
+            string[] queueData = result.Message.Key.Split(":");
+            if (queueData[0] == _nodeName)
+                return;
+
+            if (SendBroadcastAction != null)
+            {
+                SendBroadcastAction.Invoke(result.Message.Value);
+            }
+            else
+            {
+                Logger.Error("SendBroadcastAction not defined");
+            }
+        });
+    }
 }

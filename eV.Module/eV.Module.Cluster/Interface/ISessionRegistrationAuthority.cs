@@ -5,8 +5,8 @@ namespace eV.Module.Cluster.Interface;
 
 public interface ISessionRegistrationAuthority
 {
-    // public void Registry(string nodeName, string sessionId);
-    // public void Deregister(string nodeName, string sessionId);
-    // public string GetNodeName(string sessionId);
-    // public List<string> GetSessionIdList(string nodeName);
+    public void Registry( string sessionId);
+    public void Deregister(string sessionId);
+    public string GetNodeName(string sessionId);
+    public List<string> GetAllSessionId();
 }

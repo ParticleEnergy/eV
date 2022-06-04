@@ -7,6 +7,11 @@ namespace eV.Module.Cluster;
 
 public abstract class ClusterSetting
 {
+    public string ClusterName { get; set; }
+    public int ConsumeSendPipelineNumber { get; set; }
+    public int ConsumeSendGroupPipelineNumber { get; set; }
+    public int ConsumeSendBroadcastPipelineNumber { get; set; }
+
     public ConfigurationOptions RedisOption { get; set; } = DefaultSetting.RedisOption;
     public KeyValuePair<ProducerConfig, ConsumerConfig> KafkaOption { get; set; } = DefaultSetting.KafkaOption;
 
