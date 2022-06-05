@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using Confluent.Kafka;
+using Confluent.Kafka.Admin;
 using eV.Module.EasyLog;
 namespace eV.Module.Queue.Kafka;
 
@@ -11,14 +12,17 @@ public class Kafka<TKey, TValue>
     {
         get;
     }
+    private readonly IAdminClient _adminClient;
 
     public CancellationTokenSource CancellationTokenSource { get; }
 
     private readonly Func<ConsumerConfig, IConsumer<TKey, TValue>> _createConsumer;
     private readonly ConsumerConfig _consumerConfig;
     private readonly CancellationToken _cancellationToken;
-    public Kafka(IProducer<TKey, TValue> producer, ConsumerConfig consumerConfig, Func<ConsumerConfig, IConsumer<TKey, TValue>> createConsumer)
+    public Kafka(IAdminClient adminClient, IProducer<TKey, TValue> producer, ConsumerConfig consumerConfig, Func<ConsumerConfig, IConsumer<TKey, TValue>> createConsumer)
     {
+        _adminClient = adminClient;
+
         Producer = producer;
         _createConsumer = createConsumer;
         _consumerConfig = consumerConfig;
@@ -132,9 +136,27 @@ public class Kafka<TKey, TValue>
                 bool flag = consume.Invoke(data);
                 result?.Invoke(consumer, flag);
             }
-            catch (Exception e)
+            catch (ConsumeException e)
             {
-                Logger.Error(e.Message, e);
+                if (e.Error.Code == ErrorCode.UnknownTopicOrPart)
+                {
+                    try
+                    {
+                        _adminClient.CreateTopicsAsync(new[]
+                        {
+                            new TopicSpecification
+                            {
+                                Name = e.ConsumerRecord.Topic
+                            }
+                        });
+                    }
+                    catch (Exception exception)
+                    {
+                        Logger.Error(exception.Message, exception);
+                    }
+                    continue;
+                }
+                Logger.Error($"Kafka Error code:{e.Error.Code} reason: {e.Error.Reason}");
             }
         }
     }

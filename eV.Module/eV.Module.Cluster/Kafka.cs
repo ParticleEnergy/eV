@@ -1,4 +1,8 @@
+// Copyright (c) ParticleEnergy. All rights reserved.
+// Licensed under the Apache license. See the LICENSE file in the project root for full license information.
+
 using Confluent.Kafka;
+using Confluent.Kafka.Admin;
 using eV.Module.EasyLog;
 namespace eV.Module.Cluster;
 
@@ -7,6 +11,7 @@ public class Kafka
     private readonly CancellationTokenSource _cancellationTokenSource;
     private readonly CancellationToken _cancellationToken;
 
+    private readonly IAdminClient _adminClient;
     private readonly IProducer<string, byte[]> _producer;
     private readonly ConsumerConfig _consumerConfig;
 
@@ -23,7 +28,13 @@ public class Kafka
 
         (ProducerConfig? producerConfig, ConsumerConfig? consumerConfig) = kafkaOption;
 
+        _adminClient = new AdminClientBuilder(new AdminClientConfig
+        {
+            BootstrapServers = producerConfig.BootstrapServers
+        }).Build();
+
         _consumerConfig = consumerConfig;
+        _consumerConfig.ClientId = $"eV.Cluster-{_consumerConfig.ClientId}";
 
         _producer = new ProducerBuilder<string, byte[]>(producerConfig).SetErrorHandler(
             delegate(IProducer<string, byte[]> _, Error error)
@@ -67,9 +78,27 @@ public class Kafka
 
                 action.Invoke(data);
             }
-            catch (Exception e)
+            catch (ConsumeException e)
             {
-                Logger.Error(e.Message, e);
+                if (e.Error.Code == ErrorCode.UnknownTopicOrPart)
+                {
+                    try
+                    {
+                        _adminClient.CreateTopicsAsync(new[]
+                        {
+                            new TopicSpecification
+                            {
+                                Name = e.ConsumerRecord.Topic
+                            }
+                        });
+                    }
+                    catch (Exception exception)
+                    {
+                        Logger.Error(exception.Message, exception);
+                    }
+                    continue;
+                }
+                Logger.Error($"Cluster [{_clusterName}] [{_nodeName}] Kafka Error code:{e.Error.Code} reason: {e.Error.Reason}");
             }
         }
     }

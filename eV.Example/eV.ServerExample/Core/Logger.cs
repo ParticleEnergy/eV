@@ -1,8 +1,8 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
-using EasyLogger = eV.Module.EasyLog.Logger;
 using Microsoft.Extensions.Logging;
+using EasyLogger = eV.Module.EasyLog.Logger;
 namespace eV.ServerExample.Core;
 
 public class Logger : ILogger

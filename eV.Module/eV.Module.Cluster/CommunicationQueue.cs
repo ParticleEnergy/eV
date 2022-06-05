@@ -78,17 +78,17 @@ public class CommunicationQueue : ICommunicationQueue
 
     public void Start()
     {
-        for (int i = 0; i < _consumeSendPipelineNumber;)
+        for (int i = 0; i < _consumeSendPipelineNumber; ++i)
         {
             new Task(ConsumeSend).Start();
         }
 
-        for (int i = 0; i < _consumeSendGroupPipelineNumber;)
+        for (int i = 0; i < _consumeSendGroupPipelineNumber; ++i)
         {
             new Task(ConsumeSendGroup).Start();
         }
 
-        for (int i = 0; i < _consumeSendBroadcastPipelineNumber;)
+        for (int i = 0; i < _consumeSendBroadcastPipelineNumber; ++i)
         {
             new Task(ConsumeSendBroadcast).Start();
         }

@@ -52,7 +52,10 @@ public static class LoadModule
 
         Dictionary<string, KeyValuePair<ProducerConfig, ConsumerConfig>> configs = new();
         foreach ((string name, var option) in Configure.Instance.KafkaOption)
+        {
             configs[name] = ConfigUtils.GetKafkaConfig(option);
+            configs[name].Value.ClientId = $"{name}-{configs[name].Value.ClientId}";
+        }
 
         KafkaManger.Instance.Start(configs);
     }

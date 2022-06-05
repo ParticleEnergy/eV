@@ -32,7 +32,7 @@ public class KafkaManger
         foreach ((string name, (ProducerConfig? producerConfig, ConsumerConfig? consumerConfig))in kafkaConfigs)
             try
             {
-                Kafka<string, object> kafka = new(CreateProducer(producerConfig), consumerConfig, CreateConsumer);
+                Kafka<string, object> kafka = new(CreateAdminClient(producerConfig.BootstrapServers), CreateProducer(producerConfig), consumerConfig, CreateConsumer);
                 _kafka[name] = kafka;
                 Logger.Info($"Kafka [{name}] connected success");
             }
@@ -51,6 +51,14 @@ public class KafkaManger
             kafka.Producer.Dispose();
             Logger.Info($"Kafka [{name}] stop");
         }
+    }
+
+    private static IAdminClient CreateAdminClient(string bootstrapServers)
+    {
+        return new AdminClientBuilder(new AdminClientConfig
+        {
+            BootstrapServers = bootstrapServers
+        }).Build();
     }
 
     private static IProducer<string, object> CreateProducer(ProducerConfig config)

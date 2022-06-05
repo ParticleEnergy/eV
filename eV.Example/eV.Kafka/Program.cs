@@ -16,7 +16,7 @@ using eV.Module.Queue.Kafka;
 //     producer.Produce("topic_1", new Message<string, string>{Key = "test", Value="a log message" });
 //     producer.Flush();
 // }
-//
+
 // var cconfig = new ConsumerConfig()
 // {
 //     BootstrapServers = "127.0.0.1:9092",
@@ -25,34 +25,43 @@ using eV.Module.Queue.Kafka;
 //     StatisticsIntervalMs = 5000,
 //     SessionTimeoutMs = 6000,
 //     AutoOffsetReset = AutoOffsetReset.Earliest,
-//     EnablePartitionEof = true,
-//     // PartitionAssignmentStrategy = PartitionAssignmentStrategy.CooperativeSticky
+//     EnablePartitionEof = true
 //
 // };
 //
 // var consumer = new ConsumerBuilder<string, string>(cconfig).Build();
-// consumer.Subscribe("topic_1");
+// consumer.Subscribe("topic_11");
 // while (true)
 // {
 //     try
 //     {
 //         var result = consumer.Consume();
+//         if (result.IsPartitionEOF)
+//         {
+//             Console.WriteLine($"Kafka Reached end of topic {result.Topic}, partition {result.Partition}, offset {result.Offset}.");
+//             continue;
+//         }
+//
 //         Console.WriteLine(result.Message.Value);
 //     }
-//     catch (Exception e)
+//     catch (ConsumeException e)
 //     {
-//         Console.WriteLine(e);
-//         throw;
+//         Console.WriteLine(e.ConsumerRecord.Topic);
+//         Console.WriteLine(e.Error.Code);
+//         Console.WriteLine(e.Error.Reason);
 //     }
 // }
-//
 
+//
 // using (var producer = new ProducerBuilder<string, string>(config).Build())
 // {
 //     producer.Produce("log", new Message<string, string>{Key = "test", Value="a log message" });
 //     producer.Flush();
 //     // await producer.ProduceAsync("weblog", new Message<string, string> {Key = "test", Value="a log message" });
 // }
+//
+
+
 Dictionary<string, KeyValuePair<ProducerConfig, ConsumerConfig>> config = new();
 
 config["test"] = KeyValuePair.Create(
@@ -75,16 +84,18 @@ config["test"] = KeyValuePair.Create(
 
 KafkaManger.Instance.Start(config);
 
-KafkaManger.Instance.GetKafka("test")!.Produce("test_topic", "testKey", "123", Console.WriteLine);
+// KafkaManger.Instance.GetKafka("test")!.Produce("test_topic", "testKey", "123", Console.WriteLine);
 
 // KafkaManger<string, object>.Instance.GetKafka("test")!.Producer.Flush();
 
 KafkaManger.Instance.GetKafka("test")!.Consume(delegate(IConsumer<string, object> consumer)
 {
-    consumer.Subscribe("test_topic");
+    consumer.Subscribe("33333");
+
 }, delegate(ConsumeResult<string, object>? result )
 {
     Console.WriteLine(result.Message.Value);
     return true;
 });
+
 Console.ReadLine();
