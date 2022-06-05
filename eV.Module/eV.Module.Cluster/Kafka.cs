@@ -45,7 +45,9 @@ public class Kafka
     public void Consume(string groupId, string topic, Action<ConsumeResult<string, byte[]>> action)
     {
         IConsumer<string, byte[]> consumer = CreateConsumer(groupId);
+
         consumer.Subscribe(topic);
+
         while (true)
         {
             try
@@ -76,11 +78,13 @@ public class Kafka
     {
         ConsumerConfig consumerConfig = new()
         {
+            BootstrapServers = _consumerConfig.BootstrapServers,
+            GroupId = groupId,
             AutoOffsetReset = AutoOffsetReset.Earliest,
+            AllowAutoCreateTopics = true,
             EnableAutoCommit = true,
             EnablePartitionEof = true,
             SocketKeepaliveEnable = true,
-            BootstrapServers = _consumerConfig.BootstrapServers,
             SaslMechanism = _consumerConfig.SaslMechanism,
             SecurityProtocol = _consumerConfig.SecurityProtocol,
             SaslUsername = _consumerConfig.SaslUsername,
@@ -89,8 +93,7 @@ public class Kafka
             SocketReceiveBufferBytes = _consumerConfig.SocketReceiveBufferBytes,
             SocketSendBufferBytes = _consumerConfig.SocketSendBufferBytes,
             HeartbeatIntervalMs = _consumerConfig.HeartbeatIntervalMs,
-            SessionTimeoutMs = _consumerConfig.SessionTimeoutMs,
-            GroupId = groupId
+            SessionTimeoutMs = _consumerConfig.SessionTimeoutMs
         };
 
         return new ConsumerBuilder<string, byte[]>(consumerConfig).SetErrorHandler(

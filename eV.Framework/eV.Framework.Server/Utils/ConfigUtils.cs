@@ -5,9 +5,9 @@ using System.Net;
 using Confluent.Kafka;
 using eV.Framework.Server.Options;
 using StackExchange.Redis;
-namespace eV.Framework.Server;
+namespace eV.Framework.Server.Utils;
 
-public static class Utils
+public static class ConfigUtils
 {
     public static ConfigurationOptions GetRedisConfig(RedisOption option)
     {
@@ -44,6 +44,7 @@ public static class Utils
             BootstrapServers = option.Address,
             GroupId = Configure.Instance.ProjectName,
             AutoOffsetReset = AutoOffsetReset.Earliest,
+            AllowAutoCreateTopics = true,
             EnableAutoCommit = true,
             EnablePartitionEof = true,
             SocketKeepaliveEnable = true

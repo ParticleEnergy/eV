@@ -2,7 +2,10 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 
+using eV.Framework.Server.SessionDrive;
 using eV.Framework.Server.SystemHandler;
+using eV.Framework.Server.Utils;
+using eV.Module.Cluster;
 using eV.Module.EasyLog;
 using eV.Module.GameProfile;
 using eV.Module.Queue;
@@ -23,6 +26,8 @@ public class Server
 
     private readonly SessionExtension _sessionExtension = new();
 
+    private Cluster? _cluster;
+
     public Server()
     {
         Logger.SetLogger(new Log(Configure.Instance.ProjectName));
@@ -31,6 +36,33 @@ public class Server
         _sessionExtension.OnReleaseEvent += SessionOnRelease;
 
         _server.AcceptConnect += ServerOnAcceptConnect;
+
+        InitServerSession();
+    }
+
+    private void InitServerSession()
+    {
+        if (Configure.Instance.ClusterOption == null)
+        {
+            ServerSession.SetSessionDrive(new SingleSessionDrive());
+        }
+        else
+        {
+            _cluster = new Cluster(new ClusterSetting
+            {
+                ClusterName = Configure.Instance.ProjectName,
+                ConsumeSendPipelineNumber = Configure.Instance.ClusterOption.ConsumeSendPipelineNumber,
+                ConsumeSendGroupPipelineNumber = Configure.Instance.ClusterOption.ConsumeSendGroupPipelineNumber,
+                ConsumeSendBroadcastPipelineNumber = Configure.Instance.ClusterOption.ConsumeSendBroadcastPipelineNumber,
+                RedisOption = ConfigUtils.GetRedisConfig(Configure.Instance.ClusterOption.Redis),
+                KafkaOption = ConfigUtils.GetKafkaConfig(Configure.Instance.ClusterOption.Kafka),
+                SendAction = SessionUtils.SendAction,
+                SendGroupAction = SessionUtils.SendGroupAction,
+                SendBroadcastAction = SessionUtils.SendBroadcastAction
+            });
+
+            ServerSession.SetSessionDrive(new ClusterSessionDrive(_cluster.GetClusterSession()));
+        }
     }
 
     public void Start()
@@ -46,6 +78,7 @@ public class Server
         LoadModule.Run();
         RegisterHandler();
 
+        _cluster?.Start();
         _queue.Start();
         _server.Start();
         _idleDetection.Start();
@@ -54,6 +87,7 @@ public class Server
     public void Stop()
     {
         _idleDetection.Stop();
+        _cluster?.Stop();
         _server.Stop();
         LoadModule.Stop();
     }

@@ -10,6 +10,8 @@ public interface ISessionRegistrationAuthority
     public string GetNodeName(string sessionId);
     public List<string> GetAllSessionId();
 
+
+
     public void Start();
     public void Stop();
 }

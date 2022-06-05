@@ -8,7 +8,11 @@ namespace eV.Module.Cluster;
 
 internal static class DefaultSetting
 {
-    public const int CommunicationPipelineNumber = 8;
+    public const string ClusterName = "eV.Cluster";
+
+    public const int ConsumeSendPipelineNumber = 4;
+    public const int ConsumeSendGroupPipelineNumber = 2;
+    public const int ConsumeSendBroadcastPipelineNumber = 1;
 
     public static readonly ConfigurationOptions RedisOption = new();
     public static KeyValuePair<ProducerConfig, ConsumerConfig> KafkaOption { get; set; } = new();

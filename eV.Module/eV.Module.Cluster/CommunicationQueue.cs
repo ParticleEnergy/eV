@@ -18,7 +18,7 @@ public class CommunicationQueue : ICommunicationQueue
     private const string GroupIdPrefix = "eV-Cluster-GroupId";
     private const string TopicPrefix = "eV-Cluster-Topic";
 
-    private static readonly string s_sendTopicFormat = $"{0}-Cluster:{1}-Node:{2}-Send";
+    private static readonly string s_sendTopicFormat = "{0}-Cluster:{1}-Node:{2}-Send";
 
     private readonly string _sendTopic;
     private readonly string _sendGroupTopic;
@@ -44,8 +44,8 @@ public class CommunicationQueue : ICommunicationQueue
         _sessionRegistrationAuthority = sessionRegistrationAuthority;
 
         _sendTopic = string.Format(s_sendTopicFormat, TopicPrefix, _clusterName, _nodeName);
-        _sendGroupTopic = $"{GroupIdPrefix}-Cluster:{_clusterName}-SendGroup";
-        _sendBroadcastTopic = $"{GroupIdPrefix}-Cluster:{_clusterName}-SendBroadcast";
+        _sendGroupTopic = $"{TopicPrefix}-Cluster:{_clusterName}-SendGroup";
+        _sendBroadcastTopic = $"{TopicPrefix}-Cluster:{_clusterName}-SendBroadcast";
 
         _kafka = new Kafka(_clusterName, _nodeName, kafkaOption);
     }
@@ -101,53 +101,55 @@ public class CommunicationQueue : ICommunicationQueue
 
     private void ConsumeSend()
     {
-        _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-Node:{_nodeName}-Send", _sendTopic, delegate(ConsumeResult<string, byte[]> result)
+        if (SendAction != null)
         {
-            if (SendAction != null)
+            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-Node:{_nodeName}-Send", _sendTopic, delegate(ConsumeResult<string, byte[]> result)
             {
                 SendAction.Invoke(result.Message.Key, result.Message.Value);
-            }
-            else
-            {
-                Logger.Error("SendAction not defined");
-            }
-        });
+
+            });
+        }
+        else
+        {
+            Logger.Error("SendAction not defined");
+        }
+
     }
 
     private void ConsumeSendGroup()
     {
-        _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendGroup", _sendGroupTopic, delegate(ConsumeResult<string, byte[]> result)
+        if (SendGroupAction != null)
         {
-            string[] queueData = result.Message.Key.Split(":");
-            if (queueData[0] == _nodeName)
-                return;
-            if (SendGroupAction != null)
+            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendGroup", _sendGroupTopic, delegate(ConsumeResult<string, byte[]> result)
             {
+                string[] queueData = result.Message.Key.Split(":");
+                if (queueData[0] == _nodeName)
+                    return;
                 SendGroupAction.Invoke(queueData[1], result.Message.Value);
-            }
-            else
-            {
-                Logger.Error("SendGroupAction not defined");
-            }
-        });
+            });
+        }
+        else
+        {
+            Logger.Error("SendGroupAction not defined");
+        }
     }
 
     private void ConsumeSendBroadcast()
     {
-        _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendBroadcast", _sendBroadcastTopic, delegate(ConsumeResult<string, byte[]> result)
+        if (SendBroadcastAction != null)
         {
-            string[] queueData = result.Message.Key.Split(":");
-            if (queueData[0] == _nodeName)
-                return;
+            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendBroadcast", _sendBroadcastTopic, delegate(ConsumeResult<string, byte[]> result)
+            {
+                string[] queueData = result.Message.Key.Split(":");
+                if (queueData[0] == _nodeName)
+                    return;
 
-            if (SendBroadcastAction != null)
-            {
                 SendBroadcastAction.Invoke(result.Message.Value);
-            }
-            else
-            {
-                Logger.Error("SendBroadcastAction not defined");
-            }
-        });
+            });
+        }
+        else
+        {
+            Logger.Error("SendBroadcastAction not defined");
+        }
     }
 }

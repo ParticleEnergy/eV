@@ -6,10 +6,6 @@ namespace eV.Module.Cluster;
 
 public class Cluster
 {
-    public event Func<string, byte[], bool>? SendAction;
-    public event Action<string, byte[]>? SendGroupAction;
-    public event Action<byte[]>? SendBroadcastAction;
-
     private readonly string _nodeName = "todo";
     private readonly ICommunicationQueue _communicationQueue;
     private readonly ISessionRegistrationAuthority _sessionRegistrationAuthority;
@@ -28,6 +24,9 @@ public class Cluster
             _sessionRegistrationAuthority,
             setting.KafkaOption
         );
+        _communicationQueue.SendAction += setting.SendAction;
+        _communicationQueue.SendGroupAction += setting.SendGroupAction;
+        _communicationQueue.SendBroadcastAction += setting.SendBroadcastAction;
 
         _clusterSession = new ClusterSession(_sessionRegistrationAuthority, _communicationQueue);
     }
@@ -40,9 +39,6 @@ public class Cluster
     public void Start()
     {
         _sessionRegistrationAuthority.Start();
-        _communicationQueue.SendAction += SendAction;
-        _communicationQueue.SendGroupAction += SendGroupAction;
-        _communicationQueue.SendBroadcastAction += SendBroadcastAction;
         _communicationQueue.Start();
     }
 

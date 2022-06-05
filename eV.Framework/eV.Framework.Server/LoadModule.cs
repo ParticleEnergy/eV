@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using Confluent.Kafka;
+using eV.Framework.Server.Utils;
 using eV.Module.Queue.Kafka;
 using eV.Module.Storage.Mongo;
 using eV.Module.Storage.Redis;
@@ -31,7 +32,7 @@ public static class LoadModule
         Dictionary<string, ConfigurationOptions> configs = new();
 
         foreach ((string name, var option) in Configure.Instance.RedisOption)
-            configs[name] = Utils.GetRedisConfig(option);
+            configs[name] = ConfigUtils.GetRedisConfig(option);
 
         RedisManager.Instance.Start(configs);
     }
@@ -51,7 +52,7 @@ public static class LoadModule
 
         Dictionary<string, KeyValuePair<ProducerConfig, ConsumerConfig>> configs = new();
         foreach ((string name, var option) in Configure.Instance.KafkaOption)
-            configs[name] = Utils.GetKafkaConfig(option);
+            configs[name] = ConfigUtils.GetKafkaConfig(option);
 
         KafkaManger.Instance.Start(configs);
     }

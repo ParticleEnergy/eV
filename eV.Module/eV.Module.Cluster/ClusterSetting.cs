@@ -5,12 +5,12 @@ using Confluent.Kafka;
 using StackExchange.Redis;
 namespace eV.Module.Cluster;
 
-public abstract class ClusterSetting
+public class ClusterSetting
 {
-    public string ClusterName { get; set; }
-    public int ConsumeSendPipelineNumber { get; set; }
-    public int ConsumeSendGroupPipelineNumber { get; set; }
-    public int ConsumeSendBroadcastPipelineNumber { get; set; }
+    public string ClusterName { get; set; } = DefaultSetting.ClusterName;
+    public int ConsumeSendPipelineNumber { get; set; } = DefaultSetting.ConsumeSendPipelineNumber;
+    public int ConsumeSendGroupPipelineNumber { get; set; } = DefaultSetting.ConsumeSendGroupPipelineNumber;
+    public int ConsumeSendBroadcastPipelineNumber { get; set; } = DefaultSetting.ConsumeSendBroadcastPipelineNumber;
 
     public ConfigurationOptions RedisOption { get; set; } = DefaultSetting.RedisOption;
     public KeyValuePair<ProducerConfig, ConsumerConfig> KafkaOption { get; set; } = DefaultSetting.KafkaOption;

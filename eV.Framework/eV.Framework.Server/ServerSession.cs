@@ -1,47 +1,36 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
-using System.Collections.Concurrent;
+using eV.Framework.Server.Interface;
 using eV.Module.EasyLog;
 using eV.Module.Routing.Interface;
-using eV.Module.Session;
 namespace eV.Framework.Server;
 
 public static class ServerSession
 {
+    private static ISessionDrive? _sessionDrive;
+
+    public static void SetSessionDrive(ISessionDrive sessionDrive)
+    {
+        if (_sessionDrive != null)
+        {
+            Logger.Error("Can only be set at startup");
+            return;
+        }
+        _sessionDrive = sessionDrive;
+    }
+
     public static bool Send(string sessionId, byte[] data)
     {
-        Session? session = SessionDispatch.Instance.SessionManager.GetActiveSession(sessionId);
-        return session != null && session.Send(data);
-
+        return _sessionDrive?.Send(sessionId, data) ?? false;
     }
     public static void SendGroup(string selfSessionId, string groupId, byte[] data)
     {
-        ConcurrentDictionary<string, string>? groups = SessionDispatch.Instance.SessionGroup.GetGroup(groupId);
-        if (groups == null)
-        {
-            Logger.Warn($"Group {groupId} not found");
-            return;
-        }
-        foreach (KeyValuePair<string, string> group in groups)
-        {
-            Session? session = SessionDispatch.Instance.SessionManager.GetActiveSession(group.Value);
-            if (session?.SessionId == null || session.SessionId.Equals(selfSessionId))
-                continue;
-            session.Send(data);
-        }
+        _sessionDrive?.SendGroup(selfSessionId, groupId, data);
     }
     public static void SendBroadcast(string selfSessionId, byte[] data)
     {
-        if (SessionDispatch.Instance.SessionManager.GetActiveCount() <= 0)
-            return;
-
-        foreach ((string _, Session? session) in SessionDispatch.Instance.SessionManager.GetAllActiveSession())
-        {
-            if (session.SessionId == null || session.SessionId.Equals(selfSessionId))
-                continue;
-            session.Send(data);
-        }
+        _sessionDrive?.SendBroadcast(selfSessionId, data);
     }
     public static bool JoinGroup(string groupId, string sessionId)
     {
@@ -53,10 +42,10 @@ public static class ServerSession
     }
     public static bool Activate(ISession session)
     {
-        return SessionDispatch.Instance.SessionManager.AddActiveSession((Session)session);
+        return _sessionDrive?.Activate(session) ?? false;
     }
     public static bool Release(ISession session)
     {
-        return SessionDispatch.Instance.SessionManager.RemoveActiveSession((Session)session);
+        return _sessionDrive?.Release(session) ?? false;
     }
 }
