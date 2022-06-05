@@ -6,18 +6,18 @@ namespace eV.Module.Cluster;
 
 public class Cluster
 {
-    private readonly string _nodeName = "todo";
     private readonly ICommunicationQueue _communicationQueue;
     private readonly ISessionRegistrationAuthority _sessionRegistrationAuthority;
     private readonly ClusterSession _clusterSession;
 
     public Cluster(ClusterSetting setting)
     {
-        _sessionRegistrationAuthority = new SessionRegistrationAuthority(setting.ClusterName, _nodeName, setting.RedisOption);
+        string nodeName = Guid.NewGuid().ToString();
+        _sessionRegistrationAuthority = new SessionRegistrationAuthority(setting.ClusterName, nodeName, setting.RedisOption);
 
         _communicationQueue = new CommunicationQueue(
             setting.ClusterName,
-            _nodeName,
+            nodeName,
             setting.ConsumeSendPipelineNumber,
             setting.ConsumeSendGroupPipelineNumber,
             setting.ConsumeSendBroadcastPipelineNumber,
