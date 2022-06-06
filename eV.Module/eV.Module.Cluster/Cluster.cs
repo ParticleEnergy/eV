@@ -2,22 +2,24 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using eV.Module.Cluster.Interface;
+using eV.Module.EasyLog;
 namespace eV.Module.Cluster;
 
 public class Cluster
 {
+    private readonly string _nodeName;
     private readonly ICommunicationQueue _communicationQueue;
     private readonly ISessionRegistrationAuthority _sessionRegistrationAuthority;
     private readonly ClusterSession _clusterSession;
 
     public Cluster(ClusterSetting setting)
     {
-        string nodeName = Guid.NewGuid().ToString();
-        _sessionRegistrationAuthority = new SessionRegistrationAuthority(setting.ClusterName, nodeName, setting.RedisOption);
+        _nodeName = Guid.NewGuid().ToString();
+        _sessionRegistrationAuthority = new SessionRegistrationAuthority(setting.ClusterName, _nodeName, setting.RedisOption);
 
         _communicationQueue = new CommunicationQueue(
             setting.ClusterName,
-            nodeName,
+            _nodeName,
             setting.ConsumeSendPipelineNumber,
             setting.ConsumeSendGroupPipelineNumber,
             setting.ConsumeSendBroadcastPipelineNumber,
@@ -40,6 +42,7 @@ public class Cluster
     {
         _sessionRegistrationAuthority.Start();
         _communicationQueue.Start();
+        Logger.Info($"Node {_nodeName} cluster mode on");
     }
 
     public void Stop()
