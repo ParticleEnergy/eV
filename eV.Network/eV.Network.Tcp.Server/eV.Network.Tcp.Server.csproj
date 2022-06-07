@@ -13,7 +13,7 @@
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.3.0</PackageVersion>
+    <PackageVersion>1.4.0</PackageVersion>
     <RootNamespace>eV.Network.Tcp.Server</RootNamespace>
 
   </PropertyGroup>
