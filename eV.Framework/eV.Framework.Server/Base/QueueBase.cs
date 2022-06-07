@@ -2,8 +2,8 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 
-using eV.Module.EasyLog;
 using eV.Module.Queue.Interface;
+using EasyLogger = eV.Module.EasyLog.Logger;
 namespace eV.Framework.Server.Base;
 
 public abstract class QueueBase : IQueueHandler
@@ -17,7 +17,7 @@ public abstract class QueueBase : IQueueHandler
         }
         catch (Exception e)
         {
-            Logger.Error(e.Message, e);
+            EasyLogger.Error(e.Message, e);
         }
     }
 

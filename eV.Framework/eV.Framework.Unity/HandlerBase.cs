@@ -7,9 +7,10 @@ namespace eV.Framework.Unity;
 
 public abstract class HandlerBase<TContent> : IHandler
 {
-    public virtual void Run(ISession session, object content)
+    public virtual Task Run(ISession session, object content)
     {
         Handle(session, (TContent)content);
+        return Task.CompletedTask;
     }
     protected abstract void Handle(ISession session, TContent content);
 }

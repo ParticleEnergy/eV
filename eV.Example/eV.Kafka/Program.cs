@@ -1,5 +1,4 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using System.Net;
 using Confluent.Kafka;
 using eV.Module.Queue.Kafka;
 

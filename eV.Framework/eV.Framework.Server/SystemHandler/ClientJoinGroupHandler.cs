@@ -2,8 +2,8 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using eV.Framework.Server.Base;
-using eV.Module.EasyLog;
 using eV.Module.Routing.Interface;
+using EasyLogger = eV.Module.EasyLog.Logger;
 namespace eV.Framework.Server.SystemHandler;
 
 public class ClientJoinGroup
@@ -17,12 +17,12 @@ public class ClientJoinGroupHandler : HandlerBase<ClientJoinGroup>
     {
         if (content.GroupId is null or "")
         {
-            Logger.Warn($"Session {session.SessionId} JoinGroup failed groupId is empty");
+            EasyLogger.Warn($"Session {session.SessionId} JoinGroup failed groupId is empty");
             return;
         }
         if (content.SessionId is null or "")
         {
-            Logger.Warn($"Session {session.SessionId} JoinGroup failed sessionId is empty");
+            EasyLogger.Warn($"Session {session.SessionId} JoinGroup failed sessionId is empty");
             return;
         }
         ServerSession.JoinGroup(content.GroupId, content.SessionId);

@@ -1,8 +1,8 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
-using eV.Module.EasyLog;
 using eV.Module.Session;
+using EasyLogger = eV.Module.EasyLog.Logger;
 namespace eV.Framework.Server;
 
 public class IdleDetection
@@ -20,7 +20,7 @@ public class IdleDetection
     public void Start()
     {
         _task.Start();
-        Logger.Info("Idle detection start");
+        EasyLogger.Info("Idle detection start");
     }
     public void Stop()
     {

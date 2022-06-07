@@ -2,19 +2,19 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 
+using eV.Framework.Server.Logger;
 using eV.Framework.Server.SessionDrive;
 using eV.Framework.Server.SystemHandler;
 using eV.Framework.Server.Utils;
 using eV.Module.Cluster;
-using eV.Module.EasyLog;
 using eV.Module.GameProfile;
 using eV.Module.Queue;
 using eV.Module.Routing;
-using eV.Module.Routing.Interface;
 using eV.Module.Session;
 using eV.Network.Core;
 using eV.Network.Core.Interface;
 using eV.Network.Tcp.Server;
+using EasyLogger = eV.Module.EasyLog.Logger;
 using eVNetworkServer = eV.Network.Tcp.Server.Server;
 namespace eV.Framework.Server;
 
@@ -30,10 +30,10 @@ public class Server
 
     public Server()
     {
-        Logger.SetLogger(new Log(Configure.Instance.ProjectName));
+        EasyLogger.SetLogger(new ServerLog(Configure.Instance.ProjectName));
 
-        _sessionExtension.OnActivateEvent += SessionOnActivate;
-        _sessionExtension.OnReleaseEvent += SessionOnRelease;
+        _sessionExtension.OnActivateEvent += ServerEvent.SessionOnActivate;
+        _sessionExtension.OnReleaseEvent += ServerEvent.SessionOnRelease;
 
         _server.AcceptConnect += ServerOnAcceptConnect;
 
@@ -67,7 +67,7 @@ public class Server
 
     public void Start()
     {
-        Logger.Info(DefaultSetting.Logo);
+        EasyLogger.Info(DefaultSetting.Logo);
         Profile.Init(
             Configure.Instance.BaseOption.PublicObjectNamespace,
             Configure.Instance.BaseOption.GameProfilePath,
@@ -97,7 +97,7 @@ public class Server
         if (_server.ServerState != RunState.On)
             return;
         Session session = SessionDispatch.Instance.SessionManager.GetSession(channel, _sessionExtension);
-        OnConnected?.Invoke(session);
+        ServerEvent.OnConnected(session);
     }
 
     private static ServerSetting GetServerSetting()
@@ -141,9 +141,4 @@ public class Server
         Dispatch.AddCustomHandler(typeof(ClientSendBySessionIdHandler), typeof(ClientSendBySessionId));
         Dispatch.AddCustomHandler(typeof(ClientSendGroupHandler), typeof(ClientSendGroup));
     }
-    #region Event
-    public event SessionEvent? OnConnected;
-    public event SessionEvent? SessionOnActivate;
-    public event SessionEvent? SessionOnRelease;
-    #endregion
 }

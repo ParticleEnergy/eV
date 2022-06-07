@@ -67,7 +67,7 @@ public static class Dispatch
         RegisterHandler(handlerNamespace);
     }
 
-    public static void Dispense(ISession session, IPacket packet)
+    public static async void Dispense(ISession session, IPacket packet)
     {
         if (packet.GetName().Equals("") || packet.GetContent().Length == 0)
             return;
@@ -81,7 +81,7 @@ public static class Dispatch
                 return;
             }
             object content = Serializer.Deserialize(packet.GetContent(), route.ContentType);
-            route.Handler.Run(session, content);
+            await route.Handler.Run(session, content);
             Logger.Info($"Message [{packet.GetName()}] handle access");
         }
         catch (Exception e)

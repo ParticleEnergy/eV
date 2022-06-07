@@ -5,5 +5,5 @@ namespace eV.Module.Routing.Interface;
 
 public interface IHandler
 {
-    public void Run(ISession session, object message);
+    public Task Run(ISession session, object message);
 }

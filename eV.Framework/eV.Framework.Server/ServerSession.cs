@@ -2,8 +2,8 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using eV.Framework.Server.Interface;
-using eV.Module.EasyLog;
 using eV.Module.Routing.Interface;
+using EasyLogger = eV.Module.EasyLog.Logger;
 namespace eV.Framework.Server;
 
 public static class ServerSession
@@ -14,7 +14,7 @@ public static class ServerSession
     {
         if (_sessionDrive != null)
         {
-            Logger.Error("Can only be set at startup");
+            EasyLogger.Error("Can only be set at startup");
             return;
         }
         _sessionDrive = sessionDrive;

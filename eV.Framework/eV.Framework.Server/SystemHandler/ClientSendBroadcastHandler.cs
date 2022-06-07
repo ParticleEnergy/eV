@@ -2,8 +2,8 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using eV.Framework.Server.Base;
-using eV.Module.EasyLog;
 using eV.Module.Routing.Interface;
+using EasyLogger = eV.Module.EasyLog.Logger;
 namespace eV.Framework.Server.SystemHandler;
 
 public class ClientSendBroadcast
@@ -16,7 +16,7 @@ public class ClientSendBroadcastHandler : HandlerBase<ClientSendBroadcast>
     {
         if (content.Data is not { Length: > 0 })
         {
-            Logger.Warn($"Session {session.SessionId} send broadcast failed data is empty");
+            EasyLogger.Warn($"Session {session.SessionId} send broadcast failed data is empty");
             return;
         }
         ServerSession.SendBroadcast(session.SessionId!, content.Data);

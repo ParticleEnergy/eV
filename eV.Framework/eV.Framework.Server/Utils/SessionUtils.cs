@@ -2,9 +2,9 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using System.Collections.Concurrent;
-using eV.Module.EasyLog;
 using eV.Module.Routing.Interface;
 using eV.Module.Session;
+using EasyLogger = eV.Module.EasyLog.Logger;
 namespace eV.Framework.Server.Utils;
 
 public static class SessionUtils
@@ -20,7 +20,7 @@ public static class SessionUtils
         ConcurrentDictionary<string, string>? groups = SessionDispatch.Instance.SessionGroup.GetGroup(groupId);
         if (groups == null)
         {
-            Logger.Warn($"Group {groupId} not found");
+            EasyLogger.Warn($"Group {groupId} not found");
             return;
         }
         foreach (KeyValuePair<string, string> group in groups)
@@ -63,7 +63,7 @@ public static class SessionUtils
         ConcurrentDictionary<string, string>? groups = SessionDispatch.Instance.SessionGroup.GetGroup(groupId);
         if (groups == null)
         {
-            Logger.Warn($"Group {groupId} not found");
+            EasyLogger.Warn($"Group {groupId} not found");
             return;
         }
         foreach (KeyValuePair<string, string> group in groups)

@@ -3,13 +3,13 @@
 
 using log4net;
 using ILog = eV.Module.EasyLog.Interface.ILog;
-namespace eV.Framework.Server;
+namespace eV.Framework.Server.Logger;
 
-public class Log : ILog
+public class ServerLog : ILog
 {
     private readonly log4net.ILog _logger;
 
-    public Log(string loggerName)
+    public ServerLog(string loggerName)
     {
         _logger = LogManager.GetLogger(loggerName);
     }

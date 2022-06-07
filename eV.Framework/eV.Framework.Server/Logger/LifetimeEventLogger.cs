@@ -3,9 +3,9 @@
 
 using Microsoft.Extensions.Logging;
 using EasyLogger = eV.Module.EasyLog.Logger;
-namespace eV.ServerExample.Core;
+namespace eV.Framework.Server.Logger;
 
-public class Logger : ILogger
+public class LifetimeEventLogger : ILogger
 {
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
