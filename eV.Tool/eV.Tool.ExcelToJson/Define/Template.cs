@@ -1,0 +1,44 @@
+// Copyright (c) ParticleEnergy. All rights reserved.
+// Licensed under the Apache license. See the LICENSE file in the project root for full license information.
+
+namespace eV.Tool.ExcelToJson.Define;
+
+public static class Template
+{
+    public const string ProfileName = "Main";
+
+    public const string ObjectFileName = "{0}Profile.cs";
+
+    public const string ProfileObject = @"{0}
+
+using eV.Module.GameProfile.Attributes;
+using {1}.Object;
+namespace {2};
+
+[GameProfile]
+public class {3}Profile : {4}<{5}{6}Row>
+{{
+
+}}
+
+public class {7}Row
+{{
+{8}
+}}
+
+";
+
+    public const string ItemObject = @"{0}
+
+namespace {1}.Object;
+
+public class {2}
+{{
+{3}
+}}
+
+";
+    public const string BaseProperty = "    public {0} {1} {{ get; set; }} = {2};";
+    public const string ComplexProperty = "    public {0}? {1} {{ get; set; }}";
+}
+

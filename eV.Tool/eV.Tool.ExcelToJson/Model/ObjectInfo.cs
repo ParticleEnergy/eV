@@ -1,0 +1,39 @@
+// Copyright (c) ParticleEnergy. All rights reserved.
+// Licensed under the Apache license. See the LICENSE file in the project root for full license information.
+
+using eV.Tool.ExcelToJson.Define;
+namespace eV.Tool.ExcelToJson.Model;
+
+public class ObjectInfo
+{
+    public bool IsMain { get; set; }
+    public string Head { get; set; } = string.Empty;
+    public string NamespaceName { get; set; } = string.Empty;
+    public string ClassName { get; set; } = string.Empty;
+    public string ProfileType { get; set; } = string.Empty;
+    public string ProfileDetailType { get; set; } = string.Empty;
+    public List<ObjectBaseProperty>? ObjectBaseProperties { get; set; }
+    public List<ObjectComplexProperty>? ObjectComplexProperties { get; set; }
+
+    public override string ToString()
+    {
+        return IsMain ? string.Format(Template.ProfileObject, Head, NamespaceName, NamespaceName, ClassName, ProfileType, ProfileDetailType, ClassName, ClassName, GetProperties()) : string.Format(Template.ItemObject, Head, NamespaceName, ClassName, GetProperties());
+    }
+
+    private string GetProperties()
+    {
+        List<string> properties = new();
+
+        if (ObjectBaseProperties != null)
+        {
+            properties.AddRange(ObjectBaseProperties.Select(objectBaseProperty => string.Format(Template.BaseProperty, objectBaseProperty.Type, objectBaseProperty.Name, objectBaseProperty.DefaultValue)));
+        }
+
+        if (ObjectComplexProperties != null)
+        {
+            properties.AddRange(ObjectComplexProperties.Select(objectComplexProperty => string.Format(Template.ComplexProperty, objectComplexProperty.Type, objectComplexProperty.Name)));
+        }
+
+        return string.Join("\n", properties);
+    }
+}
