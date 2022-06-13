@@ -10,16 +10,40 @@
 //
 // // Console.WriteLine(File.GetFiles("/Users/three.zhang/Desktop").Count);
 //
+using eV.Module.EasyLog;
 using eV.Tool.ExcelToJson.Core;
+using eV.Tool.ExcelToJson.Define;
 using eV.Tool.ExcelToJson.Model;
 using Microsoft.Extensions.Configuration;
 ConfigurationBuilder builder = new();
 builder.AddJsonFile("appsettings.json");
 var config = builder.Build();
 
-Parser parser = new(config);
-
-
+if (config.GetSection(Const.InExcelPath).Value is "" or null)
+{
+    Logger.Error("");
+    return;
+}
+if (config.GetSection(Const.OutObjectFilePath).Value is "" or null)
+{
+    Logger.Error("");
+    return;
+}
+if (config.GetSection(Const.OutJsonFilePath).Value is "" or null)
+{
+    Logger.Error("");
+    return;
+}
+if (config.GetSection(Const.OutObjectNamespace).Value is "" or null)
+{
+    Logger.Error("");
+    return;
+}
+if (config.GetSection(Const.OutObjectFileHead).Value is "" or null)
+{
+    Logger.Error("");
+    return;
+}
 
 var excel = Excel.GetTableInfos(new List<ExcelInfo>
 {
@@ -32,27 +56,11 @@ var excel = Excel.GetTableInfos(new List<ExcelInfo>
 });
 
 if (excel != null)
-    Console.WriteLine(excel[0].FileName);
+{
+    Parser parser = new(config);
+    parser.OutClass(excel);
+}
 
-// ObjectInfo objectInfo = new()
-// {
-//     NamespaceName = "eV.Profile",
-//     ClassName = "Demo",
-//     ProfileType = "List",
-//     // ProfileDetailType = "string, "
-// };
-//
-// string BaseProperty = string.Format(Template.BaseProperty, "string", "Name", "string.Empty");
-// string ComplexProperty = string.Format(Template.ComplexProperty, "List<string>", "Names");
-//
-// objectInfo.IsMain = true;
-// Console.WriteLine(objectInfo.ToString());
 
-// List<string> abc = new List<string>()
-// {
-//     "1", "2","3"
-// };
-//
-// Console.WriteLine(string.Join("\n", abc));
 
-// Console.WriteLine(string.Format(Template.ProfileObject, objectInfo.NamespaceName, objectInfo.NamespaceName, objectInfo.ClassName, objectInfo.ProfileType, objectInfo.ProfileDetailType,objectInfo.ClassName, objectInfo.ClassName, BaseProperty));
+

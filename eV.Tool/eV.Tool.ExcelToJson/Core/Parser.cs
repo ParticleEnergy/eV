@@ -10,11 +10,26 @@ namespace eV.Tool.ExcelToJson.Core;
 
 public class Parser
 {
-//     private readonly List<ObjectInfo> _objectInfos = new();
+    private readonly List<ObjectInfo> _objectInfos = new();
     private readonly IConfigurationRoot _configuration;
     public Parser(IConfigurationRoot configuration)
     {
         _configuration = configuration;
+    }
+
+    public void OutClass(List<TableInfo> tableInfos)
+    {
+        if (!CheckTable(tableInfos))
+            return;
+        foreach (TableInfo tableInfo in tableInfos)
+        {
+            ParserTableStruct(tableInfo);
+        }
+
+        foreach (ObjectInfo objectInfo in _objectInfos)
+        {
+            Console.WriteLine(objectInfo.ToString());
+        }
     }
 
     private string GetFiledType(string type)
@@ -29,7 +44,7 @@ public class Parser
             FieldType.Bool => "bool",
             FieldType.Int => "int",
             FieldType.Double => "double",
-            _ => "string.Empty"
+            _ => "string"
         };
     }
 
@@ -45,119 +60,120 @@ public class Parser
         };
     }
 
-    private ObjectInfo? CreateObjectInfo()
+    private ObjectInfo CreateObjectInfo()
     {
         string outObjectNamespace = _configuration.GetSection(Const.OutObjectNamespace).Value;
         string outObjectFileHead = _configuration.GetSection(Const.OutObjectFileHead).Value;
-
-        if (outObjectNamespace.Equals(""))
+        return new ObjectInfo
         {
-            Logger.Error("bad configuration file");
-            return null;
-        }
-        if (!outObjectFileHead.Equals(""))
-            return new ObjectInfo
-            {
-                NamespaceName = outObjectNamespace, Head = outObjectFileHead
-            };
-        Logger.Error("bad configuration file");
-        return null;
+            NamespaceName = outObjectNamespace, Head = outObjectFileHead
+        };
     }
-//
-//     private ObjectInfo GetObjectInfo(SheetInfo sheetInfo)
-//     {
-//         ObjectInfo objectInfo = new()
-//         {
-//             Head = "//",
-//             NamespaceName = "eV",
-//         };
-//
-//
-//         foreach (var fieldInfo in sheetInfo.FieldInfos.Where(fieldInfo => !fieldInfo.Type.Equals(FieldType.PrimaryKey) || !fieldInfo.Name.Equals("")))
-//         {
-//             if (fieldInfo.Type.Equals(FieldType.PrimaryKey))
-//             {
-//                 objectInfo.ObjectBaseProperties.Add(new ObjectBaseProperty
-//                 {
-//                     Type = fieldInfo.Type,
-//                     Name = fieldInfo.Name,
-//                     DefaultValue = GetDefaultValue(FieldType.String)
-//                 });
-//             }
-//             else if (new List<string>{FieldType.ListBool,FieldType.ListInt,FieldType.ListDouble,FieldType.ListString}.Contains(fieldInfo.Type))
-//             {
-//                 objectInfo.ObjectComplexProperties.Add(new ObjectComplexProperty
-//                 {
-//                     Type = GetListType(fieldInfo.Type),
-//                     Name = fieldInfo.Name
-//                 });
-//             }
-//             else
-//             {
-//                 objectInfo.ObjectBaseProperties.Add(new ObjectBaseProperty
-//                 {
-//                     Type = fieldInfo.Type,
-//                     Name = fieldInfo.Name,
-//                     DefaultValue = GetDefaultValue(fieldInfo.Type)
-//                 });
-//             }
-//         }
-//
-//
-//         return objectInfo;
-//     }
-//
-//     private void ParserTableStruct(TableInfo tableInfo)
-//     {
-//         Dictionary<string, ObjectInfo> objectInfos = new();
-//
-//         foreach (var sheetInfo in tableInfo.SheetInfos!.Where(sheetInfo => _objectInfos.All(oi => oi.ClassName != sheetInfo.Name)))
-//         {
-//             ObjectInfo objectInfo;
-//             if (sheetInfo.Name == Template.ProfileName)
-//             {
-//                 objectInfo = GetObjectInfo(sheetInfo);
-//                 objectInfo.ClassName = tableInfo.FileName;
-//                 objectInfo.IsMain = true;
-//                 objectInfo.ProfileType = sheetInfo.PkType;
-//                 objectInfo.ProfileDetailType = sheetInfo.PkType == "List" ? "": "string, ";
-//             }
-//             else
-//             {
-//                 objectInfo = GetObjectInfo(sheetInfo);
-//                 objectInfo.ClassName = sheetInfo.Name;
-//                 objectInfo.IsMain = false;
-//
-//                 string key = sheetInfo.Hierarchy.Count == 0? Template.ProfileName : sheetInfo.Hierarchy[0];
-//                 if (sheetInfo.FkType.Equals(FieldType.ForeignKey))
-//                 {
-//                     objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty
-//                     {
-//                         Name = objectInfo.ClassName,
-//                         Type = objectInfo.ClassName
-//                     });
-//                 }
-//                 else if (sheetInfo.FkType.Equals(FieldType.ForeignKeyList))
-//                 {
-//                     objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty
-//                     {
-//                         Name = $"{objectInfo.ClassName}List",
-//                         Type = $"List<{objectInfo.ClassName}>"
-//                     });
-//                 }
-//                 else
-//                 {
-//                     objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty
-//                     {
-//                         Name = $"{objectInfo.ClassName}Dictionary",
-//                         Type = $"Dictionary<string, {objectInfo.ClassName}>"
-//                     });
-//                 }
-//             }
-//
-//             objectInfos[sheetInfo.Name] = objectInfo;
-//         }
-//     }
+
+    private ObjectInfo GetObjectInfo(SheetInfo sheetInfo)
+    {
+        ObjectInfo objectInfo = CreateObjectInfo();
+
+        foreach (var fieldInfo in sheetInfo.FieldInfos.Where(fieldInfo => !fieldInfo.Type.Equals(FieldType.ForeignKey)))
+        {
+            if (FieldType.ListTypes.Contains(fieldInfo.Type))
+            {
+                objectInfo.ObjectComplexProperties.Add(new ObjectComplexProperty
+                {
+                    Type = GetFiledType(fieldInfo.Type),
+                    Name = fieldInfo.Name,
+                    Comment = fieldInfo.Comment
+                });
+            }
+            else if (FieldType.PrimaryKeyTypes.Contains(fieldInfo.Type))
+            {
+                objectInfo.ObjectBaseProperties.Add(new ObjectBaseProperty
+                {
+                    Type = GetFiledType(FieldType.String),
+                    Name = fieldInfo.Name,
+                    DefaultValue = GetDefaultValue(FieldType.String),
+                    Comment = fieldInfo.Comment
+                });
+            }
+            else
+            {
+                objectInfo.ObjectBaseProperties.Add(new ObjectBaseProperty
+                {
+                    Type = GetFiledType(fieldInfo.Type),
+                    Name = fieldInfo.Name,
+                    DefaultValue = GetDefaultValue(fieldInfo.Type),
+                    Comment = fieldInfo.Comment
+                });
+            }
+        }
+        return objectInfo;
+    }
+
+    private void ParserTableStruct(TableInfo tableInfo)
+    {
+        Dictionary<string, ObjectInfo> objectInfos = new()
+        {
+            [Const.MainSheet] = GetObjectInfo(tableInfo.MainSheet)
+        };
+
+        objectInfos[Const.MainSheet].IsMain = true;
+        objectInfos[Const.MainSheet].ClassName = tableInfo.FileName;
+        objectInfos[Const.MainSheet].ProfileType = tableInfo.MainSheet.PrimaryKeyFieldInfo!.Type == FieldType.PrimaryKeyList ? "List" : "Dictionary";
+        objectInfos[Const.MainSheet].ProfileDetailType = tableInfo.MainSheet.PrimaryKeyFieldInfo!.Type == FieldType.PrimaryKeyList ? "" : "string, ";
+
+        foreach (SheetInfo sheetInfo in tableInfo.SubSheetInfos)
+        {
+            var objectInfo = GetObjectInfo(sheetInfo);
+            objectInfo.IsMain = false;
+            objectInfo.ClassName = sheetInfo.Name;
+
+            string key = sheetInfo.Hierarchy.Count == 0 ? Const.MainSheet : sheetInfo.Hierarchy[0];
+
+            switch (sheetInfo.PrimaryKeyFieldInfo!.Type)
+            {
+                case FieldType.PrimaryKeyDictionary:
+                    objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty
+                    {
+                        Name = $"{sheetInfo.Name}Dictionary",
+                        Type = $"Dictionary<string, {sheetInfo.Name}>",
+                        Comment = sheetInfo.FullName
+                    });
+                    break;
+                case FieldType.PrimaryKeyList:
+                    objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty
+                    {
+                        Type = $"List<{sheetInfo.Name}>",
+                        Name = $"{sheetInfo.Name}List",
+                        Comment = sheetInfo.FullName
+                    });
+                    break;
+                default:
+                    objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty
+                    {
+                        Type = sheetInfo.Name,
+                        Name = sheetInfo.Name,
+                        Comment = sheetInfo.FullName
+                    });
+                    break;
+            }
+
+            objectInfos[sheetInfo.Name] = objectInfo;
+        }
+
+        _objectInfos.Add(objectInfos[Const.MainSheet]);
+
+        foreach ((string _, ObjectInfo oi) in objectInfos)
+        {
+            bool flag = false;
+            foreach (var _ in _objectInfos.Where(goi => oi.ClassName == goi.ClassName))
+            {
+                flag = true;
+            }
+            if (flag)
+                continue;
+            _objectInfos.Add(oi);
+        }
+    }
 
     private static bool CheckTable(IEnumerable<TableInfo> tableInfos)
     {
