@@ -5,8 +5,6 @@ namespace eV.Tool.ExcelToJson.Define;
 
 public static class Template
 {
-    public const string ProfileName = "Main";
-
     public const string ObjectFileName = "{0}Profile.cs";
 
     public const string ProfileObject = @"{0}
@@ -38,7 +36,12 @@ public class {2}
 }}
 
 ";
-    public const string BaseProperty = "    public {0} {1} {{ get; set; }} = {2};";
-    public const string ComplexProperty = "    public {0}? {1} {{ get; set; }}";
+    public const string BaseProperty = @"    /// <summary>
+    /// {0}
+    /// </summary>
+    public {1} {2} {{ get; set; }} = {3};";
+    public const string ComplexProperty = @"    /// <summary>
+    /// {0}
+    /// </summary>
+    public {1}? {2} {{ get; set; }}";
 }
-

@@ -1,20 +1,27 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using System.Data;
+// using System.Data;
+// using eV.Tool.ExcelToJson.Core;
+// using eV.Tool.ExcelToJson.Define;
+// using eV.Tool.ExcelToJson.Model;
+// using NPOI.SS.UserModel;
+// using NPOI.XSSF.UserModel;
+// // using File = eV.Tool.ExcelToJson.Core.File;
+//
+// // Console.WriteLine(File.GetFiles("/Users/three.zhang/Desktop").Count);
+//
 using eV.Tool.ExcelToJson.Core;
-using eV.Tool.ExcelToJson.Define;
 using eV.Tool.ExcelToJson.Model;
-using NPOI.SS.UserModel;
-using NPOI.XSSF.UserModel;
-// using File = eV.Tool.ExcelToJson.Core.File;
+using Microsoft.Extensions.Configuration;
+ConfigurationBuilder builder = new();
+builder.AddJsonFile("appsettings.json");
+var config = builder.Build();
 
-// Console.WriteLine(File.GetFiles("/Users/three.zhang/Desktop").Count);
-
-
-// Console.WriteLine(string.Format(Template.ProfileObject, "1", "2", "3", "4", "5").ToString());
+Parser parser = new(config);
 
 
-var excel = Excel.GetTable(new List<ExcelInfo>
+
+var excel = Excel.GetTableInfos(new List<ExcelInfo>
 {
     new()
     {
@@ -24,8 +31,9 @@ var excel = Excel.GetTable(new List<ExcelInfo>
     }
 });
 
+if (excel != null)
+    Console.WriteLine(excel[0].FileName);
 
-//
 // ObjectInfo objectInfo = new()
 // {
 //     NamespaceName = "eV.Profile",

@@ -5,7 +5,8 @@ namespace eV.Tool.ExcelToJson.Model;
 
 public class TableInfo
 {
-    public string FileName { get; set; } = string.Empty;
     public string FilePath { get; set; } = string.Empty;
-    public List<SheetInfo>? SheetInfos { get; set; }
+    public string FileName { get; set; } = string.Empty;
+    public SheetInfo MainSheet { get; set; } = new();
+    public List<SheetInfo> SubSheetInfos { get; } = new();
 }

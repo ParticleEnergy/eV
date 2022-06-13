@@ -9,22 +9,21 @@ public class SheetInfo : IComparable<SheetInfo>
 {
     public string FullName { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
-    public List<string> Hierarchy { get; set; } = new();
-
-    public string FkType { get; set; } = string.Empty;
-    public List<FieldInfo>? FieldInfos { get; set; }
-    public List<IRow>? Data { get; set; }
-
+    public FieldInfo? PrimaryKeyFieldInfo { get; set; }
+    public FieldInfo? ForeignKeyFieldInfo { get; set; }
+    public List<string> Hierarchy { get; } = new();
+    public List<FieldInfo> FieldInfos { get; } = new();
+    public List<IRow> Data { get; } = new();
     public int CompareTo(SheetInfo? other)
     {
-        if (Name == Template.ProfileName)
-            return 1;
-
-        if (other?.Name == Template.ProfileName)
+        if (Name == Const.MainSheet)
             return -1;
+
+        if (other?.Name == Const.MainSheet)
+            return 1;
 
         int flag = other?.Hierarchy.Count ?? 0;
 
-        return flag > Hierarchy.Count ? 1 : -1;
+        return flag > Hierarchy.Count ? -1 : 1;
     }
 }

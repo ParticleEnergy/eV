@@ -1,68 +1,43 @@
-// Copyright (c) ParticleEnergy. All rights reserved.
-// Licensed under the Apache license. See the LICENSE file in the project root for full license information.
-
-using eV.Module.EasyLog;
-using eV.Tool.ExcelToJson.Define;
-using eV.Tool.ExcelToJson.Model;
-using Microsoft.Extensions.Configuration;
-using FieldInfo = eV.Tool.ExcelToJson.Model.FieldInfo;
-namespace eV.Tool.ExcelToJson.Core;
-
-public class Parser
-{
+// // Copyright (c) ParticleEnergy. All rights reserved.
+// // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
+//
+// using eV.Module.EasyLog;
+// using eV.Tool.ExcelToJson.Define;
+// using eV.Tool.ExcelToJson.Model;
+// namespace eV.Tool.ExcelToJson.Core;
+//
+// public class Parser
+// {
 //     private readonly List<ObjectInfo> _objectInfos = new();
-    private readonly IConfigurationRoot _configuration;
-    public Parser(IConfigurationRoot configuration)
-    {
-        _configuration = configuration;
-    }
-
-    private string GetFiledType(string type)
-    {
-        return type switch
-        {
-            FieldType.ListString => "List<string>",
-            FieldType.ListBool => "List<bool>",
-            FieldType.ListDouble => "List<double>",
-            FieldType.ListInt => "List<int>",
-            FieldType.String => "string",
-            FieldType.Bool => "bool",
-            FieldType.Int => "int",
-            FieldType.Double => "double",
-            _ => "string.Empty"
-        };
-    }
-
-    private string GetDefaultValue(string type)
-    {
-        return type switch
-        {
-            FieldType.String => "string.Empty",
-            FieldType.Bool => "false",
-            FieldType.Double => "0.0",
-            FieldType.Int => "0",
-            _ => "string.Empty"
-        };
-    }
-
-    private ObjectInfo? CreateObjectInfo()
-    {
-        string outObjectNamespace = _configuration.GetSection(Const.OutObjectNamespace).Value;
-        string outObjectFileHead = _configuration.GetSection(Const.OutObjectFileHead).Value;
-
-        if (outObjectNamespace.Equals(""))
-        {
-            Logger.Error("bad configuration file");
-            return null;
-        }
-        if (!outObjectFileHead.Equals(""))
-            return new ObjectInfo
-            {
-                NamespaceName = outObjectNamespace, Head = outObjectFileHead
-            };
-        Logger.Error("bad configuration file");
-        return null;
-    }
+//
+//     public Parser(IEnumerable<TableInfo> tableInfos)
+//     {
+//         CheckTable(tableInfos);
+//     }
+//
+//     private string GetListType(string type)
+//     {
+//         return type switch
+//         {
+//             FieldType.ListString => "List<string>",
+//             FieldType.ListBool => "List<bool>",
+//             FieldType.ListDouble => "List<double>",
+//             FieldType.ListInt => "List<int>",
+//             _ => "string.Empty"
+//         };
+//     }
+//
+//     private string GetDefaultValue(string type)
+//     {
+//         return type switch
+//         {
+//             FieldType.String => "string.Empty",
+//             FieldType.Bool => "false",
+//             FieldType.Double => "0.0",
+//             FieldType.Int => "0",
+//             _ => "string.Empty"
+//         };
+//     }
 //
 //     private ObjectInfo GetObjectInfo(SheetInfo sheetInfo)
 //     {
@@ -158,45 +133,41 @@ public class Parser
 //             objectInfos[sheetInfo.Name] = objectInfo;
 //         }
 //     }
-
-    private static bool CheckTable(IEnumerable<TableInfo> tableInfos)
-    {
-        List<KeyValuePair<string, SheetInfo>> allSheetInfos = new();
-        foreach (TableInfo tableInfo in tableInfos)
-        {
-            allSheetInfos.AddRange(tableInfo.SubSheetInfos.Select(sheetInfo => KeyValuePair.Create(tableInfo.FilePath, sheetInfo)));
-        }
-
-
-        foreach ((string filePath1, SheetInfo sheetInfo1) in allSheetInfos)
-        {
-            foreach ((string filePath2, SheetInfo sheetInfo2) in allSheetInfos)
-            {
-                if (!sheetInfo1.Name.Equals(sheetInfo2.Name))
-                    continue;
-
-                if (sheetInfo1.FieldInfos.Count != sheetInfo2.FieldInfos.Count)
-                {
-                    Logger.Error($"[{filePath1} Sheet: {sheetInfo1.FullName}] [{filePath2} Sheet: {sheetInfo2.FullName}] Unequal number of fields");
-                    return false;
-                }
-
-                foreach (FieldInfo fieldInfo1 in sheetInfo1.FieldInfos)
-                {
-                    if (fieldInfo1.Type.Equals(FieldType.ForeignKey))
-                        continue;
-                    bool flag = false;
-                    foreach (var _ in sheetInfo2.FieldInfos.Where(fieldInfo2 => fieldInfo1.Name.Equals(fieldInfo2.Name) && fieldInfo2.Type.Equals(fieldInfo2.Type)))
-                    {
-                        flag = true;
-                    }
-                    if (flag)
-                        continue;
-                    Logger.Error($"[{filePath1} Sheet: {sheetInfo1.FullName}] [{filePath2} Sheet: {sheetInfo2.FullName}] Inconsistent fields [{fieldInfo1.Name}]");
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-}
+//
+//     private static bool CheckTable(IEnumerable<TableInfo> tableInfos)
+//     {
+//         List<KeyValuePair<string, SheetInfo>> allSheetInfos = (from tableInfo in tableInfos from sheetInfo in tableInfo.SheetInfos! where !sheetInfo.Name.Equals(Template.ProfileName) select KeyValuePair.Create(tableInfo.FilePath, sheetInfo)).ToList();
+//
+//
+//         foreach ((string filePath1, SheetInfo sheetInfo1) in allSheetInfos)
+//         {
+//             foreach ((string filePath2, SheetInfo sheetInfo2) in allSheetInfos)
+//             {
+//                 if (!sheetInfo1.Name.Equals(sheetInfo2.Name))
+//                     continue;
+//
+//                 if (sheetInfo1.FieldInfos.Count != sheetInfo2.FieldInfos.Count)
+//                 {
+//                     Logger.Error($"[{filePath1} Sheet: {sheetInfo1.FullName}] [{filePath2} Sheet: {sheetInfo2.FullName}] Unequal number of fields");
+//                     return false;
+//                 }
+//
+//                 foreach (FieldInfo fieldInfo1 in sheetInfo1.FieldInfos)
+//                 {
+//                     if (fieldInfo1.Type.Equals(FieldType.ForeignKey) || fieldInfo1.Type.Equals(FieldType.ForeignKeyList) || fieldInfo1.Type.Equals(FieldType.ForeignKeyDictionary))
+//                         continue;
+//                     bool flag = false;
+//                     foreach (var _ in sheetInfo2.FieldInfos.Where(fieldInfo2 => fieldInfo1.Name.Equals(fieldInfo2.Name) && fieldInfo2.Type.Equals(fieldInfo2.Type)))
+//                     {
+//                         flag = true;
+//                     }
+//                     if (flag)
+//                         continue;
+//                     Logger.Error($"[{filePath1} Sheet: {sheetInfo1.FullName}] [{filePath2} Sheet: {sheetInfo2.FullName}] Inconsistent fields [{fieldInfo1.Name}]");
+//                     return false;
+//                 }
+//             }
+//         }
+//         return true;
+//     }
+// }

@@ -9,38 +9,175 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 namespace eV.Tool.ExcelToJson.Core;
 
-public static class Excel
+public class Excel
 {
-    private const int CommentIndex = 0;
-    private const int TypeIndex = 1;
-    private const int NameIndex = 2;
-    private const int DataStartIndex = 3;
-
-    public static List<TableInfo>? GetTable(IEnumerable<ExcelInfo> excelInfos)
+    public static List<TableInfo>? GetTableInfos(IEnumerable<ExcelInfo> excelInfos)
     {
         List<TableInfo> result = new();
         foreach (ExcelInfo excelInfo in excelInfos)
         {
             var workbook = GetWorkbook(excelInfo);
             if (workbook == null)
-                continue;
-
-            List<SheetInfo>? sheetInfos = GetSheet(workbook, excelInfo.FilePath);
-
-            if (sheetInfos == null)
-            {
                 return null;
-            }
 
-            sheetInfos.Sort();
-            result.Add(new TableInfo
-            {
-                FileName = excelInfo.FileName,
-                FilePath = excelInfo.FilePath,
-                SheetInfos = sheetInfos
-            });
+            var tableInfo = GetTableInfo(workbook, excelInfo);
+            if (tableInfo == null)
+                return null;
+            result.Add(tableInfo);
         }
         return result;
+    }
+
+    private static TableInfo? GetTableInfo(IWorkbook workbook, ExcelInfo excelInfo)
+    {
+        TableInfo tableInfo = new()
+        {
+            FileName = excelInfo.FileName, FilePath = excelInfo.FilePath
+        };
+
+        for (int i = 0; i < workbook.NumberOfSheets; ++i)
+        {
+            var sheet = workbook.GetSheetAt(i);
+
+            var sheetInfo = GetSheetInfo(sheet, excelInfo.FilePath);
+            if (sheetInfo == null)
+                return null;
+
+            if (sheet.SheetName.Equals(Const.MainSheet))
+            {
+                tableInfo.MainSheet = sheetInfo;
+                sheetInfo.Name = Const.MainSheet;
+            }
+            else
+            {
+                tableInfo.SubSheetInfos.Add(sheetInfo);
+
+                string[] sheetNames = sheet.SheetName.Split("@");
+
+                sheetInfo.Name = sheetNames[0];
+
+                for (int j = 1; j < sheetNames.Length; ++j)
+                {
+                    sheetInfo.Hierarchy.Add(sheetNames[j]);
+                }
+            }
+        }
+        tableInfo.SubSheetInfos.Sort();
+        return tableInfo;
+    }
+
+    private static SheetInfo? GetSheetInfo(ISheet sheet, string filePath)
+    {
+        SheetInfo sheetInfo = new()
+        {
+            FullName = sheet.SheetName
+        };
+        // field
+        var commentRow = sheet.GetRow(Const.CommentRowIndex);
+        var nameRow = sheet.GetRow(Const.NameRowIndex);
+        var typeRow = sheet.GetRow(Const.TypeRowIndex);
+
+        if (typeRow.Cells.Count <= 0)
+        {
+            Logger.Error($"{filePath} Sheet: {sheet.SheetName} type definition is null");
+            return null;
+        }
+
+        if (typeRow.Cells.Count != nameRow.Cells.Count)
+        {
+            Logger.Error($"{filePath} Sheet: {sheet.SheetName} Type: {typeRow.Cells.Count} Name: {nameRow.Cells.Count} Field name and type quantity are inconsistent");
+            return null;
+        }
+
+        for (int i = 0; i < typeRow.Cells.Count; ++i)
+        {
+            try
+            {
+                string comment = commentRow.GetCell(i).ToString()?.Replace("\n", "") ?? "";
+                string? name = nameRow.GetCell(i).ToString();
+                string? type = typeRow.GetCell(i).ToString();
+
+                if (type == null || !FieldType.AllTypes.Contains(type))
+                {
+                    Logger.Error($"{filePath} Sheet: {sheet.SheetName} Cell: {i} Type: {type} field type is error");
+                    return null;
+                }
+
+                if (name is null or "" && !type.Equals(FieldType.ForeignKey))
+                {
+                    Logger.Error($"{filePath} Sheet: {sheet.SheetName} Cell {i} field name is error");
+                    return null;
+                }
+
+                foreach (FieldInfo fi in sheetInfo.FieldInfos)
+                {
+                    if (name == fi.Name)
+                    {
+                        Logger.Error($"{filePath} Sheet: {sheet.SheetName} Cell {i} field names cannot be the same");
+                        return null;
+                    }
+
+                    if (FieldType.PrimaryKeyTypes.Contains(type) && FieldType.PrimaryKeyTypes.Contains(fi.Type))
+                    {
+                        Logger.Error($"{filePath} Sheet: {sheet.SheetName} A Sheet can only contain one primary key");
+                        return null;
+                    }
+
+                    if (!type.Equals(FieldType.ForeignKey) || !fi.Type.Equals(FieldType.ForeignKey))
+                        continue;
+                    Logger.Error($"{filePath} Sheet: {sheet.SheetName} A Sheet can only contain one foreign key");
+                    return null;
+                }
+
+                FieldInfo fieldInfo = new()
+                {
+                    Index = i,
+                    Name = name ?? "",
+                    Type = type,
+                    Comment = comment
+                };
+
+                if (type.Equals(FieldType.ForeignKey))
+                {
+                    sheetInfo.ForeignKeyFieldInfo = fieldInfo;
+                }
+                else if (FieldType.PrimaryKeyTypes.Contains(type))
+                {
+                    sheetInfo.PrimaryKeyFieldInfo = fieldInfo;
+                }
+                else
+                {
+                    sheetInfo.FieldInfos.Add(fieldInfo);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error($"{filePath} Cell {i} {e.Message}");
+            }
+        }
+        if (!sheet.SheetName.Equals(Const.MainSheet) && sheetInfo.ForeignKeyFieldInfo == null)
+        {
+            Logger.Error($"{filePath} Sheet: {sheet.SheetName} Non Main Sheet must contain foreign keys");
+            return null;
+        }
+        if (sheetInfo.ForeignKeyFieldInfo == null && sheetInfo.PrimaryKeyFieldInfo == null && sheetInfo.FieldInfos.Count == 0)
+        {
+            Logger.Error($"{filePath} Sheet: {sheet.SheetName} Contains at least one field");
+            return null;
+        }
+        if (sheet.SheetName.Equals(Const.MainSheet) && sheetInfo.PrimaryKeyFieldInfo == null)
+        {
+            Logger.Error($"{filePath} Sheet: {sheet.SheetName} Main sheet must have primary key");
+            return null;
+        }
+
+        // data
+        for (int i = 0; i < sheet.LastRowNum - (Const.DataStartRowIndex + 1); ++i)
+        {
+            sheetInfo.Data.Add(sheet.GetRow(i));
+        }
+
+        return sheetInfo;
     }
 
     private static IWorkbook? GetWorkbook(ExcelInfo excelInfo)
@@ -67,171 +204,6 @@ public static class Excel
         {
             Logger.Error($"{excelInfo.FilePath} {e.Message}");
         }
-        return null;
-    }
-
-    private static List<SheetInfo>? GetSheet(IWorkbook workbook, string filePath)
-    {
-        List<SheetInfo> result = new();
-
-        for (int i = 0; i < workbook.NumberOfSheets; ++i)
-        {
-            try
-            {
-                var sheet = workbook.GetSheetAt(i);
-
-                KeyValuePair<string, List<FieldInfo>>? fieldInfos = GetField(sheet, filePath);
-
-                if (fieldInfos == null)
-                {
-                    return null;
-                }
-
-                SheetInfo sheetInfo = new()
-                {
-                    FullName = sheet.SheetName,
-                    FieldInfos = fieldInfos.Value.Value,
-                    FkType =  fieldInfos.Value.Key,
-                    Data = GetData(sheet)
-                };
-
-                string[] sheetNames = sheet.SheetName.Split("@");
-
-                sheetInfo.Name = sheetNames[0];
-
-                for (int j = 1; j < sheetNames.Length; ++j)
-                {
-                    sheetInfo.Hierarchy.Add(sheetNames[j]);
-                }
-                result.Add(sheetInfo);
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"{filePath} {e.Message}");
-            }
-        }
-
-        return result;
-    }
-
-    private static List<IRow> GetData(ISheet sheet)
-    {
-        List<IRow> result = new();
-
-        for (int i = 0; i < sheet.LastRowNum - (DataStartIndex + 1); ++i)
-        {
-            result.Add(sheet.GetRow(i));
-        }
-        return result;
-    }
-
-    private static KeyValuePair<string, List<FieldInfo>>? GetField(ISheet sheet, string filePath)
-    {
-        List<FieldInfo> result = new();
-        string fk = FieldType.ForeignKey;
-        List<string> foreignKeyList = new()
-        {
-            FieldType.ForeignKey,
-            FieldType.ForeignKeyList,
-            FieldType.ForeignKeyDictionary,
-        };
-
-        var typeRow = sheet.GetRow(TypeIndex);
-        var nameRow = sheet.GetRow(NameIndex);
-        var commentRow = sheet.GetRow(CommentIndex);
-
-        if (typeRow.Cells.Count <= 0)
-        {
-            Logger.Error($"{filePath} Sheet: {sheet.SheetName} type definition is null");
-            return null;
-        }
-
-        if (typeRow.Cells.Count != nameRow.Cells.Count)
-        {
-            Logger.Error($"{filePath} Sheet: {sheet.SheetName} Type: {typeRow.Cells.Count} Name: {nameRow.Cells.Count} Field name and type quantity are inconsistent");
-            return null;
-        }
-
-        for (int i = 0; i < typeRow.Cells.Count; ++i)
-        {
-            try
-            {
-                string? type = typeRow.GetCell(i).ToString();
-                string? name = nameRow.GetCell(i).ToString();
-                string comment = commentRow.GetCell(i).ToString()?.Replace("\n", "") ?? "";
-                if (type == null || !new List<string>
-                    {
-                        FieldType.PrimaryKey,
-                        FieldType.ForeignKey,
-                        FieldType.ForeignKeyList,
-                        FieldType.ForeignKeyDictionary,
-                        FieldType.String,
-                        FieldType.Int,
-                        FieldType.Double,
-                        FieldType.Bool,
-                        FieldType.ListString,
-                        FieldType.ListInt,
-                        FieldType.ListDouble,
-                        FieldType.ListBool
-                    }.Contains(type))
-                {
-                    Logger.Error($"{filePath} Sheet: {sheet.SheetName} Cell: {i} Type: {type} field type is error");
-                    return null;
-                }
-                if (name is null or "")
-                {
-                    if (type.Equals(FieldType.PrimaryKey))
-                    {
-                        name = "";
-                    }
-                    else
-                    {
-                        Logger.Error($"{filePath} Sheet: {sheet.SheetName} Cell {i} field name is error");
-                        return null;
-                    }
-                }
-
-                foreach (FieldInfo fi in result)
-                {
-                    if (name == fi.Name)
-                    {
-                        Logger.Error($"{filePath} Sheet: {sheet.SheetName} Cell {i} field names cannot be the same");
-                        return null;
-                    }
-
-                    if (type.Equals(FieldType.PrimaryKey) && fi.Type.Equals(FieldType.PrimaryKey))
-                    {
-                        Logger.Error($"{filePath} Sheet: {sheet.SheetName} A Sheet can only contain one primary key");
-                        return null;
-                    }
-
-                    if (!foreignKeyList.Contains(type) || !foreignKeyList.Contains(fi.Type))
-                        continue;
-                    Logger.Error($"{filePath} Sheet: {sheet.SheetName} A Sheet can only contain one foreign key");
-                    return null;
-                }
-
-                FieldInfo fieldInfo = new()
-                {
-                    Index = i,
-                    Name = name,
-                    Type = type,
-                    Comment = comment
-                };
-                result.Add(fieldInfo);
-                if (foreignKeyList.Contains(type))
-                    fk = type;
-            }
-            catch (Exception e)
-            {
-                Logger.Error($"{filePath} Cell {i} {e.Message}");
-            }
-        }
-
-        if (result.Count != 1 || (!result[0].Type.Equals(FieldType.ForeignKey) && !result[0].Type.Equals(FieldType.ForeignKeyList) && !result[0].Type.Equals(FieldType.ForeignKeyDictionary)))
-            return KeyValuePair.Create(fk, result);
-
-        Logger.Error($"{filePath} Sheet: {sheet.SheetName} Contains at least one field other than fk or fks");
         return null;
     }
 }

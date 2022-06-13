@@ -12,8 +12,9 @@ public class ObjectInfo
     public string ClassName { get; set; } = string.Empty;
     public string ProfileType { get; set; } = string.Empty;
     public string ProfileDetailType { get; set; } = string.Empty;
-    public List<ObjectBaseProperty>? ObjectBaseProperties { get; set; }
-    public List<ObjectComplexProperty>? ObjectComplexProperties { get; set; }
+    public string PropertyComment { get; set; } = string.Empty;
+    public List<ObjectBaseProperty> ObjectBaseProperties { get; } = new();
+    public List<ObjectComplexProperty> ObjectComplexProperties { get; } = new();
 
     public override string ToString()
     {
@@ -23,17 +24,9 @@ public class ObjectInfo
     private string GetProperties()
     {
         List<string> properties = new();
+        properties.AddRange(ObjectBaseProperties.Select(objectBaseProperty => string.Format(Template.BaseProperty, PropertyComment, objectBaseProperty.Type, objectBaseProperty.Name, objectBaseProperty.DefaultValue)));
 
-        if (ObjectBaseProperties != null)
-        {
-            properties.AddRange(ObjectBaseProperties.Select(objectBaseProperty => string.Format(Template.BaseProperty, objectBaseProperty.Type, objectBaseProperty.Name, objectBaseProperty.DefaultValue)));
-        }
-
-        if (ObjectComplexProperties != null)
-        {
-            properties.AddRange(ObjectComplexProperties.Select(objectComplexProperty => string.Format(Template.ComplexProperty, objectComplexProperty.Type, objectComplexProperty.Name)));
-        }
-
+        properties.AddRange(ObjectComplexProperties.Select(objectComplexProperty => string.Format(Template.ComplexProperty, PropertyComment, objectComplexProperty.Type, objectComplexProperty.Name)));
         return string.Join("\n", properties);
     }
 }
