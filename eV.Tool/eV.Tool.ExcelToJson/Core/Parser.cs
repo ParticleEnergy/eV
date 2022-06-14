@@ -17,10 +17,17 @@ public class Parser
         _configuration = configuration;
     }
 
-    public void OutClass(List<TableInfo> tableInfos)
+
+
+    public void OutClass(List<TableInfo> tableInfos, Action<string, string> write)
     {
         if (!CheckTable(tableInfos))
             return;
+
+        _objectInfos.Clear();
+
+        string path = _configuration.GetSection(Const.OutObjectFilePath).Value;
+
         foreach (TableInfo tableInfo in tableInfos)
         {
             ParserTableStruct(tableInfo);
@@ -28,11 +35,12 @@ public class Parser
 
         foreach (ObjectInfo objectInfo in _objectInfos)
         {
-            Console.WriteLine(objectInfo.ToString());
+            string file = objectInfo.IsMain ? $"{path}/{string.Format(Template.ObjectFileName, objectInfo.ClassName)}" : $"{path}/Object/{objectInfo.ClassName}.cs";
+            write(file, objectInfo.ToString());
         }
     }
 
-    private string GetFiledType(string type)
+    private static string GetFiledType(string type)
     {
         return type switch
         {
@@ -48,7 +56,7 @@ public class Parser
         };
     }
 
-    private string GetDefaultValue(string type)
+    private static string GetDefaultValue(string type)
     {
         return type switch
         {
@@ -74,7 +82,7 @@ public class Parser
     {
         ObjectInfo objectInfo = CreateObjectInfo();
 
-        foreach (var fieldInfo in sheetInfo.FieldInfos.Where(fieldInfo => !fieldInfo.Type.Equals(FieldType.ForeignKey)))
+        foreach (var fieldInfo in sheetInfo.FieldInfos.Where(fieldInfo => !FieldType.ForeignKeyTypes.Contains(fieldInfo.Type)))
         {
             if (FieldType.ListTypes.Contains(fieldInfo.Type))
             {
@@ -129,22 +137,22 @@ public class Parser
 
             string key = sheetInfo.Hierarchy.Count == 0 ? Const.MainSheet : sheetInfo.Hierarchy[0];
 
-            switch (sheetInfo.PrimaryKeyFieldInfo!.Type)
+            switch (sheetInfo.ForeignKeyFieldInfo!.Type)
             {
-                case FieldType.PrimaryKeyDictionary:
+                case FieldType.ForeignKeyDictionary:
                     objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty
                     {
                         Name = $"{sheetInfo.Name}Dictionary",
                         Type = $"Dictionary<string, {sheetInfo.Name}>",
-                        Comment = sheetInfo.FullName
+                        Comment = sheetInfo.Name
                     });
                     break;
-                case FieldType.PrimaryKeyList:
+                case FieldType.ForeignKeyList:
                     objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty
                     {
                         Type = $"List<{sheetInfo.Name}>",
                         Name = $"{sheetInfo.Name}List",
-                        Comment = sheetInfo.FullName
+                        Comment = sheetInfo.Name
                     });
                     break;
                 default:
@@ -152,7 +160,7 @@ public class Parser
                     {
                         Type = sheetInfo.Name,
                         Name = sheetInfo.Name,
-                        Comment = sheetInfo.FullName
+                        Comment = sheetInfo.Name
                     });
                     break;
             }
@@ -199,7 +207,7 @@ public class Parser
 
                 foreach (FieldInfo fieldInfo1 in sheetInfo1.FieldInfos)
                 {
-                    if (fieldInfo1.Type.Equals(FieldType.ForeignKey))
+                    if (FieldType.ForeignKeyTypes.Contains(fieldInfo1.Type))
                         continue;
                     bool flag = false;
                     foreach (var _ in sheetInfo2.FieldInfos.Where(fieldInfo2 => fieldInfo1.Name.Equals(fieldInfo2.Name) && fieldInfo2.Type.Equals(fieldInfo2.Type)))

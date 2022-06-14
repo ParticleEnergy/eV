@@ -5,11 +5,14 @@ namespace eV.Tool.ExcelToJson.Define;
 
 public static class FieldType
 {
-    public const string PrimaryKeyObject = "PkObject";
+    public const string PrimaryKey = "Pk";
     public const string PrimaryKeyList = "PkList";
     public const string PrimaryKeyDictionary = "PkDict";
 
-    public const string ForeignKey = "Fk";
+    public const string ForeignKeyObject = "FkObject";
+    public const string ForeignKeyList = "FkList";
+    public const string ForeignKeyDictionary = "FkDict";
+
 
     public const string ListString = "ListString";
     public const string ListInt = "ListInt";
@@ -23,9 +26,16 @@ public static class FieldType
 
     public static List<string> PrimaryKeyTypes => new()
     {
-        PrimaryKeyObject,
+        PrimaryKey,
         PrimaryKeyList,
         PrimaryKeyDictionary
+    };
+
+    public static List<string> ForeignKeyTypes => new()
+    {
+        ForeignKeyObject,
+        ForeignKeyList,
+        ForeignKeyDictionary
     };
 
     public static List<string> ListTypes => new()
@@ -38,10 +48,12 @@ public static class FieldType
 
     public static List<string> AllTypes => new()
     {
-        PrimaryKeyObject,
+        PrimaryKey,
         PrimaryKeyList,
         PrimaryKeyDictionary,
-        ForeignKey,
+        ForeignKeyObject,
+        ForeignKeyList,
+        ForeignKeyDictionary,
         ListString,
         ListBool,
         ListDouble,

@@ -9,7 +9,7 @@ using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 namespace eV.Tool.ExcelToJson.Core;
 
-public class Excel
+public static class Excel
 {
     public static List<TableInfo>? GetTableInfos(IEnumerable<ExcelInfo> excelInfos)
     {
@@ -103,7 +103,13 @@ public class Excel
                     return null;
                 }
 
-                if (name is null or "" && !type.Equals(FieldType.ForeignKey))
+                if (FieldType.PrimaryKeyTypes.Contains(type) && !sheet.SheetName.Equals(Const.MainSheet) && !type.Equals(FieldType.PrimaryKey))
+                {
+                    Logger.Error($"{filePath} Sheet: {sheet.SheetName} Cell: {i} Type: {type} primary key type is error");
+                    return null;
+                }
+
+                if (name is null or "" && !FieldType.ForeignKeyTypes.Contains(type))
                 {
                     Logger.Error($"{filePath} Sheet: {sheet.SheetName} Cell {i} field name is error");
                     return null;
@@ -123,7 +129,7 @@ public class Excel
                         return null;
                     }
 
-                    if (!type.Equals(FieldType.ForeignKey) || !fi.Type.Equals(FieldType.ForeignKey))
+                    if (!FieldType.ForeignKeyTypes.Contains(type) || !FieldType.ForeignKeyTypes.Contains(fi.Type))
                         continue;
                     Logger.Error($"{filePath} Sheet: {sheet.SheetName} A Sheet can only contain one foreign key");
                     return null;
@@ -137,7 +143,7 @@ public class Excel
                     Comment = comment
                 };
 
-                if (type.Equals(FieldType.ForeignKey))
+                if (FieldType.ForeignKeyTypes.Contains(type))
                 {
                     sheetInfo.ForeignKeyFieldInfo = fieldInfo;
                 }

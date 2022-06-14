@@ -24,4 +24,8 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Example\Profile\Object" />
+    </ItemGroup>
+
 </Project>
