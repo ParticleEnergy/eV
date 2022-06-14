@@ -8,16 +8,14 @@ using Microsoft.Extensions.Configuration;
 using FieldInfo = eV.Tool.ExcelToJson.Model.FieldInfo;
 namespace eV.Tool.ExcelToJson.Core;
 
-public class Parser
+public class ParserStruct
 {
     private readonly List<ObjectInfo> _objectInfos = new();
     private readonly IConfigurationRoot _configuration;
-    public Parser(IConfigurationRoot configuration)
+    public ParserStruct(IConfigurationRoot configuration)
     {
         _configuration = configuration;
     }
-
-
 
     public void OutClass(List<TableInfo> tableInfos, Action<string, string> write)
     {

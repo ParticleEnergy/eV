@@ -178,7 +178,7 @@ public static class Excel
         }
 
         // data
-        for (int i = 0; i < sheet.LastRowNum - (Const.DataStartRowIndex + 1); ++i)
+        for (int i = Const.DataStartRowIndex; i <= sheet.LastRowNum; ++i)
         {
             sheetInfo.Data.Add(sheet.GetRow(i));
         }

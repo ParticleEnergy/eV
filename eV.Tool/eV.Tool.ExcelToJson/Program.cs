@@ -44,18 +44,20 @@ if (tableInfos == null)
     return;
 }
 
-Parser parser = new(config);
+ParserData parser = new(config);
+parser.GetTableData(tableInfos);
 
-File.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
-parser.OutClass(tableInfos, File.Write);
-
-// if (args.Length > 0 && args[0].Equals("object"))
-// {
-//     File.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
-//     parser.OutClass(tableInfos, File.Write);
-// }
-// else
-// {
-//     Console.WriteLine("");
-// }
+return;
+if (args.Length > 0 && args[0].Equals("object"))
+{
+    ParserStruct parserStruct = new(config);
+    File.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
+    parserStruct.OutClass(tableInfos, File.Write);
+}
+else
+{
+    ParserData parserData = new(config);
+    File.InitOutJsonPath(config.GetSection(Const.OutJsonFilePath).Value);
+    // parserData.OutJson(tableInfos, File.Write);
+}
 

@@ -12,6 +12,7 @@ public static class Const
     public const string OutObjectFileHead = "OutObjectFileHead";
 
     public const string MainSheet = "Main";
+    public const string SplitFlag = ",";
 
     public const int CommentRowIndex = 0;
     public const int NameRowIndex = 1;
