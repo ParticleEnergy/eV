@@ -33,7 +33,7 @@ if (config.GetSection(Const.OutObjectNamespace).Value is "" or null)
 }
 if (config.GetSection(Const.OutObjectFileHead).Value is "" or null)
 {
-        Logger.Error("appsettings.json missing OutObjectFileHead");
+    Logger.Error("appsettings.json missing OutObjectFileHead");
     return;
 }
 
@@ -44,20 +44,30 @@ if (tableInfos == null)
     return;
 }
 
-ParserData parser = new(config);
-parser.GetTableData(tableInfos);
-
-return;
-if (args.Length > 0 && args[0].Equals("object"))
+switch (args.Length)
 {
-    ParserStruct parserStruct = new(config);
-    File.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
-    parserStruct.OutClass(tableInfos, File.Write);
+    case > 0 when args[0].Equals("object"):
+        {
+            ParserStruct parserStruct = new(config);
+            File.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
+            parserStruct.OutClass(tableInfos, File.Write);
+            break;
+        }
+    case > 0 when args[0].Equals("json"):
+        {
+            ParserData parserData = new(config);
+            File.InitOutJsonPath(config.GetSection(Const.OutJsonFilePath).Value);
+            parserData.OutJson(tableInfos, File.Write);
+            break;
+        }
+    default:
+        {
+            ParserStruct parserStruct = new(config);
+            File.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
+            parserStruct.OutClass(tableInfos, File.Write);
+            ParserData parserData = new(config);
+            File.InitOutJsonPath(config.GetSection(Const.OutJsonFilePath).Value);
+            parserData.OutJson(tableInfos, File.Write);
+            break;
+        }
 }
-else
-{
-    ParserData parserData = new(config);
-    File.InitOutJsonPath(config.GetSection(Const.OutJsonFilePath).Value);
-    // parserData.OutJson(tableInfos, File.Write);
-}
-

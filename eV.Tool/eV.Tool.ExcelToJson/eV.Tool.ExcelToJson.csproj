@@ -25,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Example\Json" />
       <Folder Include="Example\Profile\Object" />
     </ItemGroup>
 

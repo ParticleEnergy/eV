@@ -1,7 +1,6 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
-using System.Data;
 using eV.Module.EasyLog;
 using eV.Tool.ExcelToJson.Define;
 using eV.Tool.ExcelToJson.Model;
@@ -19,46 +18,39 @@ public class ParserData
         _configuration = configuration;
     }
 
-    public void GetTableData(List<TableInfo> tableInfos)
+    public void OutJson(List<TableInfo> tableInfos, Action<string, string> write)
     {
 
         foreach (TableInfo tableInfo in tableInfos)
         {
-            Dictionary<string, Dictionary<string, object>?> data = new();
+            Dictionary<int, List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>> data = new();
+            for (int i = tableInfo.SubSheetInfos.Count - 1; i >= 0; i--)
+            {
+                SheetInfo sheetInfo = tableInfo.SubSheetInfos[i];
+                data.TryGetValue(sheetInfo.Hierarchy.Count, out List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? flag);
+                if (flag == null)
+                {
+                    data[sheetInfo.Hierarchy.Count] = new List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>();
+                }
+                data.TryGetValue(sheetInfo.Hierarchy.Count + 1, out List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? d);
+                data[sheetInfo.Hierarchy.Count].Add(KeyValuePair.Create(sheetInfo, GetSubSheetData(sheetInfo, d)));
+            }
+            data.TryGetValue(0, out List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? subData);
 
-            object? mainTable = GetMainSheetData(tableInfo.MainSheet);
+            object? mainTable = GetMainSheetData(tableInfo.MainSheet, subData);
             if (mainTable == null)
             {
                 return;
             }
-            foreach (SheetInfo sheetInfo in tableInfo.SubSheetInfos)
-            {
-                data[sheetInfo.FullName] = GetSubSheetData(sheetInfo);
-            }
 
-            if (tableInfo.MainSheet.PrimaryKeyFieldInfo != null)
-            {
-                if (tableInfo.MainSheet.PrimaryKeyFieldInfo.Type.Equals(FieldType.PrimaryKeyList))
-                {
-                    foreach (var mainData in (List<Dictionary<string, object>>)mainTable)
-                    {
-
-                    }
-                }
-                else
-                {
-                    foreach ((string _, var mainData) in (Dictionary<string, Dictionary<string, object>>)mainTable)
-                    {
-
-                    }
-                }
-            }
             string jsonString = JsonConvert.SerializeObject(mainTable);
-            Console.WriteLine(jsonString);
+            string path = _configuration.GetSection(Const.OutJsonFilePath).Value;
+            string file = $"{path}/{tableInfo.FileName}Profile.json";
+            write(file, jsonString);
         }
     }
 
-    private static Dictionary<string, object>? GetSubSheetData(SheetInfo sheetInfo)
+    private static Dictionary<string, object>? GetSubSheetData(SheetInfo sheetInfo, List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? data)
     {
         Dictionary<string, object> result = new();
 
@@ -77,12 +69,39 @@ public class ParserData
             }
             if (sheetInfo.PrimaryKeyFieldInfo != null)
             {
-                if (row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index).ToString() == null)
+                string? primaryKeyValue = row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index).ToString();
+                if (primaryKeyValue == null)
                 {
                     Logger.Error($"{sheetInfo.FullName} Primary key cannot be empty");
                     return null;
                 }
-                dataRow[sheetInfo.PrimaryKeyFieldInfo.Name] = row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index).ToString() ?? "";
+                dataRow[sheetInfo.PrimaryKeyFieldInfo.Name] = primaryKeyValue;
+
+                if (data != null)
+                {
+                    foreach ((SheetInfo subSheetInfo, Dictionary<string, object>? d)in data)
+                    {
+                        if (d != null && string.Join( "@", subSheetInfo.Hierarchy).Equals(sheetInfo.FullName))
+                        {
+                            d.TryGetValue(primaryKeyValue, out object? value);
+                            switch (subSheetInfo.ForeignKeyFieldInfo!.Type)
+                            {
+                                case FieldType.ForeignKeyDictionary:
+                                    dataRow[$"{subSheetInfo.Name}Dictionary"] = value;
+                                    break;
+                                case FieldType.ForeignKeyObject:
+                                    dataRow[$"{subSheetInfo.Name}"] = value;
+                                    break;
+                                case FieldType.ForeignKeyList:
+                                    dataRow[$"{subSheetInfo.Name}List"] = value;
+                                    break;
+                                default:
+                                    Logger.Error($"Sub sheet {subSheetInfo.FullName} Foreign key cannot be empty");
+                                    return null;
+                            }
+                        }
+                    }
+                }
             }
             string? fkValue = row.GetCell(sheetInfo.ForeignKeyFieldInfo.Index).ToString();
             if (fkValue == null)
@@ -131,10 +150,10 @@ public class ParserData
         return result;
     }
 
-    private static object? GetMainSheetData(SheetInfo sheetInfo)
+    private static object? GetMainSheetData(SheetInfo sheetInfo, List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? subData)
     {
-        Dictionary<string, Dictionary<string, object>> dataDictionary = new();
-        List<Dictionary<string, object>> dataList = new();
+        Dictionary<string, Dictionary<string, object?>> dataDictionary = new();
+        List<Dictionary<string, object?>> dataList = new();
         foreach (var dataRow in sheetInfo.Data.Select(row => GetMainRow(row, sheetInfo)))
         {
             if (dataRow == null)
@@ -144,9 +163,35 @@ public class ParserData
 
             if (sheetInfo.PrimaryKeyFieldInfo != null)
             {
+                if (subData != null)
+                {
+                    foreach ((SheetInfo subSheetInfo, Dictionary<string, object>? d)in subData)
+                    {
+                        if (d != null)
+                        {
+                            d.TryGetValue(dataRow[sheetInfo.PrimaryKeyFieldInfo.Name]!.ToString()!, out object? value);
+                            switch (subSheetInfo.ForeignKeyFieldInfo!.Type)
+                            {
+                                case FieldType.ForeignKeyDictionary:
+                                    dataRow[$"{subSheetInfo.Name}Dictionary"] = value;
+                                    break;
+                                case FieldType.ForeignKeyObject:
+                                    dataRow[$"{subSheetInfo.Name}"] = value;
+                                    break;
+                                case FieldType.ForeignKeyList:
+                                    dataRow[$"{subSheetInfo.Name}List"] = value;
+                                    break;
+                                default:
+                                    Logger.Error($"Sub sheet {subSheetInfo.FullName} Foreign key cannot be empty");
+                                    return null;
+                            }
+                        }
+                    }
+                }
+
                 if (sheetInfo.PrimaryKeyFieldInfo.Type.Equals(FieldType.PrimaryKeyDictionary))
                 {
-                    dataDictionary[dataRow[sheetInfo.PrimaryKeyFieldInfo.Name].ToString()!] = dataRow;
+                    dataDictionary[dataRow[sheetInfo.PrimaryKeyFieldInfo.Name]!.ToString()!] = dataRow;
                 }
                 else
                 {
@@ -168,9 +213,9 @@ public class ParserData
         return dataList;
     }
 
-    private static Dictionary<string, object>? GetMainRow(IRow row, SheetInfo sheetInfo)
+    private static Dictionary<string, object?>? GetMainRow(IRow row, SheetInfo sheetInfo)
     {
-        Dictionary<string, object>? dataRow = GetRow(row, sheetInfo);
+        Dictionary<string, object?>? dataRow = GetRow(row, sheetInfo);
         if (dataRow == null)
         {
             return null;
@@ -179,18 +224,19 @@ public class ParserData
         if (sheetInfo.PrimaryKeyFieldInfo == null)
             return dataRow;
 
-        if (row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index).ToString() == null)
+        string? pk = row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index).ToString();
+        if (pk == null)
         {
             Logger.Error($"{sheetInfo.FullName} Primary key cannot be empty");
             return null;
         }
-        dataRow[sheetInfo.PrimaryKeyFieldInfo.Name] = row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index).ToString() ?? "";
+        dataRow[sheetInfo.PrimaryKeyFieldInfo.Name] = pk;
         return dataRow;
     }
 
-    private static Dictionary<string, object>? GetRow(IRow row, SheetInfo sheetInfo)
+    private static Dictionary<string, object?>? GetRow(IRow row, SheetInfo sheetInfo)
     {
-        Dictionary<string, object> dataRow = new();
+        Dictionary<string, object?> dataRow = new();
         foreach (FieldInfo fieldInfo in sheetInfo.FieldInfos)
         {
             try
