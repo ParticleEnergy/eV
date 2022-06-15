@@ -39,6 +39,9 @@ public static class Excel
         {
             var sheet = workbook.GetSheetAt(i);
 
+            if (sheet.SheetName.StartsWith("!"))
+                continue;
+
             var sheetInfo = GetSheetInfo(sheet, excelInfo.FilePath);
             if (sheetInfo == null)
                 return null;
@@ -96,6 +99,9 @@ public static class Excel
                 string comment = commentRow.GetCell(i).ToString()?.Replace("\n", "") ?? "";
                 string? name = nameRow.GetCell(i).ToString();
                 string? type = typeRow.GetCell(i).ToString();
+
+                if (name != null && name.StartsWith("!"))
+                    continue;
 
                 if (type == null || !FieldType.AllTypes.Contains(type))
                 {
