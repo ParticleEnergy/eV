@@ -36,6 +36,11 @@ if (config.GetSection(Const.OutObjectFileHead).Value is "" or null)
     Logger.Error("appsettings.json missing OutObjectFileHead");
     return;
 }
+if (config.GetSection(Const.JsonFormatting).Value is "" or null)
+{
+    Logger.Error("appsettings.json missing OutObjectFileHead");
+    return;
+}
 
 var excelInfos = File.GetFiles(config.GetSection(Const.InExcelPath).Value);
 var tableInfos = Excel.GetTableInfos(excelInfos);
