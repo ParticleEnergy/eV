@@ -14,10 +14,10 @@ public static class Const
     public const string MainSheet = "Main";
     public const string SplitFlag = ",";
 
-    public const int CommentRowIndex = 0;
-    public const int NameRowIndex = 1;
-    public const int TypeRowIndex = 2;
-    public const int DataStartRowIndex = 3;
+    public const int CommentRowIndex = 1;
+    public const int NameRowIndex = 2;
+    public const int TypeRowIndex = 3;
+    public const int DataStartRowIndex = 4;
 
     public const int MainPrimaryKeyCellIndex = 0;
 
