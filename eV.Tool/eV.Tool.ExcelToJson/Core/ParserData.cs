@@ -43,7 +43,7 @@ public class ParserData
                 return;
             }
 
-            string jsonString = JsonConvert.SerializeObject(mainTable);
+            string jsonString = _configuration.GetSection(Const.JsonFormatting).Value.Equals("Indented") ? JsonConvert.SerializeObject(mainTable, Formatting.Indented) : JsonConvert.SerializeObject(mainTable);
             string path = _configuration.GetSection(Const.OutJsonFilePath).Value;
             string file = $"{path}/{tableInfo.FileName}Profile.json";
             write(file, jsonString);

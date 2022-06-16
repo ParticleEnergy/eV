@@ -10,6 +10,7 @@ public static class Const
     public const string OutJsonFilePath = "OutJsonFilePath";
     public const string OutObjectNamespace = "OutObjectNamespace";
     public const string OutObjectFileHead = "OutObjectFileHead";
+    public const string JsonFormatting = "JsonFormatting";
 
     public const string MainSheet = "Main";
     public const string SplitFlag = ",";

@@ -11,5 +11,5 @@ public class GameProfile
     {
     }
 
-    public HelloProfile? HelloProfile { get; set; }
+    public ExampleProfile? ExampleProfile { get; set; }
 }
