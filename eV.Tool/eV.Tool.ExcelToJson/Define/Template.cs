@@ -7,6 +7,26 @@ public static class Template
 {
     public const string ObjectFileName = "{0}Profile.cs";
 
+    public const string ProfileObjectNoDependencies = @"{0}
+
+using eV.Module.GameProfile.Attributes;
+namespace {1};
+
+[GameProfile]
+public class {2}Profile : {3}<{4}{5}Row>
+{{
+
+}}
+
+public class {6}Row
+{{
+{7}
+}}
+
+";
+
+
+
     public const string ProfileObject = @"{0}
 
 using eV.Module.GameProfile.Attributes;

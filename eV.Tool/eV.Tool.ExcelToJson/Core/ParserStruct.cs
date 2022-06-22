@@ -72,7 +72,9 @@ public class ParserStruct
         string outObjectFileHead = _configuration.GetSection(Const.OutObjectFileHead).Value;
         return new ObjectInfo
         {
-            NamespaceName = outObjectNamespace, Head = outObjectFileHead
+            NamespaceName = outObjectNamespace,
+            Head = outObjectFileHead,
+            IsDependencies = true
         };
     }
 
@@ -127,6 +129,7 @@ public class ParserStruct
         objectInfos[Const.MainSheet].ClassName = tableInfo.FileName;
         objectInfos[Const.MainSheet].ProfileType = tableInfo.MainSheet.PrimaryKeyFieldInfo!.Type == FieldType.PrimaryKeyList ? "List" : "Dictionary";
         objectInfos[Const.MainSheet].ProfileDetailType = tableInfo.MainSheet.PrimaryKeyFieldInfo!.Type == FieldType.PrimaryKeyList ? "" : "string, ";
+        objectInfos[Const.MainSheet].IsDependencies = tableInfo.SubSheetInfos.Count > 0;
 
         foreach (SheetInfo sheetInfo in tableInfo.SubSheetInfos)
         {

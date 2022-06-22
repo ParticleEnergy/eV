@@ -6,6 +6,7 @@ namespace eV.Tool.ExcelToJson.Model;
 
 public class ObjectInfo
 {
+    public bool IsDependencies { get; set; }
     public bool IsMain { get; set; }
     public string Head { get; set; } = string.Empty;
     public string NamespaceName { get; set; } = string.Empty;
@@ -17,7 +18,16 @@ public class ObjectInfo
 
     public override string ToString()
     {
-        return IsMain ? string.Format(Template.ProfileObject, Head, NamespaceName, NamespaceName, ClassName, ProfileType, ProfileDetailType, ClassName, ClassName, GetProperties()) : string.Format(Template.ItemObject, Head, NamespaceName, ClassName, GetProperties());
+        string result;
+        if (IsMain)
+        {
+            result = IsDependencies ? string.Format(Template.ProfileObject, Head, NamespaceName, NamespaceName, ClassName, ProfileType, ProfileDetailType, ClassName, ClassName, GetProperties()) : string.Format(Template.ProfileObjectNoDependencies, Head, NamespaceName, ClassName, ProfileType, ProfileDetailType, ClassName, ClassName, GetProperties());
+        }
+        else
+        {
+            result = string.Format(Template.ItemObject, Head, NamespaceName, ClassName, GetProperties());
+        }
+        return result;
     }
 
     private string GetProperties()
