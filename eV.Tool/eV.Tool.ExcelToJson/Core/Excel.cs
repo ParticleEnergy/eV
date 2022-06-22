@@ -188,8 +188,8 @@ public static class Excel
         {
             if (sheet.GetRow(i) == null)
             {
-                Logger.Warn($"{filePath} {sheet.SheetName}row :{i} is null");
-                continue;
+                Logger.Error($"{filePath} {sheet.SheetName}row :{i} is null");
+                return null;
             }
             sheetInfo.Data.Add(sheet.GetRow(i));
         }

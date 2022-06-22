@@ -73,7 +73,7 @@ public static class File
                 System.IO.File.Delete(item.FullName);
             }
 
-            DirectoryInfo objectDir = new(path);
+            DirectoryInfo objectDir = new($"{path}/Object");
             FileInfo[] objectFiles = objectDir.GetFiles();
             foreach (var i in objectFiles)
             {
