@@ -92,7 +92,7 @@ public static class Excel
             return null;
         }
 
-        for (int i = 0; i < typeRow.Cells.Count; ++i)
+        for (int i = 0; i < typeRow.Cells.Count; i++)
         {
             try
             {
