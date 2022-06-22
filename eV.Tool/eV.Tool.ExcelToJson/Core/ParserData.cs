@@ -241,7 +241,6 @@ public class ParserData
         {
             try
             {
-                // string originValue = row.GetCell(fieldInfo.Index).ToString() ?? "";
                 string originValue = row.GetCell(fieldInfo.Index)?.ToString() ?? "";
                 dataRow[fieldInfo.Name] = fieldInfo.Type switch
                 {

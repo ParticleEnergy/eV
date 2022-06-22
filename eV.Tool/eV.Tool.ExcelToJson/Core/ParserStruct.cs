@@ -80,6 +80,17 @@ public class ParserStruct
     {
         ObjectInfo objectInfo = CreateObjectInfo();
 
+        if (sheetInfo.PrimaryKeyFieldInfo != null)
+        {
+            objectInfo.ObjectBaseProperties.Add(new ObjectBaseProperty
+            {
+                Type = GetFiledType(FieldType.String),
+                Name = sheetInfo.PrimaryKeyFieldInfo.Name,
+                DefaultValue = GetDefaultValue(FieldType.String),
+                Comment = sheetInfo.PrimaryKeyFieldInfo.Comment
+            });
+        }
+
         foreach (var fieldInfo in sheetInfo.FieldInfos.Where(fieldInfo => !FieldType.ForeignKeyTypes.Contains(fieldInfo.Type)))
         {
             if (FieldType.ListTypes.Contains(fieldInfo.Type))
@@ -88,16 +99,6 @@ public class ParserStruct
                 {
                     Type = GetFiledType(fieldInfo.Type),
                     Name = fieldInfo.Name,
-                    Comment = fieldInfo.Comment
-                });
-            }
-            else if (FieldType.PrimaryKeyTypes.Contains(fieldInfo.Type))
-            {
-                objectInfo.ObjectBaseProperties.Add(new ObjectBaseProperty
-                {
-                    Type = GetFiledType(FieldType.String),
-                    Name = fieldInfo.Name,
-                    DefaultValue = GetDefaultValue(FieldType.String),
                     Comment = fieldInfo.Comment
                 });
             }
