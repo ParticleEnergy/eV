@@ -186,6 +186,11 @@ public static class Excel
         // data
         for (int i = Const.DataStartRowIndex; i <= sheet.LastRowNum; ++i)
         {
+            if (sheet.GetRow(i) == null)
+            {
+                Logger.Warn($"{filePath} {sheet.SheetName}row :{i} is null");
+                continue;
+            }
             sheetInfo.Data.Add(sheet.GetRow(i));
         }
 
