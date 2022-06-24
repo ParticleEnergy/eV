@@ -96,9 +96,9 @@ public static class Excel
         {
             try
             {
-                string comment = commentRow.GetCell(i).ToString()?.Replace("\n", "") ?? "";
-                string? name = nameRow.GetCell(i).ToString();
-                string? type = typeRow.GetCell(i).ToString();
+                string comment = commentRow.GetCell(i)?.ToString()?.Replace("\n", "") ?? "";
+                string? name = nameRow.GetCell(i)?.ToString();
+                string? type = typeRow.GetCell(i)?.ToString();
 
                 if (name != null && name.StartsWith("!"))
                     continue;

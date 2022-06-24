@@ -63,14 +63,14 @@ public class ParserData
         foreach (var row in sheetInfo.Data)
         {
             var dataRow = GetRow(row, sheetInfo);
-            if (dataRow == null)
+            if (dataRow is null)
             {
                 return null;
             }
             if (sheetInfo.PrimaryKeyFieldInfo != null)
             {
                 string? primaryKeyValue = row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index).ToString();
-                if (primaryKeyValue == null)
+                if (primaryKeyValue is null)
                 {
                     Logger.Error($"{sheetInfo.FullName} Primary key cannot be empty");
                     return null;
@@ -216,7 +216,7 @@ public class ParserData
     private static Dictionary<string, object?>? GetMainRow(IRow row, SheetInfo sheetInfo)
     {
         Dictionary<string, object?>? dataRow = GetRow(row, sheetInfo);
-        if (dataRow == null)
+        if (dataRow is null)
         {
             return null;
         }
