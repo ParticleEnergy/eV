@@ -70,7 +70,7 @@ public class ParserData
             }
             if (sheetInfo.PrimaryKeyFieldInfo != null)
             {
-                string? primaryKeyValue = row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index).ToString();
+                string? primaryKeyValue = row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index)?.ToString();
                 if (primaryKeyValue is null)
                 {
                     Logger.Error($"{sheetInfo.FullName} Primary key cannot be empty");
@@ -118,7 +118,7 @@ public class ParserData
                     return null;
                 case FieldType.ForeignKeyDictionary:
                     {
-                        string? pk = row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index).ToString();
+                        string? pk = row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index)?.ToString();
                         if (pk == null)
                         {
                             Logger.Error($"{sheetInfo.FullName} Primary key cannot be empty");
@@ -225,7 +225,7 @@ public class ParserData
         if (sheetInfo.PrimaryKeyFieldInfo == null)
             return dataRow;
 
-        string? pk = row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index).ToString();
+        string? pk = row.GetCell(sheetInfo.PrimaryKeyFieldInfo.Index)?.ToString();
         if (pk == null)
         {
             Logger.Error($"{sheetInfo.FullName} Primary key cannot be empty");
