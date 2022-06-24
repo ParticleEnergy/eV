@@ -1,6 +1,7 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
+using System.Globalization;
 using eV.Module.EasyLog;
 using eV.Tool.ExcelToJson.Define;
 using eV.Tool.ExcelToJson.Model;
@@ -241,7 +242,16 @@ public class ParserData
         {
             try
             {
-                string originValue = row.GetCell(fieldInfo.Index)?.ToString() ?? "";
+                string originValue;
+                var cell = row.GetCell(fieldInfo.Index);
+                if (cell is { CellType: CellType.Formula })
+                {
+                    originValue = cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
+                }
+                else
+                {
+                    originValue = row.GetCell(fieldInfo.Index)?.ToString() ?? "";
+                }
                 dataRow[fieldInfo.Name] = fieldInfo.Type switch
                 {
                     FieldType.String => originValue,
