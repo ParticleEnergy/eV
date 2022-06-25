@@ -104,10 +104,10 @@ public class ParserData
                     }
                 }
             }
-            string? fkValue = row.GetCell(sheetInfo.ForeignKeyFieldInfo.Index).ToString();
+            string? fkValue = row.GetCell(sheetInfo.ForeignKeyFieldInfo.Index)?.ToString();
             if (fkValue == null)
             {
-                Logger.Error($"{sheetInfo.FullName} Foreign key cannot be empty");
+                Logger.Error($"Sheet {sheetInfo.FullName} Foreign key cannot be empty");
                 return null;
             }
 
