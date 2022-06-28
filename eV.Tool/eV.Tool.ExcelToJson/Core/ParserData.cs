@@ -82,7 +82,7 @@ public class ParserData
                 {
                     foreach ((SheetInfo subSheetInfo, Dictionary<string, object>? d)in data)
                     {
-                        if (d != null && string.Join( "@", subSheetInfo.Hierarchy).Equals(sheetInfo.FullName))
+                        if (d != null && string.Join("@", subSheetInfo.Hierarchy).Equals(sheetInfo.FullName))
                         {
                             d.TryGetValue(primaryKeyValue, out object? value);
                             switch (subSheetInfo.ForeignKeyFieldInfo!.Type)
@@ -258,10 +258,10 @@ public class ParserData
                     FieldType.Bool => originValue == "TRUE",
                     FieldType.Int => originValue.Equals("") ? 0 : Convert.ToInt32(originValue),
                     FieldType.Double => originValue.Equals("") ? 0 : Convert.ToDouble(originValue),
-                    FieldType.ListString => originValue.Split(Const.SplitFlag).ToList(),
-                    FieldType.ListBool => originValue.Split(Const.SplitFlag).Select(s => s == "TRUE").ToList(),
-                    FieldType.ListDouble => originValue.Split(Const.SplitFlag).Select(a => a.Equals("") ? 0 : Convert.ToDouble(a)).ToList(),
-                    FieldType.ListInt => originValue.Split(Const.SplitFlag).Select(a => a.Equals("") ? 0 : Convert.ToInt32(a)).ToList(),
+                    FieldType.ListString => originValue == "" ? new List<string>() : originValue.Split(Const.SplitFlag).ToList(),
+                    FieldType.ListBool => originValue == "" ? new List<bool>() : originValue.Split(Const.SplitFlag).Select(s => s == "TRUE").ToList(),
+                    FieldType.ListDouble => originValue == "" ? new List<double>() : originValue.Split(Const.SplitFlag).Select(a => a.Equals("") ? 0 : Convert.ToDouble(a)).ToList(),
+                    FieldType.ListInt => originValue == "" ? new List<int>() : originValue.Split(Const.SplitFlag).Select(a => a.Equals("") ? 0 : Convert.ToInt32(a)).ToList(),
                     _ => dataRow[fieldInfo.Name]
                 };
             }
