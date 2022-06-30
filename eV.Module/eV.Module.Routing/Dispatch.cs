@@ -9,9 +9,16 @@ namespace eV.Module.Routing;
 
 public static class Dispatch
 {
+    private static readonly Dictionary<Type, IHandler> s_handlers = new();
     private static readonly Dictionary<string, Route> s_receiveHandlers = new();
     private static readonly Dictionary<Type, string> s_sendMessages = new();
     private static bool s_registered;
+
+    public static IHandler? GetHandler<T>()
+    {
+        s_handlers.TryGetValue(typeof(T), out IHandler? handler);
+        return handler;
+    }
 
     private static void RegisterHandler(string nsName)
     {
@@ -30,6 +37,7 @@ public static class Dispatch
                 continue;
 
             s_receiveHandlers[contentTypes[0].Name] = new Route(handler, contentTypes[0]);
+            s_handlers[type] = handler;
             Logger.Info($"ReceiveMessageHandler [{type.FullName}] registration succeeded");
         }
     }

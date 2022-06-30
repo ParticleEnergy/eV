@@ -65,15 +65,22 @@ public static class Profile
             Logger.Error("GameProfile not init");
         else
             foreach (FileInfo file in s_configRoot.GetFiles())
+            {
                 try
                 {
+                    string[] filename = file.Name.Split('.');
+
+                    if (filename.Length < 2 || filename[filename.Length - 1] != "json")
+                        continue;
+
                     string text = File.ReadAllText(file.FullName);
-                    result.Add(file.Name.Split('.')[0], text);
+                    result.Add(filename[0], text);
                 }
                 catch (Exception e)
                 {
                     Logger.Error(e.Message, e);
                 }
+            }
         return result;
     }
 
