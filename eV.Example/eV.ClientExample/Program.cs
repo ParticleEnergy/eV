@@ -12,6 +12,8 @@ using eV.PublicObject.ClientObject;
 // };
 ClientSetting setting = new()
 {
+    Host = "127.0.0.1",
+    Port = 8888,
     HandlerNamespace = "eV.ClientExample",
     DataStructNamespace = "eV.PublicObject",
     GameProfilePath = "/Users/three.zhang/Projects/CSharp/eV/eV.Example/eV.ClientExample/ProfileJson"
@@ -19,9 +21,9 @@ ClientSetting setting = new()
 Client client = new(setting);
 client.OnConnect += delegate(ISession session)
 {
-    HelloClientMessage helloWorldClient = new()
+    ClientHelloMessage helloWorldClient = new()
     {
-        Text = "测试测试"
+        Text = "Client: Hello world"
     };
     session.Send(helloWorldClient);
 };

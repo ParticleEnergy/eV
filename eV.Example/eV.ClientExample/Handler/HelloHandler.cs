@@ -11,17 +11,12 @@ using eV.PublicObject.ServerObject;
 namespace eV.ClientExample.Handler;
 
 [ReceiveMessageHandler]
-public class HelloHandler : HandlerBase<HelloServerMessage>
+public class HelloHandler : HandlerBase<ServerHelloMessage>
 {
-    protected override void Handle(ISession session, HelloServerMessage content)
+    protected override void Handle(ISession session, ServerHelloMessage content)
     {
         if (content.Text == null)
             return;
-        HelloClientMessage helloWorldClient = new()
-        {
-            Text = content.Text
-        };
-        // session.Send(helloWorldClient);
-        Logger.Info(helloWorldClient.Text);
+        Logger.Info(content.Text);
     }
 }
