@@ -41,7 +41,7 @@ public class Receive
             return;
         }
         Console.WriteLine(socketAsyncEventArgs.RemoteEndPoint);
-        Console.WriteLine(Encoding.Unicode.GetString(socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset).Take(socketAsyncEventArgs.BytesTransferred).ToArray()));
+        // Console.WriteLine(Encoding.Unicode.GetString(socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset).Take(socketAsyncEventArgs.BytesTransferred).ToArray()));
         StartReceiveFrom();
     }
 }

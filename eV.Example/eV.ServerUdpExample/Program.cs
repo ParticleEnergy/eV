@@ -12,7 +12,7 @@ service.OnBind += delegate(IUdpChannel channel)
     channel.Receive += delegate(byte[]? bytes, EndPoint? point)
     {
         Console.WriteLine(point);
-        Console.WriteLine(Encoding.Unicode.GetString(bytes));
+        Console.WriteLine(Encoding.Unicode.GetString(bytes!));
     };
 };
 

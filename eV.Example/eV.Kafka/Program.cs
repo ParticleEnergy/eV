@@ -93,7 +93,7 @@ KafkaManger.Instance.GetKafka("test")!.Consume(delegate(IConsumer<string, object
 
 }, delegate(ConsumeResult<string, object>? result )
 {
-    Console.WriteLine(result.Message.Value);
+    Console.WriteLine(result!.Message.Value);
     return true;
 });
 
