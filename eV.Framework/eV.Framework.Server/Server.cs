@@ -22,7 +22,7 @@ public class Server
 {
     private readonly IdleDetection _idleDetection = new(Configure.Instance.ServerOption.SessionMaximumIdleTime);
     private readonly eVNetworkServer _server = new(GetServerSetting());
-    private readonly Queue _queue = new(Configure.Instance.BaseOption.HandlerNamespace);
+    private readonly Queue _queue = new(Configure.Instance.BaseOption.ProjectAssemblyString);
 
     private readonly SessionExtension _sessionExtension = new();
 
@@ -69,7 +69,7 @@ public class Server
     {
         EasyLogger.Info(DefaultSetting.Logo);
         Profile.Init(
-            Configure.Instance.BaseOption.PublicObjectNamespace,
+            Configure.Instance.BaseOption.PublicObjectAssemblyString,
             Configure.Instance.BaseOption.GameProfilePath,
             new GameProfileParser(),
             Configure.Instance.BaseOption.GameProfileMonitoringChange
@@ -132,7 +132,7 @@ public class Server
 
     private static void RegisterHandler()
     {
-        Dispatch.RegisterServer(Configure.Instance.BaseOption.HandlerNamespace, Configure.Instance.BaseOption.PublicObjectNamespace);
+        Dispatch.RegisterServer(Configure.Instance.BaseOption.ProjectAssemblyString, Configure.Instance.BaseOption.PublicObjectAssemblyString);
 
         Dispatch.AddCustomHandler(typeof(ClientKeepaliveHandler), typeof(ClientKeepalive));
         Dispatch.AddCustomHandler(typeof(ClientJoinGroupHandler), typeof(ClientJoinGroup));

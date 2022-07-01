@@ -20,9 +20,9 @@ public static class Dispatch
         return handler;
     }
 
-    private static void RegisterHandler(string nsName)
+    private static void RegisterHandler(string assemblyString)
     {
-        Type[] allTypes = Assembly.Load(nsName).GetExportedTypes();
+        Type[] allTypes = Assembly.Load(assemblyString).GetExportedTypes();
         foreach (Type type in allTypes)
         {
             object[] receiveMessageHandlerAttributes = type.GetCustomAttributes(typeof(ReceiveMessageHandlerAttribute), true);
@@ -42,9 +42,9 @@ public static class Dispatch
         }
     }
 
-    private static void RegisterSendMessage(string nsName, Type sendMessageType)
+    private static void RegisterSendMessage(string assemblyString, Type sendMessageType)
     {
-        Type[] allTypes = Assembly.Load(nsName).GetExportedTypes();
+        Type[] allTypes = Assembly.Load(assemblyString).GetExportedTypes();
 
         foreach (Type type in allTypes)
         {

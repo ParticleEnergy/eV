@@ -12,10 +12,10 @@ using eV.PublicObject.ClientObject;
 // };
 ClientSetting setting = new()
 {
-    Host = "127.0.0.1",
-    Port = 8888,
-    HandlerNamespace = "eV.ClientExample",
-    DataStructNamespace = "eV.PublicObject",
+    Host = "10.0.0.32",
+    Port = 6688,
+    HandlerAssemblyString = "eV.ClientExample",
+    PublicObjectAssemblyString = "eV.PublicObject",
     GameProfilePath = "/Users/three.zhang/Projects/CSharp/eV/eV.Example/eV.ClientExample/ProfileJson"
 };
 Client client = new(setting);

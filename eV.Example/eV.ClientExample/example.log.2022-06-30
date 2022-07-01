@@ -1,0 +1,119 @@
+INFO 1 eV.Clinet - 
+      _    __   _________            __
+  ___| |  / /  / ____/ (_)__  ____  / /_
+ / _ \ | / /  / /   / / / _ \/ __ \/ __/
+/  __/ |/ /  / /___/ / /  __/ / / / /_
+\___/|___/   \____/_/_/\___/_/ /_/\__/
+
+INFO 1 eV.Clinet - Game profile load
+INFO 1 eV.Clinet - SendMessage [eV.PublicObject.ClientObject.HelloClientMessage] registration succeeded
+INFO 1 eV.Clinet - ReceiveMessageHandler [eV.ClientExample.Handler.HelloHandler] registration succeeded
+INFO 1 eV.Clinet - Trying to connect to the server 10.0.0.32:8888
+ERROR 8 eV.Clinet - Connect to Server 10.0.0.32:8888 failed
+INFO 1 eV.Clinet - 
+      _    __   _________            __
+  ___| |  / /  / ____/ (_)__  ____  / /_
+ / _ \ | / /  / /   / / / _ \/ __ \/ __/
+/  __/ |/ /  / /___/ / /  __/ / / / /_
+\___/|___/   \____/_/_/\___/_/ /_/\__/
+
+INFO 1 eV.Clinet - Game profile load
+INFO 1 eV.Clinet - SendMessage [eV.PublicObject.ClientObject.HelloClientMessage] registration succeeded
+INFO 1 eV.Clinet - ReceiveMessageHandler [eV.ClientExample.Handler.HelloHandler] registration succeeded
+INFO 1 eV.Clinet - Trying to connect to the server 10.0.0.32:8888
+ERROR 8 eV.Clinet - Connect to Server 10.0.0.32:8888 failed
+INFO 1 eV.Clinet - 
+      _    __   _________            __
+  ___| |  / /  / ____/ (_)__  ____  / /_
+ / _ \ | / /  / /   / / / _ \/ __ \/ __/
+/  __/ |/ /  / /___/ / /  __/ / / / /_
+\___/|___/   \____/_/_/\___/_/ /_/\__/
+
+INFO 1 eV.Clinet - Game profile load
+INFO 1 eV.Clinet - SendMessage [eV.PublicObject.ClientObject.HelloClientMessage] registration succeeded
+INFO 1 eV.Clinet - ReceiveMessageHandler [eV.ClientExample.Handler.HelloHandler] registration succeeded
+INFO 1 eV.Clinet - Trying to connect to the server 127.0.0.1:8888
+INFO 8 eV.Clinet - Connect to Server 127.0.0.1:8888 success
+INFO 8 eV.Clinet - Channel a4260de2-afeb-437d-8c56-3d0cc484275b 127.0.0.1:8888 open
+INFO 8 eV.Clinet - Channel a4260de2-afeb-437d-8c56-3d0cc484275b 127.0.0.1:8888 start receive
+INFO 1 eV.Clinet - 
+      _    __   _________            __
+  ___| |  / /  / ____/ (_)__  ____  / /_
+ / _ \ | / /  / /   / / / _ \/ __ \/ __/
+/  __/ |/ /  / /___/ / /  __/ / / / /_
+\___/|___/   \____/_/_/\___/_/ /_/\__/
+
+INFO 1 eV.Clinet - Game profile load
+INFO 1 eV.Clinet - SendMessage [eV.PublicObject.ClientObject.HelloClientMessage] registration succeeded
+INFO 1 eV.Clinet - ReceiveMessageHandler [eV.ClientExample.Handler.HelloHandler] registration succeeded
+INFO 1 eV.Clinet - Trying to connect to the server 127.0.0.1:8888
+INFO 1 eV.Clinet - 
+      _    __   _________            __
+  ___| |  / /  / ____/ (_)__  ____  / /_
+ / _ \ | / /  / /   / / / _ \/ __ \/ __/
+/  __/ |/ /  / /___/ / /  __/ / / / /_
+\___/|___/   \____/_/_/\___/_/ /_/\__/
+
+INFO 1 eV.Clinet - Game profile load
+INFO 1 eV.Clinet - SendMessage [eV.PublicObject.ClientObject.HelloClientMessage] registration succeeded
+INFO 1 eV.Clinet - ReceiveMessageHandler [eV.ClientExample.Handler.HelloHandler] registration succeeded
+INFO 1 eV.Clinet - Trying to connect to the server 127.0.0.1:8888
+INFO 8 eV.Clinet - Connect to Server 127.0.0.1:8888 success
+INFO 8 eV.Clinet - Channel 478b886e-213b-461c-8065-694fdfd3ce3a 127.0.0.1:8888 open
+INFO 8 eV.Clinet - Channel 478b886e-213b-461c-8065-694fdfd3ce3a 127.0.0.1:8888 start receive
+INFO 3 eV.Clinet - Channel 478b886e-213b-461c-8065-694fdfd3ce3a 127.0.0.1:8888 disconnect
+INFO 3 eV.Clinet - Channel 478b886e-213b-461c-8065-694fdfd3ce3a 127.0.0.1:8888 close
+INFO 3 eV.Clinet - Client released
+INFO 1 eV.Clinet - 
+      _    __   _________            __
+  ___| |  / /  / ____/ (_)__  ____  / /_
+ / _ \ | / /  / /   / / / _ \/ __ \/ __/
+/  __/ |/ /  / /___/ / /  __/ / / / /_
+\___/|___/   \____/_/_/\___/_/ /_/\__/
+
+INFO 1 eV.Clinet - Game profile load
+INFO 1 eV.Clinet - SendMessage [eV.PublicObject.ClientObject.HelloClientMessage] registration succeeded
+INFO 1 eV.Clinet - ReceiveMessageHandler [eV.ClientExample.Handler.HelloHandler] registration succeeded
+INFO 1 eV.Clinet - Trying to connect to the server 127.0.0.1:8888
+INFO 8 eV.Clinet - Connect to Server 127.0.0.1:8888 success
+INFO 8 eV.Clinet - Channel 1e27ccc4-3154-410b-a6dd-1cd43371ac16 127.0.0.1:8888 open
+INFO 8 eV.Clinet - Channel 1e27ccc4-3154-410b-a6dd-1cd43371ac16 127.0.0.1:8888 start receive
+INFO 3 eV.Clinet - Channel 1e27ccc4-3154-410b-a6dd-1cd43371ac16 127.0.0.1:8888 disconnect
+INFO 3 eV.Clinet - Channel 1e27ccc4-3154-410b-a6dd-1cd43371ac16 127.0.0.1:8888 close
+INFO 3 eV.Clinet - Client released
+INFO 1 eV.Clinet - 
+      _    __   _________            __
+  ___| |  / /  / ____/ (_)__  ____  / /_
+ / _ \ | / /  / /   / / / _ \/ __ \/ __/
+/  __/ |/ /  / /___/ / /  __/ / / / /_
+\___/|___/   \____/_/_/\___/_/ /_/\__/
+
+INFO 1 eV.Clinet - Game profile load
+INFO 1 eV.Clinet - SendMessage [eV.PublicObject.ClientObject.HelloClientMessage] registration succeeded
+INFO 1 eV.Clinet - ReceiveMessageHandler [eV.ClientExample.Handler.HelloHandler] registration succeeded
+INFO 1 eV.Clinet - Trying to connect to the server 127.0.0.1:8888
+INFO 8 eV.Clinet - Connect to Server 127.0.0.1:8888 success
+INFO 8 eV.Clinet - Channel a11744c9-f472-4808-ab64-a635366714e4 127.0.0.1:8888 open
+INFO 8 eV.Clinet - Channel a11744c9-f472-4808-ab64-a635366714e4 127.0.0.1:8888 start receive
+INFO 3 eV.Clinet - Channel a11744c9-f472-4808-ab64-a635366714e4 127.0.0.1:8888 disconnect
+INFO 3 eV.Clinet - Channel a11744c9-f472-4808-ab64-a635366714e4 127.0.0.1:8888 close
+INFO 3 eV.Clinet - Client released
+INFO 1 eV.Clinet - 
+      _    __   _________            __
+  ___| |  / /  / ____/ (_)__  ____  / /_
+ / _ \ | / /  / /   / / / _ \/ __ \/ __/
+/  __/ |/ /  / /___/ / /  __/ / / / /_
+\___/|___/   \____/_/_/\___/_/ /_/\__/
+
+INFO 1 eV.Clinet - Game profile load
+INFO 1 eV.Clinet - SendMessage [eV.PublicObject.ClientObject.ClientHelloMessage] registration succeeded
+INFO 1 eV.Clinet - ReceiveMessageHandler [eV.ClientExample.Handler.HelloHandler] registration succeeded
+INFO 1 eV.Clinet - Trying to connect to the server 127.0.0.1:8888
+INFO 8 eV.Clinet - Connect to Server 127.0.0.1:8888 success
+INFO 8 eV.Clinet - Channel 53d741c4-f80b-4061-a034-67716e1eb09a 127.0.0.1:8888 open
+INFO 8 eV.Clinet - Channel 53d741c4-f80b-4061-a034-67716e1eb09a 127.0.0.1:8888 start receive
+INFO 11 eV.Clinet - Server: hello world
+INFO 11 eV.Clinet - Message [ServerHelloMessage] handle access
+INFO 3 eV.Clinet - Channel 53d741c4-f80b-4061-a034-67716e1eb09a 127.0.0.1:8888 disconnect
+INFO 3 eV.Clinet - Channel 53d741c4-f80b-4061-a034-67716e1eb09a 127.0.0.1:8888 close
+INFO 3 eV.Clinet - Client released

@@ -12,9 +12,9 @@ namespace eV.Module.Job;
 
 public class Job
 {
-    private readonly string _nsName;
+    private readonly string _assemblyString;
     private readonly Task<IScheduler> _scheduler;
-    public Job(string nsName)
+    public Job(string assemblyString)
     {
         LogProvider.SetCurrentLogProvider(new Log());
         StdSchedulerFactory factory = new();
@@ -22,10 +22,10 @@ public class Job
 
         _scheduler.Result.Start();
 
-        _nsName = nsName;
+        _assemblyString = assemblyString;
     }
 
-    public Job(string nsName, Task<IScheduler> scheduler)
+    public Job(string assemblyString, Task<IScheduler> scheduler)
     {
         LogProvider.SetCurrentLogProvider(new Log());
 
@@ -33,12 +33,12 @@ public class Job
 
         _scheduler.Result.Start();
 
-        _nsName = nsName;
+        _assemblyString = assemblyString;
     }
 
     private void RegisterHandler()
     {
-        Type[] allTypes = Assembly.Load(_nsName).GetExportedTypes();
+        Type[] allTypes = Assembly.Load(_assemblyString).GetExportedTypes();
 
         foreach (Type type in allTypes)
         {

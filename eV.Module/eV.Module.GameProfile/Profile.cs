@@ -11,15 +11,15 @@ public static class Profile
 {
 
     private static DirectoryInfo? s_configRoot;
-    private static string? s_nsName;
+    private static string? s_assemblyString;
     private static string? s_configPath;
     private static IConfigParser? s_configParser;
     public static Dictionary<string, object> Config { get; private set; } = new();
     public static event Action? OnLoad;
 
-    public static void Init(string nsName, string path, IConfigParser configParser, bool monitoringChange = false)
+    public static void Init(string assemblyString, string path, IConfigParser configParser, bool monitoringChange = false)
     {
-        s_nsName = nsName;
+        s_assemblyString = assemblyString;
         s_configPath = path;
         s_configRoot = new DirectoryInfo(s_configPath);
         s_configParser = configParser;
@@ -87,13 +87,13 @@ public static class Profile
     private static Dictionary<string, Type> RegisterConfig()
     {
         Dictionary<string, Type> result = new();
-        if (s_nsName == null)
+        if (s_assemblyString == null)
         {
             Logger.Error("GameProfile not init");
         }
         else
         {
-            Type[] allTypes = Assembly.Load(s_nsName).GetExportedTypes();
+            Type[] allTypes = Assembly.Load(s_assemblyString).GetExportedTypes();
 
             foreach (Type type in allTypes)
             {

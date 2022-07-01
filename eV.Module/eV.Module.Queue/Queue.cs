@@ -9,16 +9,16 @@ namespace eV.Module.Queue;
 
 public class Queue
 {
-    private readonly string _nsName;
+    private readonly string _assemblyString;
 
-    public Queue(string nsName)
+    public Queue(string assemblyString)
     {
-        _nsName = nsName;
+        _assemblyString = assemblyString;
     }
 
     private void RegisterHandler()
     {
-        Type[] allTypes = Assembly.Load(_nsName).GetExportedTypes();
+        Type[] allTypes = Assembly.Load(_assemblyString).GetExportedTypes();
 
         foreach (Type type in allTypes)
         {
