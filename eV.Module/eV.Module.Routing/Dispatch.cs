@@ -57,22 +57,22 @@ public static class Dispatch
         }
     }
 
-    public static void RegisterServer(string handlerNamespace, string messageNamespace)
+    public static void RegisterServer(string handlerAssemblyString, string messageAssemblyString)
     {
         if (s_registered)
             return;
         s_registered = true;
-        RegisterSendMessage(messageNamespace, typeof(ServerMessageAttribute));
-        RegisterHandler(handlerNamespace);
+        RegisterSendMessage(messageAssemblyString, typeof(ServerMessageAttribute));
+        RegisterHandler(handlerAssemblyString);
     }
 
-    public static void RegisterClient(string handlerNamespace, string messageNamespace)
+    public static void RegisterClient(string handlerAssemblyString, string messageAssemblyString)
     {
         if (s_registered)
             return;
         s_registered = true;
-        RegisterSendMessage(messageNamespace, typeof(ClientMessageAttribute));
-        RegisterHandler(handlerNamespace);
+        RegisterSendMessage(messageAssemblyString, typeof(ClientMessageAttribute));
+        RegisterHandler(handlerAssemblyString);
     }
 
     public static async void Dispense(ISession session, IPacket packet)
