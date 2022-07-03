@@ -17,14 +17,19 @@ public static class Profile
     public static Dictionary<string, object> Config { get; private set; } = new();
     public static event Action? OnLoad;
 
-    public static void Init(string assemblyString, string path, IConfigParser configParser, bool monitoringChange = false)
+    public static void Init(string assemblyString, string path)
     {
         s_assemblyString = assemblyString;
         s_configPath = path;
         s_configRoot = new DirectoryInfo(s_configPath);
-        s_configParser = configParser;
+        s_configParser = new GameProfileParser();
 
         Load();
+    }
+
+    public static void Init(string assemblyString, string path, bool monitoringChange)
+    {
+        Init(assemblyString, path);
 
         if (!monitoringChange)
             return;

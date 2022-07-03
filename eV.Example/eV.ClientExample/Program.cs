@@ -1,27 +1,24 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 
-using eV.ClientExample.Handler;
-using eV.Framework.Client;
+using eV.ClientExample;
 using eV.Framework.Unity;
-using eV.Module.EasyLog;
+using eV.Module.GameProfile;
 using eV.Module.Routing.Interface;
 using eV.PublicObject.ClientObject;
-using eV.PublicObject.ServerObject;
-using Client = eV.Framework.Client.Client;
 
+Profile.OnLoad += delegate
+{
+    Profile.AssignmentConfigObject(GameProfile.Instance);
+};
 
-// Profile.OnLoad += delegate
-// {
-//     Profile.AssignmentConfigObject(GameProfile.Instance);
-// };
-ClientSetting setting = new()
+UnitySetting setting = new()
 {
     Host = "127.0.0.1",
     Port = 8888,
     ProjectAssemblyString = "eV.ClientExample",
     PublicObjectAssemblyString = "eV.PublicObject",
-    GameProfilePath = "/Users/three.zhang/Projects/CSharp/eV/eV.Example/eV.ClientExample/ProfileJson"
+    GameProfilePath = "/Users/three.zhang/Projects/CSharp/eV/eV.Example/eV.PublicObject/Example/Profile/Json"
 };
 Client client = new(setting);
 client.OnConnect += delegate(ISession session)
@@ -33,12 +30,13 @@ client.OnConnect += delegate(ISession session)
     session.Send(helloWorldClient);
 };
 
-var helloHandler = HandlerManager.GetHandler<HelloHandler>();
-
-if (helloHandler != null)
-    helloHandler.Handler += delegate(ISession session, ServerHelloMessage content)
-    {
-        Logger.Info("content.Text!");
-    };
+// var helloHandler = HandlerManager.GetHandler<HelloHandler>();
+//
+// if (helloHandler != null)
+//     helloHandler.Handler += delegate(ISession session, ServerHelloMessage content)
+//     {
+//         // Logger.Info(GameProfile.Instance.ExampleProfile["2"].Name);
+//         Logger.Info("content.Text!");
+//     };
 client.Connect();
 Console.ReadLine();

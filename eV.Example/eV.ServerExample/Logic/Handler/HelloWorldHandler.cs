@@ -21,6 +21,9 @@ public class HelloWorldHandler : HandlerBase<ClientHelloMessage>
     {
         if (content.Text == null)
             return;
+
+        Logger.Info(GameProfile.Instance.ExampleProfile["1"].Name);
+
         ServerHelloMessage helloWorldClient = new()
         {
             Text = content.Text

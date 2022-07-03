@@ -71,7 +71,6 @@ public class Server
         Profile.Init(
             Configure.Instance.BaseOption.PublicObjectAssemblyString,
             Configure.Instance.BaseOption.GameProfilePath,
-            new GameProfileParser(),
             Configure.Instance.BaseOption.GameProfileMonitoringChange
         );
 

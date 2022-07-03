@@ -11,5 +11,5 @@ public class GameProfile
     {
     }
 
-    public ExampleProfile? ExampleProfile { get; set; }
+    public ExampleProfile? ExampleProfile { get; set; } = new();
 }

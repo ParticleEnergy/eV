@@ -21,8 +21,11 @@ public class Client
     private readonly Keepalive _keepalive;
     public Client(UnitySetting setting)
     {
-        Logger.SetLogger(new Log());
-        Logger.Info(DefaultSetting.Logo);
+        if (setting.Log != null)
+        {
+            Logger.SetLogger(setting.Log);
+            Logger.Info(DefaultSetting.Logo);
+        }
 
         if (setting.CertFile.Equals(""))
         {
@@ -53,8 +56,7 @@ public class Client
 
         Profile.Init(
             setting.PublicObjectAssemblyString,
-            setting.GameProfilePath,
-            new GameProfileParser()
+            setting.GameProfilePath
         );
 
         Dispatch.RegisterClient(setting.ProjectAssemblyString, setting.PublicObjectAssemblyString);
