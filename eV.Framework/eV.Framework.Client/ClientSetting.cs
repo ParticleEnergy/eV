@@ -9,7 +9,7 @@ public class ClientSetting
     public string Host { get; set; } = DefaultSetting.Host;
     public int Port { get; set; } = DefaultSetting.Port;
     public int ReceiveBufferSize { get; set; } = DefaultSetting.ReceiveBufferSize;
-    public string HandlerAssemblyString { get; set; } = string.Empty;
+    public string ProjectAssemblyString { get; set; } = string.Empty;
     public string PublicObjectAssemblyString { get; set; } = string.Empty;
     public string GameProfilePath { get; set; } = string.Empty;
 

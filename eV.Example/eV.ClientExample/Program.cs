@@ -19,7 +19,7 @@ ClientSetting setting = new()
 {
     Host = "127.0.0.1",
     Port = 8888,
-    HandlerAssemblyString = "eV.ClientExample",
+    ProjectAssemblyString = "eV.ClientExample",
     PublicObjectAssemblyString = "eV.PublicObject",
     GameProfilePath = "/Users/three.zhang/Projects/CSharp/eV/eV.Example/eV.ClientExample/ProfileJson"
 };

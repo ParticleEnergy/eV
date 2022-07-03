@@ -57,7 +57,7 @@ public class Client
             new GameProfileParser()
         );
 
-        Dispatch.RegisterClient(setting.HandlerAssemblyString, setting.PublicObjectAssemblyString);
+        Dispatch.RegisterClient(setting.ProjectAssemblyString, setting.PublicObjectAssemblyString);
         _keepalive = new Keepalive(setting.TcpKeepAliveInterval);
     }
     public void Connect()

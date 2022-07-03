@@ -55,7 +55,7 @@ public class Client
             new GameProfileParser()
         );
 
-        Dispatch.RegisterClient(setting.HandlerAssemblyString, setting.PublicObjectAssemblyString);
+        Dispatch.RegisterClient(setting.ProjectAssemblyString, setting.PublicObjectAssemblyString);
     }
     public void Connect()
     {
