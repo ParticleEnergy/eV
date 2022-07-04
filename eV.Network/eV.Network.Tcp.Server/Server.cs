@@ -61,7 +61,7 @@ public class Server : IServer
 
         _acceptSocketAsyncEventArgsPool = new ObjectPool<SocketAsyncEventArgs>();
         _channelPool = new ObjectPool<TcpChannel>();
-        _maxAcceptedConnected = new Semaphore(_maxConnectionCount, _maxConnectionCount);
+        _maxAcceptedConnected = new Semaphore(_maxConnectionCount + 1, _maxConnectionCount + 1);
         _connectedChannels = new ChannelManager();
     }
 
@@ -223,13 +223,14 @@ public class Server : IServer
     {
         if (ServerState == RunState.Off)
             return false;
+        _maxAcceptedConnected.WaitOne();
+
         SocketAsyncEventArgs? acceptSocketAsyncEventArgs;
         if (_acceptSocketAsyncEventArgsPool.Count > 1)
             acceptSocketAsyncEventArgs = _acceptSocketAsyncEventArgsPool.Pop() ?? CreateAcceptSocketAsyncEventArgs();
         else
             acceptSocketAsyncEventArgs = CreateAcceptSocketAsyncEventArgs();
 
-        _maxAcceptedConnected.WaitOne();
         if (!_socket.AcceptAsync(acceptSocketAsyncEventArgs))
             ProcessAccept(acceptSocketAsyncEventArgs);
         return true;
