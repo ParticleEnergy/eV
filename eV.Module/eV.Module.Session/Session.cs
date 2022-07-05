@@ -92,8 +92,8 @@ public sealed class Session : ISession
         if (SessionState == SessionState.Active)
             return;
         _sessionId = sessionId;
-        OnActivate?.Invoke(this);
         SessionState = SessionState.Active;
+        OnActivate?.Invoke(this);
     }
     public void Shutdown()
     {
