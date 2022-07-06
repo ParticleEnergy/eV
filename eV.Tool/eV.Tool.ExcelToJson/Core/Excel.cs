@@ -188,7 +188,7 @@ public static class Excel
         {
             if (sheet.GetRow(i) == null || sheet.GetRow(i).LastCellNum == 0)
             {
-                Logger.Error($"{filePath} {sheet.SheetName}row :{i} is null");
+                Logger.Error($"{filePath} {sheet.SheetName} row :{i} is null");
                 return null;
             }
             sheetInfo.Data.Add(sheet.GetRow(i));
