@@ -3,7 +3,6 @@
 
 
 using eV.Module.EasyLog;
-using eV.Module.GameProfile;
 using eV.Module.Routing;
 using eV.Module.Routing.Interface;
 using eV.Module.Session;
@@ -53,11 +52,6 @@ public class Client
 
         _client.ConnectCompleted += ClientOnConnectCompleted;
         _client.DisconnectCompleted += ClientOnDisconnectCompleted;
-
-        Profile.Init(
-            setting.PublicObjectAssemblyString,
-            setting.GameProfilePath
-        );
 
         Dispatch.RegisterClient(setting.ProjectAssemblyString, setting.PublicObjectAssemblyString);
         _keepalive = new Keepalive(setting.TcpKeepAliveInterval);
