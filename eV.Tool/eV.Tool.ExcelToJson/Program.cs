@@ -2,8 +2,10 @@
 
 
 using eV.Module.EasyLog;
+using eV.Tool.ExcelToJson.Core;
 using eV.Tool.ExcelToJson.Define;
 using eV.Tool.ExcelToJson.Excel;
+using eV.Tool.ExcelToJson.Utils;
 using Microsoft.Extensions.Configuration;
 
 ConfigurationBuilder builder = new();
@@ -42,6 +44,17 @@ if (config.GetSection(Const.JsonFormatting).Value is "" or null)
 }
 
 var excelInfo = new ExcelInfo("/Users/three.zhang/Projects/BedroomAdventure/BedroomAdventure-config/Excel/Protagonist.xlsx","Protagonist.xlsx","xlsx");
+
+var excelInfos = new List<ExcelInfo>
+{
+    excelInfo
+};
+var analyticStructure = new AnalyticStructure(config, excelInfos);
+analyticStructure.Write+= delegate(string s, string s1)
+{
+    Console.WriteLine(s1);
+};
+analyticStructure.Generate();
 
 // var excelInfos = File.GetFiles(config.GetSection(Const.InExcelPath).Value);
 // var tableInfos = Excel.GetTableInfos(excelInfos);

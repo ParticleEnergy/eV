@@ -3,25 +3,26 @@
 
 namespace eV.Tool.ExcelToJson.Define;
 
-public static class Template
+public static class Template8
 {
     public const string ObjectFileName = "{0}Profile.cs";
 
     public const string ProfileObjectNoDependencies = @"{0}
 
 using eV.Module.GameProfile.Attributes;
-namespace {1};
+namespace {1}
+{
+    [GameProfile]
+    public class {2}Profile : {3}<{4}{5}Row>
+    {{
 
-[GameProfile]
-public class {2}Profile : {3}<{4}{5}Row>
-{{
+    }}
 
-}}
-
-public class {6}Row
-{{
-{7}
-}}
+    public class {6}Row
+    {{
+    {7}
+    }}
+}
 
 ";
 
@@ -29,29 +30,31 @@ public class {6}Row
 
 using eV.Module.GameProfile.Attributes;
 using {1}.Object;
-namespace {2};
+namespace {2}
+{
+    [GameProfile]
+    public class {3}Profile : {4}<{5}{6}Row>
+    {{
 
-[GameProfile]
-public class {3}Profile : {4}<{5}{6}Row>
-{{
+    }}
 
-}}
-
-public class {7}Row
-{{
-{8}
-}}
+    public class {7}Row
+    {{
+    {8}
+    }}
+}
 
 ";
 
     public const string ItemObject = @"{0}
 
-namespace {1}.Object;
-
-public class {2}
-{{
-{3}
-}}
+namespace {1}.Object
+{
+    public class {2}
+    {{
+    {3}
+    }}
+}
 
 ";
 
@@ -63,5 +66,5 @@ public class {2}
     public const string ComplexProperty = @"    /// <summary>
     /// {0}
     /// </summary>
-    public {1} {2} {{ get; set; }} = new();";
+    public {1} {2} {{ get; set; }} = new {3}();";
 }

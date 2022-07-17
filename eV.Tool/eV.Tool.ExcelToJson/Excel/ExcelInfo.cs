@@ -59,19 +59,19 @@ public class ExcelInfo
             if (sheetInfo == null)
                 continue;
 
-            string[] sheetNames = sheet.SheetName.Split("@");
-            sheetInfo.Name = sheetNames[0];
-            for (int j = 1; j < sheetNames.Length; j++)
+            if (sheet.SheetName == Const.MainSheet)
             {
-                sheetInfo.Hierarchy.Add(sheetNames[j]);
-            }
-
-            if (sheetInfo.Name == Const.MainSheet)
-            {
+                sheetInfo.Name = Const.MainSheet;
                 MainSheetInfo = sheetInfo;
             }
             else
             {
+                string[] sheetNames = sheet.SheetName.Split("@");
+                sheetInfo.Name = sheetNames[0];
+                for (int j = 1; j < sheetNames.Length; j++)
+                {
+                    sheetInfo.Hierarchy.Add(sheetNames[j]);
+                }
                 SubSheetInfos.Add(sheetInfo);
             }
         }
@@ -79,6 +79,7 @@ public class ExcelInfo
         {
             Logger.Error($"{FilePath} main sheet not found");
         }
+        SubSheetInfos.Sort();
     }
 
     private SheetInfo? GetSheetInfo(ISheet sheet)
@@ -216,8 +217,7 @@ public class ExcelInfo
             && !FieldType.ForeignKeyTypes.Contains(type)
             && !FieldType.BaseTypes.Contains(type)
             && !FieldType.ListTypes.Contains(type)
-            && !type.StartsWith(FieldType.Dict)
-            && !type.Equals(FieldType.Class))
+            && !type.StartsWith(FieldType.Dict))
         {
             Logger.Error($"{FilePath} Sheet: {sheetName} Cell: {index + 1} type definition error");
             return null;

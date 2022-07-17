@@ -25,8 +25,6 @@ public static class FieldType
 
     public const string Dict = "Dict";
 
-    public const string Class = "Class";
-
     public static List<string> BaseTypes => new()
     {
         String,
