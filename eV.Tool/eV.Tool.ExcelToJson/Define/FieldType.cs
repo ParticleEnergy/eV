@@ -13,16 +13,27 @@ public static class FieldType
     public const string ForeignKeyList = "FkList";
     public const string ForeignKeyDictionary = "FkDict";
 
+    public const string String = "String";
+    public const string Int = "Int";
+    public const string Double = "Double";
+    public const string Bool = "Bool";
 
     public const string ListString = "ListString";
     public const string ListInt = "ListInt";
     public const string ListDouble = "ListDouble";
     public const string ListBool = "ListBool";
 
-    public const string String = "String";
-    public const string Int = "Int";
-    public const string Double = "Double";
-    public const string Bool = "Bool";
+    public const string Dict = "Dict";
+
+    public const string Class = "Class";
+
+    public static List<string> BaseTypes => new()
+    {
+        String,
+        Int,
+        Double,
+        Bool
+    };
 
     public static List<string> PrimaryKeyTypes => new()
     {
@@ -44,23 +55,5 @@ public static class FieldType
         ListBool,
         ListDouble,
         ListInt
-    };
-
-    public static List<string> AllTypes => new()
-    {
-        PrimaryKey,
-        PrimaryKeyList,
-        PrimaryKeyDictionary,
-        ForeignKeyObject,
-        ForeignKeyList,
-        ForeignKeyDictionary,
-        ListString,
-        ListBool,
-        ListDouble,
-        ListInt,
-        String,
-        Int,
-        Double,
-        Bool
     };
 }

@@ -2,10 +2,9 @@
 
 
 using eV.Module.EasyLog;
-using eV.Tool.ExcelToJson.Core;
 using eV.Tool.ExcelToJson.Define;
+using eV.Tool.ExcelToJson.Excel;
 using Microsoft.Extensions.Configuration;
-using File = eV.Tool.ExcelToJson.Core.File;
 
 ConfigurationBuilder builder = new();
 builder.AddJsonFile("appsettings.json");
@@ -42,37 +41,39 @@ if (config.GetSection(Const.JsonFormatting).Value is "" or null)
     return;
 }
 
-var excelInfos = File.GetFiles(config.GetSection(Const.InExcelPath).Value);
-var tableInfos = Excel.GetTableInfos(excelInfos);
-if (tableInfos == null)
-{
-    return;
-}
+var excelInfo = new ExcelInfo("/Users/three.zhang/Projects/BedroomAdventure/BedroomAdventure-config/Excel/Protagonist.xlsx","Protagonist.xlsx","xlsx");
 
-switch (args.Length)
-{
-    case > 0 when args[0].Equals("object"):
-        {
-            ParserStruct parserStruct = new(config);
-            File.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
-            parserStruct.OutClass(tableInfos, File.Write);
-            break;
-        }
-    case > 0 when args[0].Equals("json"):
-        {
-            ParserData parserData = new(config);
-            File.InitOutJsonPath(config.GetSection(Const.OutJsonFilePath).Value);
-            parserData.OutJson(tableInfos, File.Write);
-            break;
-        }
-    default:
-        {
-            ParserStruct parserStruct = new(config);
-            File.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
-            parserStruct.OutClass(tableInfos, File.Write);
-            ParserData parserData = new(config);
-            File.InitOutJsonPath(config.GetSection(Const.OutJsonFilePath).Value);
-            parserData.OutJson(tableInfos, File.Write);
-            break;
-        }
-}
+// var excelInfos = File.GetFiles(config.GetSection(Const.InExcelPath).Value);
+// var tableInfos = Excel.GetTableInfos(excelInfos);
+// if (tableInfos == null)
+// {
+//     return;
+// }
+//
+// switch (args.Length)
+// {
+//     case > 0 when args[0].Equals("object"):
+//         {
+//             ParserStruct parserStruct = new(config);
+//             File.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
+//             parserStruct.OutClass(tableInfos, File.Write);
+//             break;
+//         }
+//     case > 0 when args[0].Equals("json"):
+//         {
+//             ParserData parserData = new(config);
+//             File.InitOutJsonPath(config.GetSection(Const.OutJsonFilePath).Value);
+//             parserData.OutJson(tableInfos, File.Write);
+//             break;
+//         }
+//     default:
+//         {
+//             ParserStruct parserStruct = new(config);
+//             File.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
+//             parserStruct.OutClass(tableInfos, File.Write);
+//             ParserData parserData = new(config);
+//             File.InitOutJsonPath(config.GetSection(Const.OutJsonFilePath).Value);
+//             parserData.OutJson(tableInfos, File.Write);
+//             break;
+//         }
+// }

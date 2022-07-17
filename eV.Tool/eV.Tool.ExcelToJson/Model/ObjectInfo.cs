@@ -33,9 +33,11 @@ public class ObjectInfo
     private string GetProperties()
     {
         List<string> properties = new();
+
         properties.AddRange(ObjectBaseProperties.Select(objectBaseProperty => string.Format(Template.BaseProperty, objectBaseProperty.Comment, objectBaseProperty.Type, objectBaseProperty.Name, objectBaseProperty.DefaultValue)));
 
         properties.AddRange(ObjectComplexProperties.Select(objectComplexProperty => string.Format(Template.ComplexProperty, objectComplexProperty.Comment, objectComplexProperty.Type, objectComplexProperty.Name)));
+
         return string.Join("\n", properties);
     }
 }

@@ -3,17 +3,17 @@
 
 using eV.Tool.ExcelToJson.Define;
 using NPOI.SS.UserModel;
-namespace eV.Tool.ExcelToJson.Model;
+namespace eV.Tool.ExcelToJson.Excel;
 
 public class SheetInfo : IComparable<SheetInfo>
 {
     public string FullName { get; set; } = string.Empty;
     public string Name { get; set; } = string.Empty;
+    public List<IRow> Data { get; } = new();
     public FieldInfo? PrimaryKeyFieldInfo { get; set; }
     public FieldInfo? ForeignKeyFieldInfo { get; set; }
-    public List<string> Hierarchy { get; } = new();
     public List<FieldInfo> FieldInfos { get; } = new();
-    public List<IRow> Data { get; } = new();
+    public List<string> Hierarchy { get; } = new();
     public int CompareTo(SheetInfo? other)
     {
         if (Name == Const.MainSheet)

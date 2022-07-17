@@ -25,8 +25,6 @@ public class {6}Row
 
 ";
 
-
-
     public const string ProfileObject = @"{0}
 
 using eV.Module.GameProfile.Attributes;
@@ -56,10 +54,12 @@ public class {2}
 }}
 
 ";
+
     public const string BaseProperty = @"    /// <summary>
     /// {0}
     /// </summary>
     public {1} {2} {{ get; set; }} = {3};";
+
     public const string ComplexProperty = @"    /// <summary>
     /// {0}
     /// </summary>
