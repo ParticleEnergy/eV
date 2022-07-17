@@ -16,16 +16,44 @@ public class ObjectInfo
     public List<ObjectBaseProperty> ObjectBaseProperties { get; } = new();
     public List<ObjectComplexProperty> ObjectComplexProperties { get; } = new();
 
+    private readonly string _profileObjectNoDependencies;
+    private readonly string _profileObject;
+    private readonly string _itemObject;
+
+    private readonly string _baseProperty;
+    private readonly string _complexProperty;
+
+
+    public ObjectInfo(string csharpVersion)
+    {
+        if (csharpVersion.ToLower().Equals("lastest"))
+        {
+            _profileObjectNoDependencies = Template.ProfileObjectNoDependencies;
+            _profileObject = Template.ProfileObject;
+            _itemObject = Template.ItemObject;
+            _baseProperty = Template.BaseProperty;
+            _complexProperty = Template.ComplexProperty;
+        }
+        else
+        {
+            _profileObjectNoDependencies = Template8.ProfileObjectNoDependencies;
+            _profileObject = Template8.ProfileObject;
+            _itemObject = Template8.ItemObject;
+            _baseProperty = Template8.BaseProperty;
+            _complexProperty = Template8.ComplexProperty;
+        }
+    }
+
     public override string ToString()
     {
         string result;
         if (IsMain)
         {
-            result = IsDependencies ? string.Format(Template.ProfileObject, Head, NamespaceName, NamespaceName, ClassName, ProfileType, ProfileDetailType, ClassName, ClassName, GetProperties()) : string.Format(Template.ProfileObjectNoDependencies, Head, NamespaceName, ClassName, ProfileType, ProfileDetailType, ClassName, ClassName, GetProperties());
+            result = IsDependencies ? string.Format(_profileObject, Head, NamespaceName, NamespaceName, ClassName, ProfileType, ProfileDetailType, ClassName, ClassName, GetProperties()) : string.Format(_profileObjectNoDependencies, Head, NamespaceName, ClassName, ProfileType, ProfileDetailType, ClassName, ClassName, GetProperties());
         }
         else
         {
-            result = string.Format(Template.ItemObject, Head, NamespaceName, ClassName, GetProperties());
+            result = string.Format(_itemObject, Head, NamespaceName, ClassName, GetProperties());
         }
         return result;
     }
@@ -34,9 +62,9 @@ public class ObjectInfo
     {
         List<string> properties = new();
 
-        properties.AddRange(ObjectBaseProperties.Select(objectBaseProperty => string.Format(Template.BaseProperty, objectBaseProperty.Comment, objectBaseProperty.Type, objectBaseProperty.Name, objectBaseProperty.DefaultValue)));
+        properties.AddRange(ObjectBaseProperties.Select(objectBaseProperty => string.Format(_baseProperty, objectBaseProperty.Comment, objectBaseProperty.Type, objectBaseProperty.Name, objectBaseProperty.DefaultValue)));
 
-        properties.AddRange(ObjectComplexProperties.Select(objectComplexProperty => string.Format(Template.ComplexProperty, objectComplexProperty.Comment, objectComplexProperty.Type, objectComplexProperty.Name)));
+        properties.AddRange(ObjectComplexProperties.Select(objectComplexProperty => string.Format(_complexProperty, objectComplexProperty.Comment, objectComplexProperty.Type, objectComplexProperty.Name)));
 
         return string.Join("\n", properties);
     }

@@ -70,7 +70,7 @@ public class AnalyticStructure
     {
         string outObjectNamespace = _configuration.GetSection(Const.OutObjectNamespace).Value;
         string outObjectFileHead = _configuration.GetSection(Const.OutObjectFileHead).Value;
-        return new ObjectInfo
+        return new ObjectInfo(_configuration.GetSection(Const.CSharpVersion).Value)
         {
             NamespaceName = outObjectNamespace,
             Head = outObjectFileHead,

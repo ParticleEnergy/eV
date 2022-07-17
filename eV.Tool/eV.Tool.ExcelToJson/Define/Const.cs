@@ -11,6 +11,7 @@ public static class Const
     public const string OutObjectNamespace = "OutObjectNamespace";
     public const string OutObjectFileHead = "OutObjectFileHead";
     public const string JsonFormatting = "JsonFormatting";
+    public const string CSharpVersion = "CSharpVersion";
 
     public const string MainSheet = "Main";
     public const string SplitFlag = ",";

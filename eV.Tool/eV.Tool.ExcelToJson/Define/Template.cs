@@ -58,10 +58,12 @@ public class {2}
     public const string BaseProperty = @"    /// <summary>
     /// {0}
     /// </summary>
-    public {1} {2} {{ get; set; }} = {3};";
+    public {1} {2} {{ get; set; }} = {3};
+";
 
     public const string ComplexProperty = @"    /// <summary>
     /// {0}
     /// </summary>
-    public {1} {2} {{ get; set; }} = new();";
+    public {1}? {2} {{ get; set; }}
+";
 }
