@@ -4,7 +4,6 @@
 using eV.Module.EasyLog;
 using eV.Tool.ExcelToJson.Core;
 using eV.Tool.ExcelToJson.Define;
-using eV.Tool.ExcelToJson.Excel;
 using eV.Tool.ExcelToJson.Utils;
 using Microsoft.Extensions.Configuration;
 
@@ -43,50 +42,40 @@ if (config.GetSection(Const.JsonFormatting).Value is "" or null)
     return;
 }
 
-var excelInfo = new ExcelInfo("/Users/three.zhang/Projects/BedroomAdventure/BedroomAdventure-config/Excel/Protagonist.xlsx","Protagonist.xlsx","xlsx");
 
-var excelInfos = new List<ExcelInfo>
+var excelInfos = FileUtils.GetExcelInfos(config.GetSection(Const.InExcelPath).Value);
+var analyticStructure = new AnalyticStructure(config, excelInfos)
 {
-    excelInfo
+    Write = FileUtils.Write
 };
-var analyticStructure = new AnalyticStructure(config, excelInfos);
-analyticStructure.Write+= delegate(string s, string s1)
-{
-    Console.WriteLine(s1);
-};
-analyticStructure.Generate();
 
-// var excelInfos = File.GetFiles(config.GetSection(Const.InExcelPath).Value);
-// var tableInfos = Excel.GetTableInfos(excelInfos);
-// if (tableInfos == null)
-// {
-//     return;
-// }
-//
-// switch (args.Length)
-// {
-//     case > 0 when args[0].Equals("object"):
-//         {
-//             ParserStruct parserStruct = new(config);
-//             File.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
-//             parserStruct.OutClass(tableInfos, File.Write);
-//             break;
-//         }
-//     case > 0 when args[0].Equals("json"):
-//         {
-//             ParserData parserData = new(config);
-//             File.InitOutJsonPath(config.GetSection(Const.OutJsonFilePath).Value);
-//             parserData.OutJson(tableInfos, File.Write);
-//             break;
-//         }
-//     default:
-//         {
-//             ParserStruct parserStruct = new(config);
-//             File.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
-//             parserStruct.OutClass(tableInfos, File.Write);
-//             ParserData parserData = new(config);
-//             File.InitOutJsonPath(config.GetSection(Const.OutJsonFilePath).Value);
-//             parserData.OutJson(tableInfos, File.Write);
-//             break;
-//         }
-// }
+var analyticData = new AnalyticData(config, excelInfos)
+{
+    Write = FileUtils.Write
+};
+
+
+switch (args.Length)
+{
+    case > 0 when args[0].Equals("object"):
+        {
+            FileUtils.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
+            analyticStructure.Generate();
+            break;
+        }
+    case > 0 when args[0].Equals("json"):
+        {
+            FileUtils.InitOutJsonPath(config.GetSection(Const.OutJsonFilePath).Value);
+            analyticData.Generate();
+            break;
+        }
+    default:
+        {
+            FileUtils.InitOutClassPath(config.GetSection(Const.OutObjectFilePath).Value);
+            FileUtils.InitOutJsonPath(config.GetSection(Const.OutJsonFilePath).Value);
+
+            analyticStructure.Generate();
+            analyticData.Generate();
+            break;
+        }
+}

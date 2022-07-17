@@ -1,6 +1,7 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
+using eV.Module.EasyLog;
 using eV.Tool.ExcelToJson.Define;
 using eV.Tool.ExcelToJson.Excel;
 using eV.Tool.ExcelToJson.Model;
@@ -9,7 +10,7 @@ namespace eV.Tool.ExcelToJson.Core;
 
 public class AnalyticStructure
 {
-    public event Action<string, string>? Write;
+    public Action<string, string>? Write { get; set; }
     private readonly IConfigurationRoot _configuration;
     private readonly List<ExcelInfo> _excelInfos;
     private readonly List<ObjectInfo> _objectInfos = new();
@@ -21,15 +22,15 @@ public class AnalyticStructure
 
     public void Generate()
     {
+        if (!CheckTable())
+            return;
+
         _objectInfos.Clear();
-
         string path = _configuration.GetSection(Const.OutObjectFilePath).Value;
-
         foreach (ExcelInfo excel in _excelInfos)
         {
             Analytic(excel);
         }
-
         foreach (ObjectInfo objectInfo in _objectInfos)
         {
             string file = objectInfo.IsMain ? $"{path}/{string.Format(Template.ObjectFileName, objectInfo.ClassName)}" : $"{path}/Object/{objectInfo.ClassName}.cs";
@@ -49,7 +50,7 @@ public class AnalyticStructure
             FieldType.Bool => "bool",
             FieldType.Int => "int",
             FieldType.Double => "double",
-            _ => type.Replace(FieldType.Dict, "Dictionary").Replace(FieldType.String, "string").Replace(FieldType.Bool, "bool").Replace(FieldType.Int, "int").Replace(FieldType.Double, "double")
+            _ => string.Join(", ", type.Replace(" ", "").Split(Const.SplitFlag)).ToLower().Replace(FieldType.Dict.ToLower(), "Dictionary")
         };
     }
 
@@ -184,5 +185,47 @@ public class AnalyticStructure
                 continue;
             _objectInfos.Add(oi);
         }
+    }
+
+    private bool CheckTable()
+    {
+        List<KeyValuePair<string, SheetInfo>> allSheetInfos = new();
+        foreach (ExcelInfo excelInfo in _excelInfos)
+        {
+            allSheetInfos.AddRange(excelInfo.SubSheetInfos.Select(sheetInfo => KeyValuePair.Create(excelInfo.FilePath, sheetInfo)));
+        }
+
+        foreach ((string filePath1, SheetInfo sheetInfo1) in allSheetInfos)
+        {
+            foreach ((string filePath2, SheetInfo sheetInfo2) in allSheetInfos)
+            {
+                if (!sheetInfo1.Name.Equals(sheetInfo2.Name))
+                    continue;
+
+                if (sheetInfo1.FieldInfos.Count != sheetInfo2.FieldInfos.Count)
+                {
+                    Logger.Error($"[{filePath1} Sheet: {sheetInfo1.FullName}] [{filePath2} Sheet: {sheetInfo2.FullName}] unequal number of fields");
+                    return false;
+                }
+
+                foreach (FieldInfo fieldInfo1 in sheetInfo1.FieldInfos)
+                {
+                    // check fk
+                    if (FieldType.ForeignKeyTypes.Contains(fieldInfo1.Type))
+                        continue;
+
+                    bool flag = false;
+
+                    foreach (var _ in sheetInfo2.FieldInfos.Where(fieldInfo2 => fieldInfo1.Name.Equals(fieldInfo2.Name) && fieldInfo2.Type.Equals(fieldInfo2.Type)))
+                        flag = true;
+
+                    if (flag)
+                        continue;
+                    Logger.Error($"[{filePath1} Sheet: {sheetInfo1.FullName}] [{filePath2} Sheet: {sheetInfo2.FullName}] inconsistent fields [{fieldInfo1.Name}]");
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
