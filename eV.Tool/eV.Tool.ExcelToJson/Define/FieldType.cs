@@ -18,11 +18,7 @@ public static class FieldType
     public const string Double = "Double";
     public const string Bool = "Bool";
 
-    public const string ListString = "ListString";
-    public const string ListInt = "ListInt";
-    public const string ListDouble = "ListDouble";
-    public const string ListBool = "ListBool";
-
+    public const string List = "List";
     public const string Dict = "Dict";
 
     public static List<string> BaseTypes => new()
@@ -45,13 +41,5 @@ public static class FieldType
         ForeignKeyObject,
         ForeignKeyList,
         ForeignKeyDictionary
-    };
-
-    public static List<string> ListTypes => new()
-    {
-        ListString,
-        ListBool,
-        ListDouble,
-        ListInt
     };
 }

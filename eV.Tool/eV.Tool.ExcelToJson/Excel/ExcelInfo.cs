@@ -216,7 +216,7 @@ public class ExcelInfo
         if (!FieldType.PrimaryKeyTypes.Contains(type)
             && !FieldType.ForeignKeyTypes.Contains(type)
             && !FieldType.BaseTypes.Contains(type)
-            && !FieldType.ListTypes.Contains(type)
+            && !type.StartsWith(FieldType.List)
             && !type.StartsWith(FieldType.Dict))
         {
             Logger.Error($"{FilePath} Sheet: {sheetName} Cell: {index + 1} type definition error");

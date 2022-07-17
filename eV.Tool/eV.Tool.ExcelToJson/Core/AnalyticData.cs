@@ -252,7 +252,7 @@ public class AnalyticData
                     }
                 }
 
-                if (fieldInfo.Type.StartsWith(FieldType.Dict))
+                if (fieldInfo.Type.StartsWith(FieldType.Dict) || fieldInfo.Type.StartsWith(FieldType.List))
                 {
                     if (originValue.Equals(""))
                     {
@@ -271,12 +271,6 @@ public class AnalyticData
                         FieldType.Int => originValue.Equals("") ? 0 : Convert.ToInt32(originValue),
                         FieldType.Double => originValue.Equals("") ? 0 : Convert.ToDouble(originValue),
                         FieldType.Bool => originValue.ToUpper() == "TRUE",
-
-                        FieldType.ListString => originValue == "" ? new List<string>() : originValue.Split(Const.SplitFlag).ToList(),
-                        FieldType.ListInt => originValue == "" ? new List<int>() : originValue.Split(Const.SplitFlag).Select(a => a.Equals("") ? 0 : Convert.ToInt32(a)).ToList(),
-                        FieldType.ListDouble => originValue == "" ? new List<double>() : originValue.Split(Const.SplitFlag).Select(a => a.Equals("") ? 0 : Convert.ToDouble(a)).ToList(),
-                        FieldType.ListBool => originValue == "" ? new List<bool>() : originValue.Split(Const.SplitFlag).Select(s => s.ToUpper() == "TRUE").ToList(),
-
                         _ => null
                     };
                 }

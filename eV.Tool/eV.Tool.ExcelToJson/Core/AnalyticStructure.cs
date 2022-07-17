@@ -42,15 +42,12 @@ public class AnalyticStructure
     {
         return type switch
         {
-            FieldType.ListString => "List<string>",
-            FieldType.ListBool => "List<bool>",
-            FieldType.ListDouble => "List<double>",
-            FieldType.ListInt => "List<int>",
+
             FieldType.String => "string",
             FieldType.Bool => "bool",
             FieldType.Int => "int",
             FieldType.Double => "double",
-            _ => string.Join(", ", type.Replace(" ", "").Split(Const.SplitFlag)).ToLower().Replace(FieldType.Dict.ToLower(), "Dictionary")
+            _ => string.Join(", ", type.Replace(" ", "").Split(Const.SplitFlag)).ToLower().Replace(FieldType.Dict.ToLower(), "Dictionary").Replace(FieldType.List.ToLower(), "List")
         };
     }
 
@@ -95,7 +92,7 @@ public class AnalyticStructure
 
         foreach (var fieldInfo in sheetInfo.FieldInfos.Where(fieldInfo => !FieldType.ForeignKeyTypes.Contains(fieldInfo.Type)))
         {
-            if (fieldInfo.Type.StartsWith(FieldType.Dict) || FieldType.ListTypes.Contains(fieldInfo.Type))
+            if (fieldInfo.Type.StartsWith(FieldType.Dict) || fieldInfo.Type.StartsWith(FieldType.List))
             {
                 objectInfo.ObjectComplexProperties.Add(new ObjectComplexProperty
                 {
