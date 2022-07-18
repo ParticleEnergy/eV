@@ -7,6 +7,7 @@ public static class Template8
 {
     public const string ProfileObjectNoDependencies = @"{0}
 
+using System.Collections.Generic;
 using eV.Module.GameProfile.Attributes;
 namespace {1}
 {{
@@ -26,6 +27,7 @@ namespace {1}
 
     public const string ProfileObject = @"{0}
 
+using System.Collections.Generic;
 using eV.Module.GameProfile.Attributes;
 using {1}.Object;
 namespace {2}
@@ -46,6 +48,20 @@ namespace {2}
 
     public const string ItemObject = @"{0}
 
+using System.Collections.Generic;
+namespace {1}.Object
+{{
+    public class {2}
+    {{
+{3}
+    }}
+}}
+
+";
+
+    public const string ItemObjectGeneric = @"{0}
+
+using System.Collections.Generic;
 namespace {1}.Object
 {{
     public class {2}

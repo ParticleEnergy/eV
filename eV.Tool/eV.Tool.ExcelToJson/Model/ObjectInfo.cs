@@ -18,19 +18,18 @@ public class ObjectInfo
 
     private readonly string _profileObjectNoDependencies;
     private readonly string _profileObject;
-    private readonly string _itemObject;
 
     private readonly string _baseProperty;
     private readonly string _complexProperty;
-
+    private readonly bool _csharpVersion;
 
     public ObjectInfo(string csharpVersion)
     {
+        _csharpVersion = csharpVersion.ToLower().Equals("lastest");
         if (csharpVersion.ToLower().Equals("lastest"))
         {
             _profileObjectNoDependencies = Template.ProfileObjectNoDependencies;
             _profileObject = Template.ProfileObject;
-            _itemObject = Template.ItemObject;
             _baseProperty = Template.BaseProperty;
             _complexProperty = Template.ComplexProperty;
         }
@@ -38,7 +37,6 @@ public class ObjectInfo
         {
             _profileObjectNoDependencies = Template8.ProfileObjectNoDependencies;
             _profileObject = Template8.ProfileObject;
-            _itemObject = Template8.ItemObject;
             _baseProperty = Template8.BaseProperty;
             _complexProperty = Template8.ComplexProperty;
         }
@@ -53,7 +51,7 @@ public class ObjectInfo
         }
         else
         {
-            result = string.Format(_itemObject, Head, NamespaceName, ClassName, GetProperties());
+            result = string.Format(_csharpVersion ? Template.ItemObject : ObjectComplexProperties.Count > 0 ? Template8.ItemObjectGeneric : Template8.ItemObject, Head, NamespaceName, ClassName, GetProperties());
         }
         return result;
     }
