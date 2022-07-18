@@ -48,7 +48,6 @@ namespace {2}
 
     public const string ItemObject = @"{0}
 
-using System.Collections.Generic;
 namespace {1}.Object
 {{
     public class {2}
