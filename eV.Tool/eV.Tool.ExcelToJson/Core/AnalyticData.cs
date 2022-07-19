@@ -244,7 +244,13 @@ public class AnalyticData
                 {
                     if (cell.CellType == CellType.Formula)
                     {
-                        originValue = cell.NumericCellValue.ToString(CultureInfo.InvariantCulture);
+                        originValue = fieldInfo.Type switch
+                        {
+                            FieldType.Bool => cell.BooleanCellValue.ToString(),
+                            FieldType.Int => cell.NumericCellValue.ToString(CultureInfo.InvariantCulture),
+                            FieldType.Double => cell.NumericCellValue.ToString(CultureInfo.InvariantCulture),
+                            _ => cell.StringCellValue
+                        };
                     }
                     else
                     {
