@@ -38,10 +38,14 @@ if (config.GetSection(Const.OutObjectFileHead).Value is "" or null)
 }
 if (config.GetSection(Const.JsonFormatting).Value is "" or null)
 {
-    Logger.Error("appsettings.json missing OutObjectFileHead");
+    Logger.Error("appsettings.json missing JsonFormatting");
     return;
 }
-
+if (config.GetSection(Const.CSharpVersion).Value is "" or null)
+{
+    Logger.Error("appsettings.json missing CSharpVersion");
+    return;
+}
 
 var excelInfos = FileUtils.GetExcelInfos(config.GetSection(Const.InExcelPath).Value);
 var analyticStructure = new AnalyticStructure(config, excelInfos)
@@ -53,7 +57,6 @@ var analyticData = new AnalyticData(config, excelInfos)
 {
     Write = FileUtils.Write
 };
-
 
 switch (args.Length)
 {
