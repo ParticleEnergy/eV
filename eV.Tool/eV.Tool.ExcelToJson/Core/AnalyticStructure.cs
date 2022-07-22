@@ -42,12 +42,11 @@ public class AnalyticStructure
     {
         return type switch
         {
-
             FieldType.String => "string",
             FieldType.Bool => "bool",
             FieldType.Int => "int",
             FieldType.Double => "double",
-            _ => string.Join(", ", type.Replace(" ", "").Split(Const.SplitFlag)).ToLower().Replace(FieldType.Dict.ToLower(), "Dictionary").Replace(FieldType.List.ToLower(), "List")
+            _ => string.Join(", ", type.Trim().Split(Const.SplitFlag)).ToLower().Replace(FieldType.Dict.ToLower(), "Dictionary").Replace(FieldType.List.ToLower(), "List")
         };
     }
 
