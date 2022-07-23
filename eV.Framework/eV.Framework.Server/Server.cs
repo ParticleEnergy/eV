@@ -21,8 +21,8 @@ namespace eV.Framework.Server;
 public class Server
 {
     private readonly IdleDetection _idleDetection = new(Configure.Instance.ServerOption.SessionMaximumIdleTime);
-    private readonly eVNetworkServer _server = new(GetServerSetting());
     private readonly Queue _queue = new(Configure.Instance.BaseOption.ProjectAssemblyString);
+    private readonly eVNetworkServer _server = new(GetServerSetting());
 
     private readonly SessionExtension _sessionExtension = new();
 

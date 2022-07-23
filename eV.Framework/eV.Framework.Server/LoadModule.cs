@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using Confluent.Kafka;
+using eV.Framework.Server.Options;
 using eV.Framework.Server.Utils;
 using eV.Module.Queue.Kafka;
 using eV.Module.Storage.Mongo;
@@ -24,6 +25,23 @@ public static class LoadModule
         KafkaManger.Instance.Stop();
     }
 
+    #region Queue
+    private static void Kafka()
+    {
+        if (Configure.Instance.KafkaOption == null)
+            return;
+
+        Dictionary<string, KeyValuePair<ProducerConfig, ConsumerConfig>> configs = new();
+        foreach ((string name, KafkaOption option) in Configure.Instance.KafkaOption)
+        {
+            configs[name] = ConfigUtils.GetKafkaConfig(option);
+            configs[name].Value.ClientId = $"{name}-{configs[name].Value.ClientId}";
+        }
+
+        KafkaManger.Instance.Start(configs);
+    }
+    #endregion
+
     #region Storage
     private static void Redis()
     {
@@ -31,7 +49,7 @@ public static class LoadModule
             return;
         Dictionary<string, ConfigurationOptions> configs = new();
 
-        foreach ((string name, var option) in Configure.Instance.RedisOption)
+        foreach ((string name, RedisOption option) in Configure.Instance.RedisOption)
             configs[name] = ConfigUtils.GetRedisConfig(option);
 
         RedisManager.Instance.Start(configs);
@@ -41,23 +59,6 @@ public static class LoadModule
     {
         if (Configure.Instance.MongodbOption != null)
             MongodbManager.Instance.Start(Configure.Instance.MongodbOption);
-    }
-    #endregion
-
-    #region Queue
-    private static void Kafka()
-    {
-        if (Configure.Instance.KafkaOption == null)
-            return;
-
-        Dictionary<string, KeyValuePair<ProducerConfig, ConsumerConfig>> configs = new();
-        foreach ((string name, var option) in Configure.Instance.KafkaOption)
-        {
-            configs[name] = ConfigUtils.GetKafkaConfig(option);
-            configs[name].Value.ClientId = $"{name}-{configs[name].Value.ClientId}";
-        }
-
-        KafkaManger.Instance.Start(configs);
     }
     #endregion
 }
