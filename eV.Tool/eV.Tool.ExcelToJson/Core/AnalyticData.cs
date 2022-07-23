@@ -53,7 +53,7 @@ public class AnalyticData
         }
     }
 
-    private Dictionary<string, object>? GetSubSheetData(SheetInfo sheetInfo, List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? data)
+    private static Dictionary<string, object>? GetSubSheetData(SheetInfo sheetInfo, List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? data)
     {
         Dictionary<string, object> result = new();
 
@@ -148,7 +148,7 @@ public class AnalyticData
         return result;
     }
 
-    private object? GetMainSheetData(SheetInfo sheetInfo, List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? subData)
+    private static object? GetMainSheetData(SheetInfo sheetInfo, List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? subData)
     {
         Dictionary<string, Dictionary<string, object?>> dataDictionary = new();
         List<Dictionary<string, object?>> dataList = new();

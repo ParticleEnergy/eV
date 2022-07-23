@@ -48,7 +48,7 @@ public static class FileUtils
         {
             foreach (var item in files)
             {
-                System.IO.File.Delete(item.FullName);
+                File.Delete(item.FullName);
             }
         }
         catch (Exception e)

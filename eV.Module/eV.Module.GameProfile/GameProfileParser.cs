@@ -21,10 +21,10 @@ public class GameProfileParser : IConfigParser
     public Dictionary<string, object> Parser(Dictionary<string, Type> configType, Dictionary<string, string> configJsonString)
     {
         Dictionary<string, object> config = new();
-         foreach (KeyValuePair<string, Type> ct in configType)
-         {
-             string name = ct.Key;
-             Type type = ct.Value;
+        foreach (KeyValuePair<string, Type> ct in configType)
+        {
+            string name = ct.Key;
+            Type type = ct.Value;
             if (!configJsonString.TryGetValue(name, out string? json))
                 continue;
             object? result = JsonConvert.DeserializeObject(json, type);

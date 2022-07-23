@@ -14,6 +14,6 @@ public class SerializeBson<T> : ISerializer<T>, IDeserializer<T>
     }
     public T Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
     {
-       return BsonSerializer.Deserialize<T>(data.ToArray());
+        return BsonSerializer.Deserialize<T>(data.ToArray());
     }
 }

@@ -37,7 +37,7 @@ public class SessionRegistrationAuthority : ISessionRegistrationAuthority
     public string GetNodeName(string sessionId)
     {
         var result = _redis?.GetDatabase().StringGet(string.Format(SessionKey, _clusterName, sessionId));
-        return (result == ""? "" : result.HasValue ? result.ToString() : "") ?? string.Empty;
+        return (result == "" ? "" : result.HasValue ? result.ToString() : "") ?? string.Empty;
     }
     public List<string> GetAllSessionId()
     {

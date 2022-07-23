@@ -38,7 +38,7 @@ public class AnalyticStructure
         }
     }
 
-    private string GetFiledType(string type)
+    private static string GetFiledType(string type)
     {
         return type switch
         {
@@ -50,7 +50,7 @@ public class AnalyticStructure
         };
     }
 
-    private string GetDefaultValue(string type)
+    private static string GetDefaultValue(string type)
     {
         return type switch
         {

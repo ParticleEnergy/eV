@@ -6,7 +6,6 @@ using eV.Tool.ExcelToJson.Core;
 using eV.Tool.ExcelToJson.Define;
 using eV.Tool.ExcelToJson.Utils;
 using Microsoft.Extensions.Configuration;
-
 string configFile = args.Length switch
 {
     > 0 when args[0].Equals("prodServer") => "appsettings.prod.server.json",
