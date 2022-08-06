@@ -196,13 +196,16 @@ public class ExcelInfo
             var row = sheet.GetRow(i);
             if (row is not { LastCellNum: > 0 })
             {
-                Logger.Error($"{FilePath} {sheet.SheetName} Row :{i + 1} is null");
+                Logger.Error($"{FilePath} {sheet.SheetName} Row: {i + 1} is null");
                 continue;
             }
             string pk = row.GetCell(sheetInfo.PrimaryKeyFieldInfo!.Index)?.ToString() ?? "";
 
             if (pk.Equals(""))
+            {
+                Logger.Error($"{FilePath} {sheet.SheetName} Row: {i + 1} pk is empty");
                 continue;
+            }
 
             sheetInfo.Data.Add(sheet.GetRow(i));
         }

@@ -21,10 +21,8 @@ public static class FileUtils
             string fileName = f[0];
             string type = f[1];
             if (!(type.Equals("xlsx") || type.Equals("xlx")))
-            {
-                Logger.Error($"{file.FullName} file type is not excel");
                 continue;
-            }
+
             if (!CheckFileName(fileName))
             {
                 Logger.Error($"{file.FullName} file names can only consist of letters");
