@@ -80,6 +80,7 @@ public static class Profile
 
                     string text = File.ReadAllText(file.FullName);
                     result.Add(filename[0], text);
+                    Logger.Info($"GameProfile [{filename[0]}] Load");
                 }
                 catch (Exception e)
                 {
