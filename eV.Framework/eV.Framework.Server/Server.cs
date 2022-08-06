@@ -68,13 +68,15 @@ public class Server
     public void Start()
     {
         EasyLogger.Info(DefaultSetting.Logo);
+
+        LoadModule.Start();
+
         Profile.Init(
             Configure.Instance.BaseOption.PublicObjectAssemblyString,
             Configure.Instance.BaseOption.GameProfilePath,
             Configure.Instance.BaseOption.GameProfileMonitoringChange
         );
 
-        LoadModule.Run();
         RegisterHandler();
 
         _cluster?.Start();

@@ -49,8 +49,6 @@ public static class Profile
 
         Config = s_configParser.Parser(configType, configJsonString);
         OnLoad?.Invoke();
-
-        Logger.Info("Game profile load");
     }
 
     public static void AssignmentConfigObject<T>(T co)

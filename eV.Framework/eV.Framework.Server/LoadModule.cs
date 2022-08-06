@@ -12,7 +12,7 @@ namespace eV.Framework.Server;
 
 public static class LoadModule
 {
-    public static void Run()
+    public static void Start()
     {
         Redis();
         Mongodb();
