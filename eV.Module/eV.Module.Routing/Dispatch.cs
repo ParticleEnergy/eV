@@ -75,7 +75,7 @@ public static class Dispatch
         RegisterHandler(handlerAssemblyString);
     }
 
-    public static async void Dispense(ISession session, IPacket packet)
+    public static async Task Dispense(ISession session, IPacket packet)
     {
         if (packet.GetName().Equals("") || packet.GetContent().Length == 0)
             return;
