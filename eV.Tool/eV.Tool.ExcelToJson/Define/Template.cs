@@ -17,12 +17,10 @@ public class {2}Profile : {3}<{4}{5}Row>
 {{
 
 }}
-
 public class {6}Row
 {{
 {7}
 }}
-
 ";
 
     public const string ProfileObject = @"{0}
@@ -36,12 +34,10 @@ public class {3}Profile : {4}<{5}{6}Row>
 {{
 
 }}
-
 public class {7}Row
 {{
 {8}
 }}
-
 ";
 
     public const string ItemObject = @"{0}
@@ -52,7 +48,6 @@ public class {2}
 {{
 {3}
 }}
-
 ";
 
     public const string BaseProperty = @"    /// <summary>

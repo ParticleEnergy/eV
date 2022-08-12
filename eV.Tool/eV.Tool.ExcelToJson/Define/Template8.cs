@@ -22,7 +22,6 @@ namespace {1}
 {7}
     }}
 }}
-
 ";
 
     public const string ProfileObject = @"{0}
@@ -43,7 +42,6 @@ namespace {2}
 {8}
     }}
 }}
-
 ";
 
     public const string ItemObject = @"{0}
@@ -55,7 +53,6 @@ namespace {1}.Object
 {3}
     }}
 }}
-
 ";
 
     public const string ItemObjectGeneric = @"{0}
@@ -68,7 +65,6 @@ namespace {1}.Object
 {3}
     }}
 }}
-
 ";
 
     public const string BaseProperty = @"        /// <summary>
