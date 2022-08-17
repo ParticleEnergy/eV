@@ -68,6 +68,6 @@ public class LifetimeEventLogger : ILogger
     }
     public IDisposable BeginScope<TState>(TState state)
     {
-        throw new NotImplementedException();
+        return NullScope.Instance;
     }
 }
