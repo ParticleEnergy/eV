@@ -17,11 +17,11 @@ public class Application
         _host = Host.CreateDefaultBuilder(args)
             .ConfigureServices(services =>
             {
-                services.AddSingleton<IHostedService, LifetimeEventsHostedService>();
+                services.AddSingleton<IHostedService, TcpHostedService>();
                 services.AddLogging(builder =>
                 {
                     builder.ClearProviders();
-                    builder.AddProvider(new LifetimeEventLoggerProvider());
+                    builder.AddProvider(new ServerLoggerProvider());
                 });
             })
             .Build();

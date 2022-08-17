@@ -4,7 +4,7 @@
 using Microsoft.Extensions.Logging;
 namespace eV.Framework.Server.Logger;
 
-public class LifetimeEventLoggerProvider : ILoggerProvider
+public class ServerLoggerProvider : ILoggerProvider
 {
     public void Dispose()
     {
@@ -13,6 +13,6 @@ public class LifetimeEventLoggerProvider : ILoggerProvider
 
     public ILogger CreateLogger(string _)
     {
-        return new LifetimeEventLogger();
+        return new ServerLogger();
     }
 }

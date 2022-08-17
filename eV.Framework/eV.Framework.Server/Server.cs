@@ -31,6 +31,7 @@ public class Server
     public Server()
     {
         EasyLogger.SetLogger(new ServerLog(Configure.Instance.ProjectName));
+        EasyLogger.Info(DefaultSetting.Logo);
 
         _sessionExtension.OnActivateEvent += ServerEvent.SessionOnActivate;
         _sessionExtension.OnReleaseEvent += ServerEvent.SessionOnRelease;
@@ -67,8 +68,6 @@ public class Server
 
     public void Start()
     {
-        EasyLogger.Info(DefaultSetting.Logo);
-
         LoadModule.Start();
 
         Profile.Init(

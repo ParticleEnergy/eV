@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using EasyLogger = eV.Module.EasyLog.Logger;
 namespace eV.Framework.Server.Logger;
 
-public class LifetimeEventLogger : ILogger
+public class ServerLogger : ILogger
 {
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
