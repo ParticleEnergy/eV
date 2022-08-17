@@ -64,7 +64,7 @@ public class LifetimeEventLogger : ILogger
     }
     public bool IsEnabled(LogLevel logLevel)
     {
-        throw new NotImplementedException();
+        return true;
     }
     public IDisposable BeginScope<TState>(TState state)
     {
