@@ -63,4 +63,19 @@ public class Application
     {
         await _host.RunAsync();
     }
+
+    public void Start()
+    {
+        _host.Start();
+    }
+
+    public async Task StartAsync()
+    {
+        await _host.StartAsync();
+    }
+
+    public async Task StopAsync()
+    {
+        await _host.StopAsync();
+    }
 }
