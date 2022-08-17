@@ -43,7 +43,7 @@ public class SessionRegistrationAuthority : ISessionRegistrationAuthority
     {
         var resultHash = _redis?.GetDatabase().HashGetAll(string.Format(NodeKey, _clusterName, _nodeName));
 
-        return resultHash == null ? new List<string>() : resultHash.Select(rh => rh.Value).Select(dummy => (string)dummy).ToList();
+        return resultHash == null ? new List<string>() : resultHash.Select(hashEntry => hashEntry.Value.ToString()).ToList();
     }
 
     public void Start()

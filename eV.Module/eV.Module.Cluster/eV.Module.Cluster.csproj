@@ -16,9 +16,9 @@
     <RootNamespace>eV.Module.Cluster</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="KubernetesClient" Version="8.0.4" />
-    <PackageReference Include="Confluent.Kafka" Version="1.8.2" />
-    <PackageReference Include="StackExchange.Redis" Version="2.5.61" />
+    <PackageReference Include="KubernetesClient" Version="8.0.12" />
+    <PackageReference Include="Confluent.Kafka" Version="1.9.2" />
+    <PackageReference Include="StackExchange.Redis" Version="2.6.48" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\eV.Module.EasyLog\eV.Module.EasyLog.csproj" />
