@@ -4,27 +4,24 @@
 using eV.Framework.Server.Logger;
 using eV.Module.GameProfile;
 using eV.Module.Routing.Interface;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using EasyLogger = eV.Module.EasyLog.Logger;
 namespace eV.Framework.Server;
 
 public class Application
 {
-    private readonly IHost _host;
-    public Application(string[] args)
+    private readonly IHost _app;
+
+    public Application(string[] args, bool onlyTcp = false)
     {
-        _host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices(services =>
-            {
-                services.AddSingleton<IHostedService, TcpHostedService>();
-                services.AddLogging(builder =>
-                {
-                    builder.ClearProviders();
-                    builder.AddProvider(new ServerLoggerProvider());
-                });
-            })
-            .Build();
+        EasyLogger.SetLogger(new ServerLog(Configure.Instance.ProjectName));
+        EasyLogger.Info(DefaultSetting.Logo);
+
+        _app = onlyTcp ? GetOnlyTcpApp(args) : GetApp(args);
     }
 
     public Application SetProfile<T>(T data)
@@ -56,26 +53,72 @@ public class Application
 
     public void Run()
     {
-        _host.Run();
+        _app.Run();
     }
 
     public async Task RunAsync()
     {
-        await _host.RunAsync();
+        await _app.RunAsync();
     }
 
     public void Start()
     {
-        _host.Start();
+        _app.Start();
     }
 
     public async Task StartAsync()
     {
-        await _host.StartAsync();
+        await _app.StartAsync();
     }
 
     public async Task StopAsync()
     {
-        await _host.StopAsync();
+        await _app.StopAsync();
+    }
+
+    private IHost GetApp(string[] args)
+    {
+        var webApplicationBuilder = WebApplication.CreateBuilder(args);
+        webApplicationBuilder.Services.AddSingleton<IHostedService, TcpHostedService>();
+        webApplicationBuilder.Services.AddLogging(loggingBuilder =>
+        {
+            loggingBuilder.ClearProviders();
+            loggingBuilder.AddProvider(new ServerLoggerProvider());
+        });
+        webApplicationBuilder.Services.AddControllers();
+        webApplicationBuilder.Services.AddEndpointsApiExplorer();
+        webApplicationBuilder.Services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = Configure.Instance.ProjectName
+            });
+        });
+
+        var app = webApplicationBuilder.Build();
+        app.MapControllers();
+
+        if (!Configure.Instance.BaseOption.IsDevelopment)
+            return app;
+
+        app.UseSwagger();
+        app.UseSwaggerUI();
+        app.Urls.Add($"http://{Configure.Instance.HttpServerOption.Host}:{Configure.Instance.HttpServerOption.Port}");
+        return app;
+    }
+
+    private IHost GetOnlyTcpApp(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
+            .ConfigureServices(services =>
+            {
+                services.AddSingleton<IHostedService, TcpHostedService>();
+                services.AddLogging(builder =>
+                {
+                    builder.ClearProviders();
+                    builder.AddProvider(new ServerLoggerProvider());
+                });
+            })
+            .Build();
     }
 }

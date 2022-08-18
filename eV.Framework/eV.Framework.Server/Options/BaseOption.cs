@@ -5,6 +5,7 @@ namespace eV.Framework.Server.Options;
 
 public class BaseOption
 {
+    public bool IsDevelopment { get; set; } = true;
     public string ProjectAssemblyString { get; set; } = string.Empty;
     public string PublicObjectAssemblyString { get; set; } = string.Empty;
     public string GameProfilePath { get; set; } = string.Empty;

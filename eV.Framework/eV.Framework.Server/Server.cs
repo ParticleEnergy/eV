@@ -2,7 +2,6 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 
-using eV.Framework.Server.Logger;
 using eV.Framework.Server.SessionDrive;
 using eV.Framework.Server.SystemHandler;
 using eV.Framework.Server.Utils;
@@ -14,13 +13,12 @@ using eV.Module.Session;
 using eV.Network.Core;
 using eV.Network.Core.Interface;
 using eV.Network.Tcp.Server;
-using EasyLogger = eV.Module.EasyLog.Logger;
 using eVNetworkServer = eV.Network.Tcp.Server.Server;
 namespace eV.Framework.Server;
 
 public class Server
 {
-    private readonly IdleDetection _idleDetection = new(Configure.Instance.ServerOption.SessionMaximumIdleTime);
+    private readonly IdleDetection _idleDetection = new(Configure.Instance.TcpServerOption.SessionMaximumIdleTime);
     private readonly Queue _queue = new(Configure.Instance.BaseOption.ProjectAssemblyString);
     private readonly eVNetworkServer _server = new(GetServerSetting());
 
@@ -30,13 +28,10 @@ public class Server
 
     public Server()
     {
-        EasyLogger.SetLogger(new ServerLog(Configure.Instance.ProjectName));
-        EasyLogger.Info(DefaultSetting.Logo);
+        _server.AcceptConnect += ServerOnAcceptConnect;
 
         _sessionExtension.OnActivateEvent += ServerEvent.SessionOnActivate;
         _sessionExtension.OnReleaseEvent += ServerEvent.SessionOnRelease;
-
-        _server.AcceptConnect += ServerOnAcceptConnect;
 
         InitServerSession();
     }
@@ -103,29 +98,29 @@ public class Server
     private static ServerSetting GetServerSetting()
     {
         ServerSetting serverSetting = new();
-        if (!Configure.Instance.ServerOption.Host.Equals(""))
-            serverSetting.Host = Configure.Instance.ServerOption.Host;
+        if (!Configure.Instance.TcpServerOption.Host.Equals(""))
+            serverSetting.Host = Configure.Instance.TcpServerOption.Host;
 
-        if (Configure.Instance.ServerOption.Port > 0)
-            serverSetting.Port = Configure.Instance.ServerOption.Port;
+        if (Configure.Instance.TcpServerOption.Port > 0)
+            serverSetting.Port = Configure.Instance.TcpServerOption.Port;
 
-        if (Configure.Instance.ServerOption.Backlog > 0)
-            serverSetting.Backlog = Configure.Instance.ServerOption.Backlog;
+        if (Configure.Instance.TcpServerOption.Backlog > 0)
+            serverSetting.Backlog = Configure.Instance.TcpServerOption.Backlog;
 
-        if (Configure.Instance.ServerOption.MaxConnectionCount > 0)
-            serverSetting.MaxConnectionCount = Configure.Instance.ServerOption.MaxConnectionCount;
+        if (Configure.Instance.TcpServerOption.MaxConnectionCount > 0)
+            serverSetting.MaxConnectionCount = Configure.Instance.TcpServerOption.MaxConnectionCount;
 
-        if (Configure.Instance.ServerOption.ReceiveBufferSize > 0)
-            serverSetting.ReceiveBufferSize = Configure.Instance.ServerOption.ReceiveBufferSize;
+        if (Configure.Instance.TcpServerOption.ReceiveBufferSize > 0)
+            serverSetting.ReceiveBufferSize = Configure.Instance.TcpServerOption.ReceiveBufferSize;
 
-        if (Configure.Instance.ServerOption.TcpKeepAliveTime > 0)
-            serverSetting.TcpKeepAliveTime = Configure.Instance.ServerOption.TcpKeepAliveTime;
+        if (Configure.Instance.TcpServerOption.TcpKeepAliveTime > 0)
+            serverSetting.TcpKeepAliveTime = Configure.Instance.TcpServerOption.TcpKeepAliveTime;
 
-        if (Configure.Instance.ServerOption.TcpKeepAliveInterval > 0)
-            serverSetting.TcpKeepAliveInterval = Configure.Instance.ServerOption.TcpKeepAliveInterval;
+        if (Configure.Instance.TcpServerOption.TcpKeepAliveInterval > 0)
+            serverSetting.TcpKeepAliveInterval = Configure.Instance.TcpServerOption.TcpKeepAliveInterval;
 
-        if (Configure.Instance.ServerOption.TcpKeepAliveRetryCount > 0)
-            serverSetting.TcpKeepAliveRetryCount = Configure.Instance.ServerOption.TcpKeepAliveRetryCount;
+        if (Configure.Instance.TcpServerOption.TcpKeepAliveRetryCount > 0)
+            serverSetting.TcpKeepAliveRetryCount = Configure.Instance.TcpServerOption.TcpKeepAliveRetryCount;
 
         return serverSetting;
     }

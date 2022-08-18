@@ -4,7 +4,7 @@
 using eV.Module.Routing.Interface;
 namespace eV.Framework.Server;
 
-public static class ServerEvent
+internal static class ServerEvent
 {
     public static SessionEvent? ServerOnConnected;
     public static SessionEvent? ServerSessionOnActivate;
