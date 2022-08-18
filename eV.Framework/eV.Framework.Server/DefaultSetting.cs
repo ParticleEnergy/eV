@@ -12,5 +12,4 @@ internal static class DefaultSetting
 /  __/ |/ /   ___/ /  __/ /   | |/ /  __/ /
 \___/|___/   /____/\___/_/    |___/\___/_/
 ";
-    public const string LoggerName = "eV.Framework.Server";
 }
