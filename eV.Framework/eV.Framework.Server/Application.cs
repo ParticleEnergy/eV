@@ -97,13 +97,14 @@ public class Application
 
         var app = webApplicationBuilder.Build();
         app.MapControllers();
+        app.Urls.Add($"http://{Configure.Instance.HttpServerOption.Host}:{Configure.Instance.HttpServerOption.Port}");
 
         if (!Configure.Instance.BaseOption.IsDevelopment)
             return app;
 
         app.UseSwagger();
         app.UseSwaggerUI();
-        app.Urls.Add($"http://{Configure.Instance.HttpServerOption.Host}:{Configure.Instance.HttpServerOption.Port}");
+        EasyLogger.Info($"Swagger http://{Configure.Instance.HttpServerOption.Host}:{Configure.Instance.HttpServerOption.Port}/swagger/index.html");
         return app;
     }
 
