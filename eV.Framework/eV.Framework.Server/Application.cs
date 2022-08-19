@@ -14,16 +14,36 @@ namespace eV.Framework.Server;
 
 public class Application
 {
-    private readonly IHost _app;
+    private string[]? _args;
+    private readonly List<Type> _singletons = new();
+    private bool _isOnlyTcp;
 
-    public Application(string[] args, bool onlyTcp = false)
+    public Application()
     {
         EasyLogger.SetLogger(new ServerLog(Configure.Instance.ProjectName));
         EasyLogger.Info(DefaultSetting.Logo);
-
-        _app = onlyTcp ? GetOnlyTcpApp(args) : GetApp(args);
+    }
+    #region
+    public Application SetArgs(string[] args)
+    {
+        _args = args;
+        return this;
     }
 
+    public Application AddSingleton(Type singleton)
+    {
+        _singletons.Add(singleton);
+        return this;
+    }
+
+    public Application OnlyTcp()
+    {
+        _isOnlyTcp = true;
+        return this;
+    }
+    #endregion
+
+    #region
     public Application SetProfile<T>(T data)
     {
         Profile.OnLoad += delegate
@@ -50,35 +70,25 @@ public class Application
         ServerEvent.ServerSessionOnRelease = sessionOnRelease;
         return this;
     }
+    #endregion
 
     public void Run()
     {
-        _app.Run();
+        (_isOnlyTcp ? GetOnlyTcpApp() : GetApp()).Run();
     }
 
     public async Task RunAsync()
     {
-        await _app.RunAsync();
+        await (_isOnlyTcp ? GetOnlyTcpApp() : GetApp()).RunAsync();
     }
 
-    public void Start()
+    private IHost GetApp()
     {
-        _app.Start();
-    }
-
-    public async Task StartAsync()
-    {
-        await _app.StartAsync();
-    }
-
-    public async Task StopAsync()
-    {
-        await _app.StopAsync();
-    }
-
-    private IHost GetApp(string[] args)
-    {
-        var webApplicationBuilder = WebApplication.CreateBuilder(args);
+        var webApplicationBuilder = _args == null ? WebApplication.CreateBuilder() : WebApplication.CreateBuilder(_args);
+        foreach (Type singleton in _singletons)
+        {
+            webApplicationBuilder.Services.AddSingleton(singleton);
+        }
         webApplicationBuilder.Services.AddSingleton<IHostedService, TcpHostedService>();
         webApplicationBuilder.Services.AddLogging(loggingBuilder =>
         {
@@ -108,11 +118,14 @@ public class Application
         return app;
     }
 
-    private IHost GetOnlyTcpApp(string[] args)
+    private IHost GetOnlyTcpApp()
     {
-        return Host.CreateDefaultBuilder(args)
-            .ConfigureServices(services =>
+        return (_args == null ? Host.CreateDefaultBuilder() : Host.CreateDefaultBuilder(_args)).ConfigureServices(services =>
             {
+                foreach (Type singleton in _singletons)
+                {
+                    services.AddSingleton(singleton);
+                }
                 services.AddSingleton<IHostedService, TcpHostedService>();
                 services.AddLogging(builder =>
                 {
