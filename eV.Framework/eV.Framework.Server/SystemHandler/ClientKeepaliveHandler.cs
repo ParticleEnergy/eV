@@ -7,7 +7,8 @@ using EasyLogger = eV.Module.EasyLog.Logger;
 namespace eV.Framework.Server.SystemHandler;
 
 public class ClientKeepalive
-{}
+{
+}
 public class ClientKeepaliveHandler : HandlerBase<ClientKeepalive>
 {
     public ClientKeepaliveHandler()

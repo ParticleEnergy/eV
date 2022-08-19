@@ -12,7 +12,7 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.4.9.9</PackageVersion>
+    <PackageVersion>1.4.9.12</PackageVersion>
     <RootNamespace>eV.Framework.Server</RootNamespace>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
