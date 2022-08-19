@@ -5,6 +5,7 @@ namespace eV.Framework.Server.Options;
 
 public class HttpServerOption
 {
+    public string Protocol { get; set; } = string.Empty;
     public string Host { get; set; } = string.Empty;
     public int Port { get; set; }
 }

@@ -18,7 +18,6 @@ public abstract class Builder
         EasyLogger.SetLogger(new ServerLog(Configure.Instance.ProjectName));
         EasyLogger.Info(DefaultSetting.Logo);
     }
-    public abstract Builder ConfigureServices(Action<IServiceCollection> configureDelegate);
     public abstract Application Build();
 }
 public class TcpBuilder : Builder
@@ -30,7 +29,7 @@ public class TcpBuilder : Builder
         _builder = args == null ? Host.CreateDefaultBuilder() : Host.CreateDefaultBuilder(args);
     }
 
-    public override Builder ConfigureServices(Action<IServiceCollection> configureDelegate)
+    public TcpBuilder ConfigureServices(Action<IServiceCollection> configureDelegate)
     {
         _configureServicesDelegate = configureDelegate;
         return this;
@@ -76,7 +75,7 @@ public class TcpAndHttpBuilder : Builder
         });
     }
 
-    public override Builder ConfigureServices(Action<IServiceCollection> configureDelegate)
+    public TcpAndHttpBuilder ConfigureServices(Action<IServiceCollection> configureDelegate)
     {
         configureDelegate(_builder.Services);
         return this;
@@ -92,13 +91,13 @@ public class TcpAndHttpBuilder : Builder
     {
         var app = _builder.Build();
         app.MapControllers();
-        app.Urls.Add($"http://{Configure.Instance.HttpServerOption.Host}:{Configure.Instance.HttpServerOption.Port}");
+        app.Urls.Add($"{Configure.Instance.HttpServerOption.Protocol}://{Configure.Instance.HttpServerOption.Host}:{Configure.Instance.HttpServerOption.Port}");
 
         if (Configure.Instance.BaseOption.IsDevelopment)
         {
             app.UseSwagger();
             app.UseSwaggerUI();
-            EasyLogger.Info($"Swagger http://{Configure.Instance.HttpServerOption.Host}:{Configure.Instance.HttpServerOption.Port}/swagger/index.html");
+            EasyLogger.Info($"Swagger {Configure.Instance.HttpServerOption.Protocol}://{Configure.Instance.HttpServerOption.Host}:{Configure.Instance.HttpServerOption.Port}/swagger/index.html");
         }
 
         _configureWebApplicationDelegate?.Invoke(app);
