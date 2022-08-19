@@ -9,11 +9,14 @@ public class GameProfileParser : IConfigParser
 {
     public GameProfileParser()
     {
-        JsonSerializerSettings jsonSerializerSettings = new();
+
         JsonConvert.DefaultSettings = () =>
         {
-            jsonSerializerSettings.DateFormatHandling = DateFormatHandling.MicrosoftDateFormat;
-            jsonSerializerSettings.DateFormatString = "yyyy-MM-dd HH:mm:ss";
+            JsonSerializerSettings jsonSerializerSettings = new()
+            {
+                DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
+                DateFormatString = "yyyy-MM-dd HH:mm:ss"
+            };
             return jsonSerializerSettings;
         };
     }
