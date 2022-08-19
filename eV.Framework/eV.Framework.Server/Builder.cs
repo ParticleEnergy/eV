@@ -24,7 +24,7 @@ public abstract class Builder
 public class TcpBuilder : Builder
 {
     private readonly IHostBuilder _builder;
-    private Action<IServiceCollection>? _configureDelegate;
+    private Action<IServiceCollection>? _configureServicesDelegate;
     public TcpBuilder(string[]? args)
     {
         _builder = args == null ? Host.CreateDefaultBuilder() : Host.CreateDefaultBuilder(args);
@@ -32,7 +32,7 @@ public class TcpBuilder : Builder
 
     public override Builder ConfigureServices(Action<IServiceCollection> configureDelegate)
     {
-        _configureDelegate = configureDelegate;
+        _configureServicesDelegate = configureDelegate;
         return this;
     }
 
@@ -46,7 +46,7 @@ public class TcpBuilder : Builder
                 builder.ClearProviders();
                 builder.AddProvider(new ServerLoggerProvider());
             });
-            _configureDelegate?.Invoke(services);
+            _configureServicesDelegate?.Invoke(services);
         });
 
         return new Application(_builder.Build());
@@ -54,9 +54,8 @@ public class TcpBuilder : Builder
 }
 public class TcpAndHttpBuilder : Builder
 {
-
     private readonly WebApplicationBuilder _builder;
-
+    private Action<WebApplication>? _configureWebApplicationDelegate;
     public TcpAndHttpBuilder(string[]? args)
     {
         _builder = args == null ? WebApplication.CreateBuilder() : WebApplication.CreateBuilder(args);
@@ -83,19 +82,26 @@ public class TcpAndHttpBuilder : Builder
         return this;
     }
 
+    public TcpAndHttpBuilder ConfigureWebApplication(Action<WebApplication> configureDelegate)
+    {
+        _configureWebApplicationDelegate = configureDelegate;
+        return this;
+    }
+
     public override Application Build()
     {
         var app = _builder.Build();
         app.MapControllers();
         app.Urls.Add($"http://{Configure.Instance.HttpServerOption.Host}:{Configure.Instance.HttpServerOption.Port}");
 
-        if (!Configure.Instance.BaseOption.IsDevelopment)
-            return new Application(app);
+        if (Configure.Instance.BaseOption.IsDevelopment)
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            EasyLogger.Info($"Swagger http://{Configure.Instance.HttpServerOption.Host}:{Configure.Instance.HttpServerOption.Port}/swagger/index.html");
+        }
 
-        app.UseSwagger();
-        app.UseSwaggerUI();
-        EasyLogger.Info($"Swagger http://{Configure.Instance.HttpServerOption.Host}:{Configure.Instance.HttpServerOption.Port}/swagger/index.html");
-
+        _configureWebApplicationDelegate?.Invoke(app);
         return new Application(app);
     }
 }
