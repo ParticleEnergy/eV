@@ -24,17 +24,6 @@ public sealed class Application
         await _host.RunAsync();
     }
 
-    public static TcpAndHttpBuilder CreateBuilder(string[]? args)
-    {
-        return new TcpAndHttpBuilder(args);
-    }
-
-    public static TcpBuilder CreateOnlyTcpBuilder(string[] args)
-    {
-        return new TcpBuilder(args);
-    }
-
-    #region
     public Application SetProfile<T>(T data)
     {
         Profile.OnLoad += delegate
@@ -61,5 +50,14 @@ public sealed class Application
         ServerEvent.ServerSessionOnRelease = sessionOnRelease;
         return this;
     }
-    #endregion
+
+    public static TcpAndHttpBuilder CreateBuilder(string[]? args)
+    {
+        return new TcpAndHttpBuilder(args);
+    }
+
+    public static TcpBuilder CreateOnlyTcpBuilder(string[] args)
+    {
+        return new TcpBuilder(args);
+    }
 }
