@@ -18,35 +18,38 @@ public abstract class Builder
         EasyLogger.SetLogger(new ServerLog(Configure.Instance.ProjectName));
         EasyLogger.Info(DefaultSetting.Logo);
     }
-
-    public abstract IServiceCollection Service { get; }
-
+    public abstract Builder ConfigureServices(Action<IServiceCollection> configureDelegate);
     public abstract Application Build();
 }
 public class TcpBuilder : Builder
 {
-    private readonly string[]? _args;
-
+    private readonly IHostBuilder _builder;
+    private Action<IServiceCollection>? _configureDelegate;
     public TcpBuilder(string[]? args)
     {
-        _args = args;
+        _builder = args == null ? Host.CreateDefaultBuilder() : Host.CreateDefaultBuilder(args);
     }
-    public override IServiceCollection Service { get; } = new ServiceCollection();
+
+    public override Builder ConfigureServices(Action<IServiceCollection> configureDelegate)
+    {
+        _configureDelegate = configureDelegate;
+        return this;
+    }
 
     public override Application Build()
     {
-        var app = (_args == null ? Host.CreateDefaultBuilder() : Host.CreateDefaultBuilder(_args)).ConfigureServices(services =>
+        _builder.ConfigureServices(services =>
+        {
+            services.AddSingleton<IHostedService, TcpHostedService>();
+            services.AddLogging(builder =>
             {
-                services.AddSingleton<IHostedService, TcpHostedService>();
-                services.AddLogging(builder =>
-                {
-                    builder.ClearProviders();
-                    builder.AddProvider(new ServerLoggerProvider());
-                });
-            })
-            .Build();
+                builder.ClearProviders();
+                builder.AddProvider(new ServerLoggerProvider());
+            });
+            _configureDelegate?.Invoke(services);
+        });
 
-        return new Application(app);
+        return new Application(_builder.Build());
     }
 }
 public class TcpAndHttpBuilder : Builder
@@ -73,7 +76,12 @@ public class TcpAndHttpBuilder : Builder
             });
         });
     }
-    public override IServiceCollection Service => _builder.Services;
+
+    public override Builder ConfigureServices(Action<IServiceCollection> configureDelegate)
+    {
+        configureDelegate(_builder.Services);
+        return this;
+    }
 
     public override Application Build()
     {
