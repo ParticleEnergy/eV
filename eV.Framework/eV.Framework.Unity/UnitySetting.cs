@@ -12,7 +12,6 @@ public class UnitySetting
     public int ReceiveBufferSize { get; set; } = DefaultSetting.ReceiveBufferSize;
     public string ProjectAssemblyString { get; set; } = string.Empty;
     public string PublicObjectAssemblyString { get; set; } = string.Empty;
-    public string GameProfilePath { get; set; } = string.Empty;
 
     public SslProtocols SslProtocols { get; set; } = DefaultSetting.SslProtocols;
     public string TargetHost { get; set; } = DefaultSetting.TargetHost;
