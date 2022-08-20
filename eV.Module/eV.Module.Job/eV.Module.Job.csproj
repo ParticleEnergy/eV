@@ -12,7 +12,7 @@
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.4.9</PackageVersion>
+    <PackageVersion>1.4.9.1</PackageVersion>
     <RootNamespace>eV.Module.Job</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
