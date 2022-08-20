@@ -40,11 +40,24 @@ public class Log : ILogProvider
 
     public IDisposable OpenNestedContext(string message)
     {
-        throw new NotImplementedException();
+        return NullScope.Instance;
     }
 
     public IDisposable OpenMappedContext(string key, object value, bool destructure = false)
     {
-        throw new NotImplementedException();
+        return NullScope.Instance;
+    }
+
+    public sealed class NullScope : IDisposable
+    {
+
+        private NullScope()
+        {
+        }
+        public static NullScope Instance { get; } = new();
+
+        public void Dispose()
+        {
+        }
     }
 }
