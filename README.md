@@ -79,7 +79,7 @@ module
     <file value="/Users/three.zhang/Projects/NoteIssuingPlan/NoteIssuingPlan.log" />
     <appendToFile value="true" />
     <rollingStyle value="Composite" />
-    <datePattern value="yyyyMMdd" />
+    <datePattern value="\.yyyyMMdd" />
     <maxSizeRollBackups value="10" />
     <maximumFileSize value="15MB" />
     <layout type="log4net.Layout.PatternLayout">
