@@ -4,6 +4,8 @@
 
 using eV.Framework.Server.Logger;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -73,6 +75,24 @@ public class TcpAndHttpBuilder : Builder
                 Title = Configure.Instance.ProjectName
             });
         });
+    }
+
+    public TcpAndHttpBuilder ConfigureConfiguration(Action<ConfigurationManager> configureDelegate)
+    {
+        configureDelegate(_builder.Configuration);
+        return this;
+    }
+
+    public TcpAndHttpBuilder ConfigureEnvironment(Action<IWebHostEnvironment> configureDelegate)
+    {
+        configureDelegate(_builder.Environment);
+        return this;
+    }
+
+    public TcpAndHttpBuilder ConfigureWebHost(Action<ConfigureWebHostBuilder> configureDelegate)
+    {
+        configureDelegate(_builder.WebHost);
+        return this;
     }
 
     public TcpAndHttpBuilder ConfigureServices(Action<IServiceCollection> configureDelegate)
