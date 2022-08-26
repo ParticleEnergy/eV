@@ -8,14 +8,14 @@ namespace eV.Framework.Server.SystemHandler;
 
 public class ClientSendBySessionId
 {
-    public string? SessionId { get; set; } = string.Empty;
+    public string SessionId { get; set; } = string.Empty;
     public byte[]? Data { get; set; } = null;
 }
-public class ClientSendBySessionIdHandler : HandlerBase<ClientSendBySessionId>
+public class ClientSendBySessionIdHandler : TcpHandlerBase<ClientSendBySessionId>
 {
     protected override void Handle(ISession session, ClientSendBySessionId content)
     {
-        if (content.SessionId is null or "")
+        if (content.SessionId.Equals(""))
         {
             EasyLogger.Warn($"Session {session.SessionId} send by sessionId failed sessionId is empty");
             return;

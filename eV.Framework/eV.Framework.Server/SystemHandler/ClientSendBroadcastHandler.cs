@@ -8,9 +8,9 @@ namespace eV.Framework.Server.SystemHandler;
 
 public class ClientSendBroadcast
 {
-    public byte[]? Data { get; set; }
+    public byte[]? Data { get; set; } = null;
 }
-public class ClientSendBroadcastHandler : HandlerBase<ClientSendBroadcast>
+public class ClientSendBroadcastHandler : TcpHandlerBase<ClientSendBroadcast>
 {
     protected override void Handle(ISession session, ClientSendBroadcast content)
     {

@@ -8,14 +8,14 @@ namespace eV.Framework.Server.SystemHandler;
 
 public class ClientSendGroup
 {
-    public string? GroupId { get; set; } = string.Empty;
+    public string GroupId { get; set; } = string.Empty;
     public byte[]? Data { get; set; } = null;
 }
-public class ClientSendGroupHandler : HandlerBase<ClientSendGroup>
+public class ClientSendGroupHandler : TcpHandlerBase<ClientSendGroup>
 {
     protected override void Handle(ISession session, ClientSendGroup content)
     {
-        if (content.GroupId is null or "")
+        if (content.GroupId.Equals(""))
         {
             EasyLogger.Warn($"Session {session.SessionId} SendGroup failed groupId is empty");
             return;

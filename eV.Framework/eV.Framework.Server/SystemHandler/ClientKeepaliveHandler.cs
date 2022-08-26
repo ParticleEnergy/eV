@@ -9,7 +9,7 @@ namespace eV.Framework.Server.SystemHandler;
 public class ClientKeepalive
 {
 }
-public class ClientKeepaliveHandler : HandlerBase<ClientKeepalive>
+public class ClientKeepaliveHandler : TcpHandlerBase<ClientKeepalive>
 {
     public ClientKeepaliveHandler()
     {

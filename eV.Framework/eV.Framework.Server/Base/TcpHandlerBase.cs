@@ -5,7 +5,7 @@
 using eV.Module.Routing.Interface;
 namespace eV.Framework.Server.Base;
 
-public abstract class HandlerBase<TContent> : IHandler
+public abstract class TcpHandlerBase<TContent> : IHandler
 {
     protected bool Skip = false;
 

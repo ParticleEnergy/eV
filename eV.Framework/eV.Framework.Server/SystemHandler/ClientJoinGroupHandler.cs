@@ -8,19 +8,19 @@ namespace eV.Framework.Server.SystemHandler;
 
 public class ClientJoinGroup
 {
-    public string? GroupId { get; set; }
-    public string? SessionId { get; set; }
+    public string GroupId { get; set; } = string.Empty;
+    public string SessionId { get; set; } = string.Empty;
 }
-public class ClientJoinGroupHandler : HandlerBase<ClientJoinGroup>
+public class ClientJoinGroupHandler : TcpHandlerBase<ClientJoinGroup>
 {
     protected override void Handle(ISession session, ClientJoinGroup content)
     {
-        if (content.GroupId is null or "")
+        if (content.GroupId.Equals(""))
         {
             EasyLogger.Warn($"Session {session.SessionId} JoinGroup failed groupId is empty");
             return;
         }
-        if (content.SessionId is null or "")
+        if (content.SessionId.Equals(""))
         {
             EasyLogger.Warn($"Session {session.SessionId} JoinGroup failed sessionId is empty");
             return;
