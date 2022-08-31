@@ -210,7 +210,7 @@ public sealed class Session : ISession
         }
     }
 
-    private void Receive(byte[]? data)
+    private async void Receive(byte[]? data)
     {
         if (data == null)
             return;
@@ -220,7 +220,7 @@ public sealed class Session : ISession
             return;
 
         foreach (Packet? packet in packets)
-            Dispatch.Dispense(this, packet);
+            await Dispatch.Dispense(this, packet);
     }
     #endregion
 
