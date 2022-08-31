@@ -16,19 +16,4 @@ internal static class DefaultSetting
 
     public static readonly ConfigurationOptions RedisOption = new();
     public static KeyValuePair<ProducerConfig, ConsumerConfig> KafkaOption { get; set; } = new();
-
-    public static bool SendAction(string sessionId, byte[] data)
-    {
-        Logger.Error("SendAction not defined");
-        return false;
-    }
-    public static void SendGroupAction(string groupId, byte[] data)
-    {
-        Logger.Error("SendGroupAction not defined");
-    }
-
-    public static void SendBroadcastAction(byte[] data)
-    {
-        Logger.Error("SendBroadcastAction not defined");
-    }
 }
