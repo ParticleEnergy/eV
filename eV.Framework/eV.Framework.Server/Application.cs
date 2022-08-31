@@ -51,13 +51,8 @@ public sealed class Application
         return this;
     }
 
-    public static TcpAndHttpBuilder CreateBuilder(string[]? args)
+    public static Builder CreateBuilder(string[]? args)
     {
-        return new TcpAndHttpBuilder(args);
-    }
-
-    public static TcpBuilder CreateOnlyTcpBuilder(string[]? args)
-    {
-        return new TcpBuilder(args);
+        return new Builder(args);
     }
 }

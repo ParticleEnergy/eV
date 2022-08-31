@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 
+using eV.Framework.Server.Logger;
 using eV.Framework.Server.SessionDrive;
 using eV.Framework.Server.SystemHandler;
 using eV.Framework.Server.Utils;
@@ -14,6 +15,7 @@ using eV.Network.Core;
 using eV.Network.Core.Interface;
 using eV.Network.Tcp.Server;
 using eVNetworkServer = eV.Network.Tcp.Server.Server;
+using EasyLogger = eV.Module.EasyLog.Logger;
 namespace eV.Framework.Server;
 
 public class Server
@@ -28,6 +30,9 @@ public class Server
 
     public Server()
     {
+        EasyLogger.SetLogger(new ServerLog(Configure.Instance.ProjectName));
+        EasyLogger.Info(DefaultSetting.Logo);
+
         _server.AcceptConnect += ServerOnAcceptConnect;
 
         _sessionExtension.OnActivateEvent += ServerEvent.SessionOnActivate;
