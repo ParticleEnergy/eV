@@ -24,13 +24,21 @@ public class Configure
         builder.AddJsonFile(attributes.Length == 0 ? "appsettings.json" : ((AssemblyConfigurationAttribute)attributes[0]).Configuration);
         Config = builder.Build();
 
-        ProjectName = Config.GetSection(ProjectNameKey).Value;
-        BaseOption = Config.GetSection(BaseOptionKey).Get<BaseOption>();
-        ServerOption = Config.GetSection(ServerOptionKey).Get<ServerOption>();
-        MongodbOption = Config.GetSection(MongodbOptionKey).Get<Dictionary<string, string>>();
-        RedisOption = Config.GetSection(RedisOptionKey).Get<Dictionary<string, RedisOption>>();
-        KafkaOption = Config.GetSection(KafkaOptionKey).Get<Dictionary<string, KafkaOption>>();
-        ClusterOption = Config.GetSection(ClusterOptionKey).Get<ClusterOption>();
+        try
+        {
+            ProjectName = Config.GetSection(ProjectNameKey).Value;
+            BaseOption = Config.GetSection(BaseOptionKey).Get<BaseOption>();
+            ServerOption = Config.GetSection(ServerOptionKey).Get<ServerOption>();
+            MongodbOption = Config.GetSection(MongodbOptionKey).Get<Dictionary<string, string>>();
+            RedisOption = Config.GetSection(RedisOptionKey).Get<Dictionary<string, RedisOption>>();
+            KafkaOption = Config.GetSection(KafkaOptionKey).Get<Dictionary<string, KafkaOption>>();
+            ClusterOption = Config.GetSection(ClusterOptionKey).Get<ClusterOption>();
+        }
+        catch (Exception e)
+        {
+            Module.EasyLog.Logger.Error(e);
+            throw;
+        }
     }
 
     public IConfiguration Config
