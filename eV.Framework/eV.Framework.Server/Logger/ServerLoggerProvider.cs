@@ -8,7 +8,7 @@ public class ServerLoggerProvider : ILoggerProvider
 {
     public void Dispose()
     {
-
+        GC.SuppressFinalize(this);
     }
 
     public ILogger CreateLogger(string _)
