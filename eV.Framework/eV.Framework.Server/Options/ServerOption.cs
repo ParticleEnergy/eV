@@ -3,7 +3,7 @@
 
 namespace eV.Framework.Server.Options;
 
-public class TcpServerOption
+public class ServerOption
 {
     public string Host { get; set; } = string.Empty;
     public int Port { get; set; }

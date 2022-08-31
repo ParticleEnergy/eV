@@ -10,8 +10,7 @@ public class Configure
 {
     private const string ProjectNameKey = "ProjectName";
     private const string BaseOptionKey = "Base";
-    private const string TcpServerOptionKey = "TcpServer";
-    private const string HttpServerOptionKey = "HttpServer";
+    private const string ServerOptionKey = "Server";
     private const string ClusterOptionKey = "Cluster";
     private const string MongodbOptionKey = "Mongodb";
     private const string RedisOptionKey = "Redis";
@@ -27,8 +26,7 @@ public class Configure
 
         ProjectName = Config.GetSection(ProjectNameKey).Value;
         BaseOption = Config.GetSection(BaseOptionKey).Get<BaseOption>();
-        TcpServerOption = Config.GetSection(TcpServerOptionKey).Get<TcpServerOption>();
-        HttpServerOption = Config.GetSection(HttpServerOptionKey).Get<HttpServerOption>();
+        ServerOption = Config.GetSection(ServerOptionKey).Get<ServerOption>();
         MongodbOption = Config.GetSection(MongodbOptionKey).Get<Dictionary<string, string>>();
         RedisOption = Config.GetSection(RedisOptionKey).Get<Dictionary<string, RedisOption>>();
         KafkaOption = Config.GetSection(KafkaOptionKey).Get<Dictionary<string, KafkaOption>>();
@@ -46,8 +44,7 @@ public class Configure
     #region Options
     public string ProjectName { get; }
     public BaseOption BaseOption { get; }
-    public TcpServerOption TcpServerOption { get; }
-    public HttpServerOption HttpServerOption { get; }
+    public ServerOption ServerOption { get; }
     public Dictionary<string, string>? MongodbOption { get; }
     public Dictionary<string, RedisOption>? RedisOption { get; }
     public Dictionary<string, KafkaOption>? KafkaOption { get; }
