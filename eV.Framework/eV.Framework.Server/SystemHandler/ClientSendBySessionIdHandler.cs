@@ -11,7 +11,7 @@ public class ClientSendBySessionId
     public string SessionId { get; set; } = string.Empty;
     public byte[]? Data { get; set; } = null;
 }
-public class ClientSendBySessionIdHandler : TcpHandlerBase<ClientSendBySessionId>
+public class ClientSendBySessionIdHandler : HandlerBase<ClientSendBySessionId>
 {
     protected override void Handle(ISession session, ClientSendBySessionId content)
     {

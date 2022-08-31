@@ -11,7 +11,7 @@ public class ClientSendGroup
     public string GroupId { get; set; } = string.Empty;
     public byte[]? Data { get; set; } = null;
 }
-public class ClientSendGroupHandler : TcpHandlerBase<ClientSendGroup>
+public class ClientSendGroupHandler : HandlerBase<ClientSendGroup>
 {
     protected override void Handle(ISession session, ClientSendGroup content)
     {

@@ -11,7 +11,7 @@ public class ClientJoinGroup
     public string GroupId { get; set; } = string.Empty;
     public string SessionId { get; set; } = string.Empty;
 }
-public class ClientJoinGroupHandler : TcpHandlerBase<ClientJoinGroup>
+public class ClientJoinGroupHandler : HandlerBase<ClientJoinGroup>
 {
     protected override void Handle(ISession session, ClientJoinGroup content)
     {

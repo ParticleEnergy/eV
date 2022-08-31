@@ -11,7 +11,7 @@ public class ClientLeaveGroup
     public string GroupId { get; set; } = string.Empty;
     public string SessionId { get; set; } = string.Empty;
 }
-public class ClientLeaveGroupHandler : TcpHandlerBase<ClientLeaveGroup>
+public class ClientLeaveGroupHandler : HandlerBase<ClientLeaveGroup>
 {
     protected override void Handle(ISession session, ClientLeaveGroup content)
     {

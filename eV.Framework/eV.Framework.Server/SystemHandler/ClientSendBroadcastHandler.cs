@@ -10,7 +10,7 @@ public class ClientSendBroadcast
 {
     public byte[]? Data { get; set; } = null;
 }
-public class ClientSendBroadcastHandler : TcpHandlerBase<ClientSendBroadcast>
+public class ClientSendBroadcastHandler : HandlerBase<ClientSendBroadcast>
 {
     protected override void Handle(ISession session, ClientSendBroadcast content)
     {
