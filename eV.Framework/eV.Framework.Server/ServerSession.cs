@@ -8,29 +8,29 @@ namespace eV.Framework.Server;
 
 public static class ServerSession
 {
-    private static ISessionDrive? _sessionDrive;
+    private static ISessionDrive? s_sessionDrive;
 
     public static void SetSessionDrive(ISessionDrive sessionDrive)
     {
-        if (_sessionDrive != null)
+        if (s_sessionDrive != null)
         {
             EasyLogger.Error("Can only be set at startup");
             return;
         }
-        _sessionDrive = sessionDrive;
+        s_sessionDrive = sessionDrive;
     }
 
     public static bool Send(string sessionId, byte[] data)
     {
-        return _sessionDrive?.Send(sessionId, data) ?? false;
+        return s_sessionDrive?.Send(sessionId, data) ?? false;
     }
     public static void SendGroup(string selfSessionId, string groupId, byte[] data)
     {
-        _sessionDrive?.SendGroup(selfSessionId, groupId, data);
+        s_sessionDrive?.SendGroup(selfSessionId, groupId, data);
     }
     public static void SendBroadcast(string selfSessionId, byte[] data)
     {
-        _sessionDrive?.SendBroadcast(selfSessionId, data);
+        s_sessionDrive?.SendBroadcast(selfSessionId, data);
     }
     public static bool JoinGroup(string groupId, string sessionId)
     {
@@ -42,10 +42,10 @@ public static class ServerSession
     }
     public static bool Activate(ISession session)
     {
-        return _sessionDrive?.Activate(session) ?? false;
+        return s_sessionDrive?.Activate(session) ?? false;
     }
     public static bool Release(ISession session)
     {
-        return _sessionDrive?.Release(session) ?? false;
+        return s_sessionDrive?.Release(session) ?? false;
     }
 }
