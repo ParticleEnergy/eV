@@ -209,31 +209,39 @@ public class TcpChannel : ITcpChannel
     #region Process
     private void ProcessReceive(SocketAsyncEventArgs socketAsyncEventArgs)
     {
-        if (_socket == null)
+        try
         {
-            ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
-            return;
-        }
-        if (!_socket.Connected)
-        {
-            ChannelError.Error(ChannelError.ErrorCode.SocketNotConnect, Close);
-            return;
-        }
-        if (socketAsyncEventArgs.SocketError != SocketError.Success)
-        {
-            Logger.Debug($"Channel {ChannelId} Error {socketAsyncEventArgs.SocketError}");
-            ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
+            if (_socket == null)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
+                return;
+            }
+            if (!_socket.Connected)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.SocketNotConnect, Close);
+                return;
+            }
+            if (socketAsyncEventArgs.SocketError != SocketError.Success)
+            {
+                Logger.Debug($"Channel {ChannelId} Error {socketAsyncEventArgs.SocketError}");
+                ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
 
-            return;
+                return;
+            }
+            if (socketAsyncEventArgs.BytesTransferred == 0)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.SocketBytesTransferredIsZero, Close);
+                return;
+            }
+            Receive?.Invoke(socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset).Take(socketAsyncEventArgs.BytesTransferred).ToArray());
+            LastReceiveDateTime = DateTime.Now;
+            StartReceive();
         }
-        if (socketAsyncEventArgs.BytesTransferred == 0)
+        catch (Exception e)
         {
-            ChannelError.Error(ChannelError.ErrorCode.SocketBytesTransferredIsZero, Close);
-            return;
+            Logger.Error(e.Message, e);
+            Close();
         }
-        Receive?.Invoke(socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset).Take(socketAsyncEventArgs.BytesTransferred).ToArray());
-        LastReceiveDateTime = DateTime.Now;
-        StartReceive();
     }
     private void ProcessSend(SocketAsyncEventArgs socketAsyncEventArgs)
     {
