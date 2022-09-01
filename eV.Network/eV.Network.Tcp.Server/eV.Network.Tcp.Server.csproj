@@ -10,11 +10,11 @@
     <Copyright>Copyright (c) ParticleEnergy</Copyright>
     <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <TargetFramework>net6.0</TargetFramework>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.4.10</PackageVersion>
+    <PackageVersion>1.4.11</PackageVersion>
     <RootNamespace>eV.Network.Tcp.Server</RootNamespace>
+    <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
 
   </PropertyGroup>
 
