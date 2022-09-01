@@ -194,42 +194,57 @@ public class UdpChannel : IUdpChannel
     #region Process
     private void ProcessReceiveFrom(SocketAsyncEventArgs socketAsyncEventArgs)
     {
-        if (_socket == null)
+        try
         {
-            ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
-            return;
+            if (_socket == null)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
+                return;
+            }
+            if (socketAsyncEventArgs.SocketError != SocketError.Success)
+            {
+                Logger.Debug($"Channel {ChannelId} Error {socketAsyncEventArgs.SocketError}");
+                ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
+                return;
+            }
+            if (socketAsyncEventArgs.BytesTransferred == 0)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.SocketBytesTransferredIsZero, Close);
+                return;
+            }
+            Receive?.Invoke(socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset).Take(socketAsyncEventArgs.BytesTransferred).ToArray(), socketAsyncEventArgs.RemoteEndPoint);
+            LastReceiveDateTime = DateTime.Now;
+            StartReceiveFrom();
         }
-        if (socketAsyncEventArgs.SocketError != SocketError.Success)
+        catch (Exception e)
         {
-            Logger.Debug($"Channel {ChannelId} Error {socketAsyncEventArgs.SocketError}");
-            ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
-            return;
+            Logger.Error(e.Message, e);
+            Close();
         }
-        if (socketAsyncEventArgs.BytesTransferred == 0)
-        {
-            ChannelError.Error(ChannelError.ErrorCode.SocketBytesTransferredIsZero, Close);
-            return;
-        }
-        Receive?.Invoke(socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset).Take(socketAsyncEventArgs.BytesTransferred).ToArray(), socketAsyncEventArgs.RemoteEndPoint);
-        LastReceiveDateTime = DateTime.Now;
-        StartReceiveFrom();
 
     }
     private void ProcessSendTo(SocketAsyncEventArgs socketAsyncEventArgs)
     {
-        if (_socket == null)
+        try
         {
-            ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
-            return;
+            if (_socket == null)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
+                return;
+            }
+            if (socketAsyncEventArgs.SocketError != SocketError.Success)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
+                return;
+            }
+            LastSendDateTime = DateTime.Now;
+            socketAsyncEventArgs.RemoteEndPoint = null;
+            _sendSocketAsyncEventArgsPool.Push(socketAsyncEventArgs);
         }
-        if (socketAsyncEventArgs.SocketError != SocketError.Success)
+        catch (Exception e)
         {
-            ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
-            return;
+            Logger.Error(e.Message, e);
         }
-        LastSendDateTime = DateTime.Now;
-        socketAsyncEventArgs.RemoteEndPoint = null;
-        _sendSocketAsyncEventArgsPool.Push(socketAsyncEventArgs);
     }
     #endregion
 }

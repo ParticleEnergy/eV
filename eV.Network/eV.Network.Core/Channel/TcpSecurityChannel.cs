@@ -195,32 +195,40 @@ public class TcpSecurityChannel : ITcpChannel
     public Action<byte[]?>? Receive { get; set; }
     public bool Send(byte[] data)
     {
-        if (ChannelState == RunState.Off)
-            return false;
-        if (_tcpClient == null)
+        try
         {
-            ChannelError.Error(ChannelError.ErrorCode.TcpClientIsNull, Close);
+            if (ChannelState == RunState.Off)
+                return false;
+            if (_tcpClient == null)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.TcpClientIsNull, Close);
+                return false;
+            }
+            if (!_tcpClient.Connected)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.TcpClientNotConnect, Close);
+                return false;
+            }
+            if (_sslStream == null)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.SslStreamIsNull, Close);
+                return false;
+            }
+            if (!_sslStream.CanWrite)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.SslStreamIoError, Close);
+                return false;
+            }
+            _sslStream.WriteAsync(data, 0, data.Length);
+            _sslStream.Flush();
+            LastSendDateTime = DateTime.Now;
+            return true;
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e.Message, e);
             return false;
         }
-        if (!_tcpClient.Connected)
-        {
-            ChannelError.Error(ChannelError.ErrorCode.TcpClientNotConnect, Close);
-            return false;
-        }
-        if (_sslStream == null)
-        {
-            ChannelError.Error(ChannelError.ErrorCode.SslStreamIsNull, Close);
-            return false;
-        }
-        if (!_sslStream.CanWrite)
-        {
-            ChannelError.Error(ChannelError.ErrorCode.SslStreamIoError, Close);
-            return false;
-        }
-        _sslStream.WriteAsync(data, 0, data.Length);
-        _sslStream.Flush();
-        LastSendDateTime = DateTime.Now;
-        return true;
     }
     #endregion
 

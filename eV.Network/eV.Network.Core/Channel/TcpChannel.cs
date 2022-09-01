@@ -245,22 +245,29 @@ public class TcpChannel : ITcpChannel
     }
     private void ProcessSend(SocketAsyncEventArgs socketAsyncEventArgs)
     {
-        if (_socket == null)
+        try
         {
-            ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
-            return;
+            if (_socket == null)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
+                return;
+            }
+            if (!_socket.Connected)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.SocketNotConnect, Close);
+                return;
+            }
+            if (socketAsyncEventArgs.SocketError != SocketError.Success)
+            {
+                ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
+                return;
+            }
+            LastSendDateTime = DateTime.Now;
         }
-        if (!_socket.Connected)
+        catch (Exception e)
         {
-            ChannelError.Error(ChannelError.ErrorCode.SocketNotConnect, Close);
-            return;
+            Logger.Error(e.Message, e);
         }
-        if (socketAsyncEventArgs.SocketError != SocketError.Success)
-        {
-            ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
-            return;
-        }
-        LastSendDateTime = DateTime.Now;
     }
     private void ProcessDisconnect(SocketAsyncEventArgs socketAsyncEventArgs)
     {
