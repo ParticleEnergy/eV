@@ -12,7 +12,7 @@
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Module.Cluster</RootNamespace>
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
-    <PackageVersion>1.4.13</PackageVersion>
+    <PackageVersion>1.4.14</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="KubernetesClient" Version="8.0.12" />
