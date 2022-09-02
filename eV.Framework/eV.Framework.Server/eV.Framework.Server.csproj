@@ -14,7 +14,7 @@
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Framework.Server</RootNamespace>
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
-    <VersionPrefix>1.4.12</VersionPrefix>
+    <PackageVersion>1.4.12</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>

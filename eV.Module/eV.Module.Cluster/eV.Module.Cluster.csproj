@@ -2,7 +2,6 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Title>eV.Module.Cluster</Title>
     <Description>eV.Module.Cluster</Description>
@@ -10,10 +9,10 @@
     <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10</LangVersion>
-    <PackageVersion>1.4.11</PackageVersion>
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Module.Cluster</RootNamespace>
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+    <PackageVersion>1.4.12</PackageVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="KubernetesClient" Version="8.0.12" />
