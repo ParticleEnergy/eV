@@ -12,11 +12,9 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.4.11</PackageVersion>
     <RootNamespace>eV.Framework.Server</RootNamespace>
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
-    <AssemblyVersion>1.4.11</AssemblyVersion>
-    <FileVersion>1.4.11</FileVersion>
+    <VersionPrefix>1.4.12</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>

@@ -13,8 +13,5 @@ using log4net.Config;
 [assembly: AssemblyProduct("eV.Framework.Server")]
 [assembly: AssemblyTitle("eV.Framework.Server")]
 [assembly: AssemblyDescription("Game Server Framework")]
-[assembly: AssemblyVersion("1.4.11")]
-[assembly: AssemblyFileVersion("1.4.11")]
-[assembly: AssemblyInformationalVersion("1.4.11")]
 [assembly: AssemblyConfiguration("appsettings.json")]
 [assembly: XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]
