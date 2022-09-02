@@ -221,7 +221,7 @@ public class Server : IServer
     #region Accept
     private bool StartAccept()
     {
-        if (ServerState == RunState.Off)
+        if (ServerState == RunState.Off || !_socket.Connected)
             return false;
         _maxAcceptedConnected.WaitOne();
 
