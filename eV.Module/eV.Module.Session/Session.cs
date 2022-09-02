@@ -215,15 +215,23 @@ public sealed class Session : ISession
 
     private async void Receive(byte[]? data)
     {
-        if (data == null)
-            return;
+        try
+        {
+            if (data == null)
+                return;
 
-        List<Packet> packets = _dataParser.Parsing(data);
-        if (packets is not { Count: > 0 })
-            return;
+            List<Packet> packets = _dataParser.Parsing(data);
+            if (packets is not { Count: > 0 })
+                return;
 
-        foreach (Packet? packet in packets)
-            await Dispatch.Dispense(this, packet);
+            foreach (Packet? packet in packets)
+                await Dispatch.Dispense(this, packet);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e.Message, e);
+            Shutdown();
+        }
     }
     #endregion
 
