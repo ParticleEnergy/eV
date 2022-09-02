@@ -156,41 +156,50 @@ public class TcpSecurityChannel : ITcpChannel
     #region IO
     private bool StartReceive()
     {
-        while (_cancellationTokenSource is { IsCancellationRequested: false })
+        try
         {
-            if (ChannelState == RunState.Off)
-                return false;
-            if (_tcpClient == null)
+            while (_cancellationTokenSource is { IsCancellationRequested: false })
             {
-                ChannelError.Error(ChannelError.ErrorCode.TcpClientIsNull, Close);
-                return false;
+                if (ChannelState == RunState.Off)
+                    return false;
+                if (_tcpClient == null)
+                {
+                    ChannelError.Error(ChannelError.ErrorCode.TcpClientIsNull, Close);
+                    return false;
+                }
+                if (!_tcpClient.Connected)
+                {
+                    ChannelError.Error(ChannelError.ErrorCode.TcpClientNotConnect, Close);
+                    return false;
+                }
+                if (_sslStream == null)
+                {
+                    ChannelError.Error(ChannelError.ErrorCode.SslStreamIsNull, Close);
+                    return false;
+                }
+                if (!_sslStream.CanRead)
+                {
+                    ChannelError.Error(ChannelError.ErrorCode.SslStreamIoError, Close);
+                    return false;
+                }
+                while (true)
+                {
+                    int bytes = _sslStream.ReadAsync(_receiveBuffer, 0, _receiveBuffer.Length).Result;
+                    if (bytes <= 0)
+                        break;
+                    Receive?.Invoke(_receiveBuffer.Skip(0).Take(bytes).ToArray());
+                    LastReceiveDateTime = DateTime.Now;
+                }
+                Array.Clear(_receiveBuffer, 0, _receiveBuffer.Length);
             }
-            if (!_tcpClient.Connected)
-            {
-                ChannelError.Error(ChannelError.ErrorCode.TcpClientNotConnect, Close);
-                return false;
-            }
-            if (_sslStream == null)
-            {
-                ChannelError.Error(ChannelError.ErrorCode.SslStreamIsNull, Close);
-                return false;
-            }
-            if (!_sslStream.CanRead)
-            {
-                ChannelError.Error(ChannelError.ErrorCode.SslStreamIoError, Close);
-                return false;
-            }
-            while (true)
-            {
-                int bytes = _sslStream.ReadAsync(_receiveBuffer, 0, _receiveBuffer.Length).Result;
-                if (bytes <= 0)
-                    break;
-                Receive?.Invoke(_receiveBuffer.Skip(0).Take(bytes).ToArray());
-                LastReceiveDateTime = DateTime.Now;
-            }
-            Array.Clear(_receiveBuffer, 0, _receiveBuffer.Length);
+            return true;
         }
-        return true;
+        catch (Exception e)
+        {
+            Logger.Error(e.Message, e);
+            Close();
+            return false;
+        }
     }
     public Action<byte[]?>? Receive { get; set; }
     public bool Send(byte[] data)

@@ -73,11 +73,6 @@ public sealed class Session : ISession
     public DateTime? LastActiveDateTime
     {
         get => _channel.LastSendDateTime;
-        // if (_channel.LastSendDateTime == null && _channel.LastReceiveDateTime == null)
-        //     return _channel.ConnectedDateTime;
-        // if (_channel.LastSendDateTime != null && _channel.LastReceiveDateTime != null)
-        //     return _channel.LastSendDateTime >= _channel.LastReceiveDateTime ? _channel.LastSendDateTime : _channel.LastReceiveDateTime;
-        // return _channel.LastSendDateTime ?? _channel.LastReceiveDateTime;
         set {}
     }
     #endregion
@@ -138,7 +133,15 @@ public sealed class Session : ISession
     }
     public bool Send(byte[] data)
     {
-        return _channel.ChannelState == RunState.On && _channel.Send(data);
+        try
+        {
+            return _channel.ChannelState == RunState.On && _channel.Send(data);
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e.Message, e);
+            return false;
+        }
     }
     public bool Send<T>(T data)
     {
