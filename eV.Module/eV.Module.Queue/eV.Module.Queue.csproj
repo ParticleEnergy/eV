@@ -2,7 +2,6 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Title>eV.Module.Queue</Title>
     <Description>eV.Module.Queue</Description>
@@ -10,7 +9,7 @@
     <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10</LangVersion>
-    <PackageVersion>1.4.11</PackageVersion>
+    <PackageVersion>1.4.12</PackageVersion>
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Module.Queue</RootNamespace>
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>

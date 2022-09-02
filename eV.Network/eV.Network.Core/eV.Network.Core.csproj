@@ -3,7 +3,6 @@
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Title>eV.Network.Core</Title>
     <Description>eV.Network.Core</Description>
@@ -13,7 +12,7 @@
     <TargetFrameworks>net5.0;net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.4.11</PackageVersion>
+    <PackageVersion>1.4.12</PackageVersion>
     <RootNamespace>eV.Network.Core</RootNamespace>
   </PropertyGroup>
 
