@@ -225,7 +225,6 @@ public class TcpChannel : ITcpChannel
             {
                 Logger.Debug($"Channel {ChannelId} Error {socketAsyncEventArgs.SocketError}");
                 ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
-
                 return;
             }
             if (socketAsyncEventArgs.BytesTransferred == 0)
