@@ -231,7 +231,7 @@ public class Server : IServer
         else
             acceptSocketAsyncEventArgs = CreateAcceptSocketAsyncEventArgs();
 
-        if (_socket.Connected && !_socket.AcceptAsync(acceptSocketAsyncEventArgs))
+        if (!_socket.AcceptAsync(acceptSocketAsyncEventArgs))
             ProcessAccept(acceptSocketAsyncEventArgs);
         return true;
     }
