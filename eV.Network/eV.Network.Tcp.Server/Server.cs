@@ -221,19 +221,28 @@ public class Server : IServer
     #region Accept
     private bool StartAccept()
     {
-        if (ServerState == RunState.Off)
+        try
+        {
+            _maxAcceptedConnected.WaitOne();
+
+            if (ServerState == RunState.Off)
+                return false;
+
+            SocketAsyncEventArgs? acceptSocketAsyncEventArgs;
+            if (_acceptSocketAsyncEventArgsPool.Count > 1)
+                acceptSocketAsyncEventArgs = _acceptSocketAsyncEventArgsPool.Pop() ?? CreateAcceptSocketAsyncEventArgs();
+            else
+                acceptSocketAsyncEventArgs = CreateAcceptSocketAsyncEventArgs();
+
+            if (!_socket.AcceptAsync(acceptSocketAsyncEventArgs))
+                ProcessAccept(acceptSocketAsyncEventArgs);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e.Message, e);
             return false;
-        _maxAcceptedConnected.WaitOne();
-
-        SocketAsyncEventArgs? acceptSocketAsyncEventArgs;
-        if (_acceptSocketAsyncEventArgsPool.Count > 1)
-            acceptSocketAsyncEventArgs = _acceptSocketAsyncEventArgsPool.Pop() ?? CreateAcceptSocketAsyncEventArgs();
-        else
-            acceptSocketAsyncEventArgs = CreateAcceptSocketAsyncEventArgs();
-
-        if (!_socket.AcceptAsync(acceptSocketAsyncEventArgs))
-            ProcessAccept(acceptSocketAsyncEventArgs);
-        return true;
+        }
     }
     private SocketAsyncEventArgs CreateAcceptSocketAsyncEventArgs()
     {
