@@ -10,7 +10,7 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.4.14</PackageVersion>
+    <PackageVersion>1.4.15</PackageVersion>
     <RootNamespace>eV.Module.PushNotification</RootNamespace>
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
   </PropertyGroup>

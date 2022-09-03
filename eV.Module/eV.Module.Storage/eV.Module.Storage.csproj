@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10</LangVersion>
-    <PackageVersion>1.4.14</PackageVersion>
+    <PackageVersion>1.4.15</PackageVersion>
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Module.Storage</RootNamespace>
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
