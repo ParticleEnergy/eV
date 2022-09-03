@@ -221,7 +221,7 @@ public class Server : IServer
     #region Accept
     private bool StartAccept()
     {
-        if (ServerState == RunState.Off || !_socket.Connected)
+        if (ServerState == RunState.Off)
             return false;
         _maxAcceptedConnected.WaitOne();
 
@@ -231,7 +231,7 @@ public class Server : IServer
         else
             acceptSocketAsyncEventArgs = CreateAcceptSocketAsyncEventArgs();
 
-        if (!_socket.AcceptAsync(acceptSocketAsyncEventArgs))
+        if (_socket.Connected && !_socket.AcceptAsync(acceptSocketAsyncEventArgs))
             ProcessAccept(acceptSocketAsyncEventArgs);
         return true;
     }
