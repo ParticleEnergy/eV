@@ -1,6 +1,7 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
+using eV.Module.EasyLog;
 using eV.Module.Routing.Interface;
 namespace eV.Module.Routing;
 
@@ -17,40 +18,48 @@ public class DataParser
 
     public List<Packet> Parsing(byte[] data)
     {
-        List<Packet> result = new();
-        int current = 0;
-        data = GetReceiveBuffer(data);
-        while (true)
+        try
         {
-            if (!CheckReceiveBufferLength(data, current, Package.HandLength))
-                break;
-
-            if (_currentPacket == null)
+            List<Packet> result = new();
+            int current = 0;
+            data = GetReceiveBuffer(data);
+            while (true)
             {
-                byte[] hand = data.Skip(current).Take(Package.HandLength).ToArray();
-                current += Package.HandLength;
-                _currentPacket = Package.Unpack(hand);
-            }
+                if (!CheckReceiveBufferLength(data, current, Package.HandLength))
+                    break;
 
-            if (!CheckReceiveBufferLength(data, current, _currentPacket!.GetNameLength() + _currentPacket!.GetContentLength()))
-                break;
-
-            if (_currentPacket.GetNameLength() > 0)
-            {
-                Packet packet = new();
-                packet.SetName(Encoder.GetEncoding().GetString(data.Skip(current).Take(_currentPacket.GetNameLength()).ToArray()));
-                current += _currentPacket.GetNameLength();
-
-                if (_currentPacket.GetContentLength() > 0)
+                if (_currentPacket == null)
                 {
-                    packet.SetContent(data.Skip(current).Take(_currentPacket.GetContentLength()).ToArray());
-                    current += _currentPacket.GetContentLength();
+                    byte[] hand = data.Skip(current).Take(Package.HandLength).ToArray();
+                    current += Package.HandLength;
+                    _currentPacket = Package.Unpack(hand);
                 }
-                result.Add(packet);
+
+                if (!CheckReceiveBufferLength(data, current, _currentPacket!.GetNameLength() + _currentPacket!.GetContentLength()))
+                    break;
+
+                if (_currentPacket.GetNameLength() > 0)
+                {
+                    Packet packet = new();
+                    packet.SetName(Encoder.GetEncoding().GetString(data.Skip(current).Take(_currentPacket.GetNameLength()).ToArray()));
+                    current += _currentPacket.GetNameLength();
+
+                    if (_currentPacket.GetContentLength() > 0)
+                    {
+                        packet.SetContent(data.Skip(current).Take(_currentPacket.GetContentLength()).ToArray());
+                        current += _currentPacket.GetContentLength();
+                    }
+                    result.Add(packet);
+                }
+                _currentPacket = null;
             }
-            _currentPacket = null;
+            return result;
         }
-        return result;
+        catch (Exception e)
+        {
+            Logger.Error(e.Message, e);
+            throw;
+        }
     }
 
     private byte[] GetReceiveBuffer(byte[] data)
