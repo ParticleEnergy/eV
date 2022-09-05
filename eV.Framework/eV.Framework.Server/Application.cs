@@ -1,6 +1,7 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
+using System.Globalization;
 using eV.Module.GameProfile;
 using eV.Module.Routing.Interface;
 using Microsoft.Extensions.Hosting;
@@ -48,6 +49,20 @@ public sealed class Application
     public Application SetServerSessionOnRelease(SessionEvent sessionOnRelease)
     {
         ServerEvent.ServerSessionOnRelease = sessionOnRelease;
+        return this;
+    }
+
+    public Application SetCultureInfo(string name)
+    {
+        CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(name, true)
+        {
+            DateTimeFormat =
+            {
+                ShortDatePattern = "yyyy-MM-dd",
+                FullDateTimePattern = "yyyy-MM-dd HH:mm:ss",
+                LongTimePattern = "HH:mm:ss"
+            }
+        };
         return this;
     }
 
