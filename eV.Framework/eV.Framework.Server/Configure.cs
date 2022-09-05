@@ -23,22 +23,6 @@ public class Configure
         ConfigurationBuilder builder = new();
         builder.AddJsonFile(attributes.Length == 0 ? "appsettings.json" : ((AssemblyConfigurationAttribute)attributes[0]).Configuration);
         Config = builder.Build();
-
-        try
-        {
-            ProjectName = Config.GetSection(ProjectNameKey).Value;
-            BaseOption = Config.GetSection(BaseOptionKey).Get<BaseOption>();
-            ServerOption = Config.GetSection(ServerOptionKey).Get<ServerOption>();
-            MongodbOption = Config.GetSection(MongodbOptionKey).Get<Dictionary<string, string>>();
-            RedisOption = Config.GetSection(RedisOptionKey).Get<Dictionary<string, RedisOption>>();
-            KafkaOption = Config.GetSection(KafkaOptionKey).Get<Dictionary<string, KafkaOption>>();
-            ClusterOption = Config.GetSection(ClusterOptionKey).Get<ClusterOption>();
-        }
-        catch (Exception e)
-        {
-            Module.EasyLog.Logger.Error(e);
-            throw;
-        }
     }
 
     public IConfiguration Config
@@ -50,12 +34,34 @@ public class Configure
         get;
     } = new();
     #region Options
-    public string ProjectName { get; }
-    public BaseOption BaseOption { get; }
-    public ServerOption ServerOption { get; }
-    public Dictionary<string, string>? MongodbOption { get; }
-    public Dictionary<string, RedisOption>? RedisOption { get; }
-    public Dictionary<string, KafkaOption>? KafkaOption { get; }
-    public ClusterOption? ClusterOption { get; }
+    public string ProjectName => Config.GetSection(ProjectNameKey).Value;
+    public BaseOption BaseOption
+    {
+        get
+        {
+            var config = Config.GetSection(BaseOptionKey).Get<BaseOption>();
+            if (config == null)
+            {
+                throw new Exception("The \"Base\" field is missing from the appsettings.json file");
+            }
+            return config;
+        }
+    }
+    public ServerOption ServerOption
+    {
+        get
+        {
+            var config = Config.GetSection(ServerOptionKey).Get<ServerOption>();
+            if (config == null)
+            {
+                throw new Exception("The \"Server\" field is missing from the appsettings.json file");
+            }
+            return config;
+        }
+    }
+    public Dictionary<string, string>? MongodbOption => Config.GetSection(MongodbOptionKey).Get<Dictionary<string, string>>();
+    public Dictionary<string, RedisOption>? RedisOption => Config.GetSection(RedisOptionKey).Get<Dictionary<string, RedisOption>>();
+    public Dictionary<string, KafkaOption>? KafkaOption => Config.GetSection(KafkaOptionKey).Get<Dictionary<string, KafkaOption>>();
+    public ClusterOption? ClusterOption => Config.GetSection(ClusterOptionKey).Get<ClusterOption>();
     #endregion
 }

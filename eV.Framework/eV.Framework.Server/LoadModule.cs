@@ -12,21 +12,21 @@ namespace eV.Framework.Server;
 
 public static class LoadModule
 {
-    public static void Start()
+    public static void StartAll()
     {
-        Redis();
-        Mongodb();
-        Kafka();
+        RedisStart();
+        MongodbStart();
+        KafkaStart();
     }
 
-    public static void Stop()
+    public static void StopAll()
     {
-        RedisManager.Instance.Stop();
-        KafkaManger.Instance.Stop();
+        RedisStop();
+        KafkaStop();
     }
 
     #region Queue
-    private static void Kafka()
+    public static void KafkaStart()
     {
         if (Configure.Instance.KafkaOption == null)
             return;
@@ -40,10 +40,16 @@ public static class LoadModule
 
         KafkaManger.Instance.Start(configs);
     }
+
+    public static void KafkaStop()
+    {
+        KafkaManger.Instance.Stop();
+    }
+
     #endregion
 
     #region Storage
-    private static void Redis()
+    public static void RedisStart()
     {
         if (Configure.Instance.RedisOption == null)
             return;
@@ -55,7 +61,12 @@ public static class LoadModule
         RedisManager.Instance.Start(configs);
     }
 
-    private static void Mongodb()
+    public static void RedisStop()
+    {
+        RedisManager.Instance.Stop();
+    }
+
+    public static void MongodbStart()
     {
         if (Configure.Instance.MongodbOption != null)
             MongodbManager.Instance.Start(Configure.Instance.MongodbOption);

@@ -68,7 +68,7 @@ public class Server
 
     public void Start()
     {
-        LoadModule.Start();
+        LoadModule.StartAll();
 
         Profile.Init(
             Configure.Instance.BaseOption.PublicObjectAssemblyString,
@@ -89,7 +89,7 @@ public class Server
         _idleDetection.Stop();
         _cluster?.Stop();
         _server.Stop();
-        LoadModule.Stop();
+        LoadModule.StopAll();
     }
 
     private void ServerOnAcceptConnect(ITcpChannel channel)
