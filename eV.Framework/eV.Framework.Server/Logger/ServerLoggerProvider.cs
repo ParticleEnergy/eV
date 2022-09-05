@@ -11,8 +11,8 @@ public class ServerLoggerProvider : ILoggerProvider
         GC.SuppressFinalize(this);
     }
 
-    public ILogger CreateLogger(string _)
+    public ILogger CreateLogger(string categoryName)
     {
-        return new ServerLogger();
+        return new ServerLogger(categoryName);
     }
 }

@@ -1,12 +1,19 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
+using log4net;
 using Microsoft.Extensions.Logging;
-using EasyLogger = eV.Module.EasyLog.Logger;
+using _logger = eV.Module.EasyLog.Logger;
 namespace eV.Framework.Server.Logger;
 
 public class ServerLogger : ILogger
 {
+    private readonly ILog _logger;
+
+    public ServerLogger(string categoryName)
+    {
+        _logger = LogManager.GetLogger(categoryName);
+    }
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
     {
         string message = $"{formatter(state, exception)}";
@@ -14,51 +21,51 @@ public class ServerLogger : ILogger
         {
             case LogLevel.Trace:
                 if (exception == null)
-                    EasyLogger.Debug(message);
+                    _logger.Debug(message);
                 else
-                    EasyLogger.Debug(message, exception);
+                    _logger.Debug(message, exception);
                 break;
             case LogLevel.Debug:
                 if (exception == null)
-                    EasyLogger.Debug(message);
+                    _logger.Debug(message);
                 else
-                    EasyLogger.Debug(message, exception);
+                    _logger.Debug(message, exception);
                 break;
             case LogLevel.Information:
                 if (exception == null)
-                    EasyLogger.Info(message);
+                    _logger.Info(message);
                 else
-                    EasyLogger.Info(message, exception);
+                    _logger.Info(message, exception);
                 break;
             case LogLevel.Warning:
                 if (exception == null)
-                    EasyLogger.Warn(message);
+                    _logger.Warn(message);
                 else
-                    EasyLogger.Warn(message, exception);
+                    _logger.Warn(message, exception);
                 break;
             case LogLevel.Error:
                 if (exception == null)
-                    EasyLogger.Error(message);
+                    _logger.Error(message);
                 else
-                    EasyLogger.Error(message, exception);
+                    _logger.Error(message, exception);
                 break;
             case LogLevel.Critical:
                 if (exception == null)
-                    EasyLogger.Debug(message);
+                    _logger.Debug(message);
                 else
-                    EasyLogger.Debug(message, exception);
+                    _logger.Debug(message, exception);
                 break;
             case LogLevel.None:
                 if (exception == null)
-                    EasyLogger.Info(message);
+                    _logger.Info(message);
                 else
-                    EasyLogger.Info(message, exception);
+                    _logger.Info(message, exception);
                 break;
             default:
                 if (exception == null)
-                    EasyLogger.Info(message);
+                    _logger.Info(message);
                 else
-                    EasyLogger.Info(message, exception);
+                    _logger.Info(message, exception);
                 break;
         }
     }
