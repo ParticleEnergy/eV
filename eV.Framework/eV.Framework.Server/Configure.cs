@@ -15,7 +15,6 @@ public class Configure
     private const string MongodbOptionKey = "Mongodb";
     private const string RedisOptionKey = "Redis";
     private const string KafkaOptionKey = "Kafka";
-    private const string CustomOptionKey = "Custom";
 
     private Configure()
     {
@@ -64,6 +63,5 @@ public class Configure
     public Dictionary<string, RedisOption>? RedisOption => Config.GetSection(RedisOptionKey).Get<Dictionary<string, RedisOption>>();
     public Dictionary<string, KafkaOption>? KafkaOption => Config.GetSection(KafkaOptionKey).Get<Dictionary<string, KafkaOption>>();
     public ClusterOption? ClusterOption => Config.GetSection(ClusterOptionKey).Get<ClusterOption>();
-    public Dictionary<string, object>? CustomOption => Config.GetSection(CustomOptionKey).Get<Dictionary<string, object>>();
     #endregion
 }
