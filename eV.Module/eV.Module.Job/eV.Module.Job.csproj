@@ -10,7 +10,7 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.4.19</PackageVersion>
+    <PackageVersion>1.4.20</PackageVersion>
     <RootNamespace>eV.Module.Job</RootNamespace>
     <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
   </PropertyGroup>
