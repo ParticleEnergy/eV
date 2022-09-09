@@ -11,10 +11,10 @@ namespace eV.Tool.ExcelToJson.Core;
 public class AnalyticStructure
 {
     public Action<string, string>? Write { get; set; }
-    private readonly IConfigurationRoot _configuration;
+    private readonly IConfigurationSection _configuration;
     private readonly List<ExcelInfo> _excelInfos;
     private readonly List<ObjectInfo> _objectInfos = new();
-    public AnalyticStructure(IConfigurationRoot configuration, List<ExcelInfo> excelInfos)
+    public AnalyticStructure(IConfigurationSection configuration, List<ExcelInfo> excelInfos)
     {
         _configuration = configuration;
         _excelInfos = excelInfos;

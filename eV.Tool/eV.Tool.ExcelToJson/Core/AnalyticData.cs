@@ -13,9 +13,9 @@ namespace eV.Tool.ExcelToJson.Core;
 public class AnalyticData
 {
     public Action<string, string>? Write { get; set; }
-    private readonly IConfigurationRoot _configuration;
+    private readonly IConfigurationSection _configuration;
     private readonly List<ExcelInfo> _excelInfos;
-    public AnalyticData(IConfigurationRoot configuration, List<ExcelInfo> excelInfos)
+    public AnalyticData(IConfigurationSection configuration, List<ExcelInfo> excelInfos)
     {
         _configuration = configuration;
         _excelInfos = excelInfos;
