@@ -36,6 +36,36 @@ public static class Profile
         Monitoring();
     }
 
+    public static void Init(string assemblyString, Dictionary<string, string> configJsonString)
+    {
+        s_assemblyString = assemblyString;
+        s_configParser = new GameProfileParser();
+
+        Dictionary<string, string> configData = new();
+        foreach (KeyValuePair<string, string> keyValuePair in configJsonString)
+        {
+            string[] filename = keyValuePair.Key.Split('.');
+            if (filename.Length < 1)
+                continue;
+            configData[filename[0]] = keyValuePair.Value;
+        }
+
+        Load(configData);
+    }
+
+    private static void Load(Dictionary<string, string> configJsonString)
+    {
+        if (s_configParser == null)
+        {
+            Logger.Error("GameProfile not init");
+            return;
+        }
+
+        Dictionary<string, Type> configType = RegisterConfig();
+        Config = s_configParser.Parser(configType, configJsonString);
+        OnLoad?.Invoke();
+    }
+
     private static void Load()
     {
         if (s_configParser == null)
