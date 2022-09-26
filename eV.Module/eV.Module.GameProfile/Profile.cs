@@ -9,101 +9,25 @@ namespace eV.Module.GameProfile;
 
 public static class Profile
 {
-
-    private static DirectoryInfo? s_configRoot;
+    private static DirectoryInfo? s_profileDirInfo;
     private static string? s_assemblyString;
-    private static string? s_configPath;
-    private static IConfigParser? s_configParser;
+    private static string? s_profilePath;
+    private static IProfileParser? s_profileParser;
     public static Dictionary<string, object> Config { get; private set; } = new();
     public static event Action? OnLoad;
-
-    public static void Init(string assemblyString, string path)
-    {
-        s_assemblyString = assemblyString;
-        s_configPath = path;
-        s_configRoot = new DirectoryInfo(s_configPath);
-        s_configParser = new GameProfileParser();
-
-        Load();
-    }
-
-    public static void Init(string assemblyString, string path, bool monitoringChange)
-    {
-        Init(assemblyString, path);
-
-        if (!monitoringChange)
-            return;
-        Monitoring();
-    }
-
-    public static void Init(string assemblyString, Dictionary<string, string> configJsonString)
-    {
-        s_assemblyString = assemblyString;
-        s_configParser = new GameProfileParser();
-
-        Dictionary<string, string> configData = new();
-        foreach (KeyValuePair<string, string> keyValuePair in configJsonString)
-        {
-            string[] filename = keyValuePair.Key.Split('.');
-            if (filename.Length < 1)
-                continue;
-            configData[filename[0]] = keyValuePair.Value;
-        }
-
-        Load(configData);
-    }
-
-    private static void Load(Dictionary<string, string> configJsonString)
-    {
-        if (s_configParser == null)
-        {
-            Logger.Error("GameProfile not init");
-            return;
-        }
-
-        Dictionary<string, Type> configType = RegisterConfig();
-        Config = s_configParser.Parser(configType, configJsonString);
-        OnLoad?.Invoke();
-    }
-
-    private static void Load()
-    {
-        if (s_configParser == null)
-        {
-            Logger.Error("GameProfile not init");
-            return;
-        }
-
-        Dictionary<string, Type> configType = RegisterConfig();
-        Dictionary<string, string> configJsonString = LoadConfig();
-
-        Config = s_configParser.Parser(configType, configJsonString);
-        OnLoad?.Invoke();
-    }
-
-    public static void AssignmentConfigObject<T>(T co)
-    {
-        foreach (PropertyInfo propertyInfo in co?.GetType().GetProperties()!)
-        {
-            if (!Config.TryGetValue(propertyInfo.Name, out object? value))
-                continue;
-            propertyInfo.SetValue(co, value);
-        }
-    }
-
-    private static Dictionary<string, string> LoadConfig()
+    public static Func<Dictionary<string, string>> GetProfileContent = () =>
     {
         Dictionary<string, string> result = new();
-        if (s_configRoot == null)
+        if (s_profileDirInfo == null)
             Logger.Error("GameProfile not init");
         else
-            foreach (FileInfo file in s_configRoot.GetFiles())
+            foreach (FileInfo file in s_profileDirInfo.GetFiles())
             {
                 try
                 {
                     string[] filename = file.Name.Split('.');
 
-                    if (filename.Length < 2 || filename[filename.Length - 1] != "json")
+                    if (filename.Length < 2 || filename[^1] != "json")
                         continue;
 
                     string text = File.ReadAllText(file.FullName);
@@ -116,6 +40,42 @@ public static class Profile
                 }
             }
         return result;
+    };
+
+    public static void Init(string assemblyString)
+    {
+        s_assemblyString = assemblyString;
+        s_profileParser = new GameProfileParser();
+        Load();
+    }
+
+    public static void Init(string assemblyString, string path)
+    {
+        s_assemblyString = assemblyString;
+        s_profileDirInfo = new DirectoryInfo(path);
+        s_profileParser = new GameProfileParser();
+        Load();
+    }
+
+    public static void Init(string assemblyString, string path, bool monitoringChange)
+    {
+        s_profilePath = path;
+        s_assemblyString = assemblyString;
+        s_profileDirInfo = new DirectoryInfo(path);
+        s_profileParser = new GameProfileParser();
+        Load();
+        if (monitoringChange)
+            Monitoring();
+    }
+
+    public static void AssignmentConfigObject<T>(T co)
+    {
+        foreach (PropertyInfo propertyInfo in co?.GetType().GetProperties()!)
+        {
+            if (!Config.TryGetValue(propertyInfo.Name, out object? value))
+                continue;
+            propertyInfo.SetValue(co, value);
+        }
     }
 
     private static Dictionary<string, Type> RegisterConfig()
@@ -142,15 +102,30 @@ public static class Profile
         return result;
     }
 
-    private static void Monitoring()
+    private static void Load()
     {
-        if (s_configPath == null)
+        if (s_profileParser == null)
         {
             Logger.Error("GameProfile not init");
             return;
         }
 
-        FileSystemWatcher watcher = new(s_configPath);
+        Dictionary<string, Type> configType = RegisterConfig();
+        Dictionary<string, string> configJsonString = GetProfileContent();
+
+        Config = s_profileParser.Parser(configType, configJsonString);
+        OnLoad?.Invoke();
+    }
+
+    private static void Monitoring()
+    {
+        if (s_profilePath == null)
+        {
+            Logger.Error("GameProfile not init");
+            return;
+        }
+
+        FileSystemWatcher watcher = new(s_profilePath);
         watcher.Filter = "*.json";
         watcher.IncludeSubdirectories = true;
         watcher.EnableRaisingEvents = true;

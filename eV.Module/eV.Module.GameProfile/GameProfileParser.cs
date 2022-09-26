@@ -5,7 +5,7 @@ using eV.Module.GameProfile.Interface;
 using Newtonsoft.Json;
 namespace eV.Module.GameProfile;
 
-public class GameProfileParser : IConfigParser
+public class GameProfileParser : IProfileParser
 {
     public GameProfileParser()
     {
