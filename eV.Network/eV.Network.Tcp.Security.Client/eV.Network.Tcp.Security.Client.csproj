@@ -12,7 +12,7 @@
     <TargetFrameworks>net5.0;net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.4.20</PackageVersion>
+    <PackageVersion>1.4.21</PackageVersion>
     <RootNamespace>eV.Network.Tcp.Security.Client</RootNamespace>
   </PropertyGroup>
 

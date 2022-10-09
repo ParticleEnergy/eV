@@ -12,27 +12,32 @@ namespace eV.Module.Job;
 
 public class Job
 {
-    private readonly string _assemblyString;
-    private readonly Task<IScheduler> _scheduler;
+    private string _assemblyString = string.Empty;
+    private IScheduler? _scheduler;
     public Job(string assemblyString)
     {
         LogProvider.SetCurrentLogProvider(new Log());
-        StdSchedulerFactory factory = new();
-        _scheduler = factory.GetScheduler();
-
-        _scheduler.Result.Start();
-
-        _assemblyString = assemblyString;
+        Init(assemblyString);
     }
 
-    public Job(string assemblyString, Task<IScheduler> scheduler)
+    public Job(string assemblyString, IScheduler scheduler)
     {
         LogProvider.SetCurrentLogProvider(new Log());
+        Init(assemblyString, scheduler);
+    }
 
-        _scheduler = scheduler;
-
-        _scheduler.Result.Start();
-
+    private async void Init(string assemblyString, IScheduler? scheduler = null)
+    {
+        if (scheduler == null)
+        {
+            StdSchedulerFactory factory = new();
+            _scheduler = await factory.GetScheduler();
+        }
+        else
+        {
+            _scheduler = scheduler;
+        }
+        await _scheduler.Start();
         _assemblyString = assemblyString;
     }
 
@@ -50,7 +55,7 @@ public class Job
             if (Activator.CreateInstance(type) is not IJobHandler handler)
                 continue;
 
-            _scheduler.Result.ScheduleJob(handler.Job, handler.Trigger);
+            _scheduler?.ScheduleJob(handler.Job, handler.Trigger);
 
             Logger.Info($"JobHandler [{type.FullName}] JobName: {handler.JobName} TriggerName: {handler.TriggerName} GroupName:{handler.GroupName} registration succeeded");
         }
@@ -63,6 +68,7 @@ public class Job
 
     public async void Stop()
     {
-        await _scheduler.Result.Shutdown();
+        if (_scheduler != null)
+            await _scheduler.Shutdown();
     }
 }
