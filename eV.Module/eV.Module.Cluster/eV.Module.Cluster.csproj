@@ -11,8 +11,8 @@
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Module.Cluster</RootNamespace>
-    <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
     <PackageVersion>1.4.21</PackageVersion>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="KubernetesClient" Version="8.0.12" />

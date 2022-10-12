@@ -13,7 +13,7 @@
     <Authors>绵羊</Authors>
     <PackageVersion>1.4.21</PackageVersion>
     <RootNamespace>eV.Network.Udp</RootNamespace>
-    <TargetFrameworks>net5.0;net6.0</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
