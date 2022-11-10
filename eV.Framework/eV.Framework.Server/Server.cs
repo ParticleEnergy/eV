@@ -68,6 +68,8 @@ public class Server
 
     public void Start()
     {
+        Dispatch.IsDebug = Configure.Instance.BaseOption.Debug;
+
         LoadModule.StartAll();
 
         Profile.Init(
