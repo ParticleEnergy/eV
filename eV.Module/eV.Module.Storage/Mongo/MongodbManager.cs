@@ -3,7 +3,10 @@
 
 
 using eV.Module.EasyLog;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Events;
+
 namespace eV.Module.Storage.Mongo;
 
 public class MongodbManager
@@ -31,7 +34,14 @@ public class MongodbManager
         foreach ((string dbName, string connString) in config)
             try
             {
-                MongoClient client = new(connString);
+                var mongoConnectionUrl = new MongoUrl(connString);
+                var mongoClientSettings = MongoClientSettings.FromUrl(mongoConnectionUrl);
+                mongoClientSettings.ClusterConfigurator = clusterBuilder => {
+                    clusterBuilder.Subscribe<CommandStartedEvent>(commandStartedEvent => {
+                        Logger.Info($"{commandStartedEvent.CommandName} - {commandStartedEvent.Command.ToJson()}");
+                    });
+                };
+                MongoClient client = new(mongoClientSettings);
                 _clients.Add(dbName, client);
                 Logger.Info($"Mongodb [{dbName}] connected success");
             }
