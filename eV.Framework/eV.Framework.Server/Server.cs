@@ -68,7 +68,8 @@ public class Server
 
     public void Start()
     {
-        Dispatch.IsDebug = Configure.Instance.BaseOption.Debug;
+        if (Configure.Instance.BaseOption.Debug)
+            Dispatch.EnableDebug();
 
         LoadModule.StartAll();
 

@@ -11,12 +11,22 @@ namespace eV.Module.Routing;
 
 public static class Dispatch
 {
-    public static bool IsDebug { get; set; } = false;
 
     private static readonly Dictionary<Type, IHandler> s_handlers = new();
     private static readonly Dictionary<string, Route> s_receiveHandlers = new();
     private static readonly Dictionary<Type, string> s_sendMessages = new();
     private static bool s_registered;
+    private static bool _isDebug;
+
+    public static void EnableDebug()
+    {
+        _isDebug = true;
+    }
+
+    public static void DisableDebug()
+    {
+        _isDebug = false;
+    }
 
     public static IHandler? GetHandler<T>()
     {
@@ -94,7 +104,7 @@ public static class Dispatch
             }
             object content = Serializer.Deserialize(packet.GetContent(), route.ContentType);
             await route.Handler.Run(session, content);
-            Logger.Info(IsDebug
+            Logger.Info(_isDebug
                 ? $"Message [{packet.GetName()}] handle access Content {content.ToJson()}"
                 : $"Message [{packet.GetName()}] handle access");
         }
