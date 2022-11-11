@@ -69,7 +69,7 @@ public class Server
     public void Start()
     {
         if (Configure.Instance.BaseOption.Debug)
-            Dispatch.EnableDebug();
+            SessionDebug.EnableDebug();
 
         LoadModule.StartAll();
 

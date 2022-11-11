@@ -5,28 +5,15 @@ using System.Reflection;
 using eV.Module.EasyLog;
 using eV.Module.Routing.Attributes;
 using eV.Module.Routing.Interface;
-using MongoDB.Bson;
 
 namespace eV.Module.Routing;
 
 public static class Dispatch
 {
-
     private static readonly Dictionary<Type, IHandler> s_handlers = new();
     private static readonly Dictionary<string, Route> s_receiveHandlers = new();
     private static readonly Dictionary<Type, string> s_sendMessages = new();
     private static bool s_registered;
-    private static bool _isDebug;
-
-    public static void EnableDebug()
-    {
-        _isDebug = true;
-    }
-
-    public static void DisableDebug()
-    {
-        _isDebug = false;
-    }
 
     public static IHandler? GetHandler<T>()
     {
@@ -89,10 +76,10 @@ public static class Dispatch
         RegisterHandler(handlerAssemblyString);
     }
 
-    public static async Task Dispense(ISession session, IPacket packet)
+    public static async Task<KeyValuePair<string, object>> Dispense(ISession session, IPacket packet)
     {
         if (packet.GetName().Equals("") || packet.GetContent().Length == 0)
-            return;
+            return new KeyValuePair<string, object>("", new object());
 
         try
         {
@@ -100,18 +87,18 @@ public static class Dispatch
             if (route == null)
             {
                 Logger.Error($"The receiver corresponding to packet [{packet.GetName()}] is not found");
-                return;
+                return new KeyValuePair<string, object>("", new object());
             }
             object content = Serializer.Deserialize(packet.GetContent(), route.ContentType);
             await route.Handler.Run(session, content);
-            Logger.Info(_isDebug
-                ? $"Message [{packet.GetName()}] handle access Content {content.ToJson()}"
-                : $"Message [{packet.GetName()}] handle access");
+
+            return new KeyValuePair<string, object>(packet.GetName(), content);
         }
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
         }
+        return new KeyValuePair<string, object>("", new object());
     }
     private static IRoute? GetRoute(string name)
     {
