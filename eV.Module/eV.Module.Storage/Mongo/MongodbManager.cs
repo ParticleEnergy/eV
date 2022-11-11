@@ -38,7 +38,7 @@ public class MongodbManager
                 var mongoClientSettings = MongoClientSettings.FromUrl(mongoConnectionUrl);
                 mongoClientSettings.ClusterConfigurator = clusterBuilder => {
                     clusterBuilder.Subscribe<CommandStartedEvent>(commandStartedEvent => {
-                        Logger.Info($"{commandStartedEvent.CommandName} - {commandStartedEvent.Command.ToJson()}");
+                        Logger.Debug($"{commandStartedEvent.CommandName} - {commandStartedEvent.Command.ToJson()}");
                     });
                 };
                 MongoClient client = new(mongoClientSettings);
