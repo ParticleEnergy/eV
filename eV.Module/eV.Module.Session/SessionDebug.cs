@@ -23,42 +23,37 @@ public static class SessionDebug
 
     public static void DebugReceive(string? sessionId, string name, object content)
     {
-        if (_isDebug)
-        {
-            Logger.Debug($"ReceiveMessage - SessionId {sessionId} Message {name} Content {content.ToJson()}");
-        }
-        else
-        {
-            Logger.Info($"ReceiveMessage - SessionId {sessionId} Message {name}");
-        }
+        Logger.Debug(_isDebug
+            ? $"ReceiveMessage [{name}] [{sessionId}] {content.ToJson()}"
+            : $"ReceiveMessage [{name}] [{sessionId}]");
     }
 
     public static void DebugSend<T>(string? sessionId, string name, T content)
     {
         if (!_isDebug) return;
 
-        Logger.Debug($"Send - SessionId {sessionId} Message {name} Content {content.ToJson()}");
+        Logger.Debug( $"Send [{name}] [{sessionId}] {content.ToJson()}");
     }
 
     public static void DebugSend<T>(string? sessionId, string toSessionId, string name, T content)
     {
         if (!_isDebug) return;
 
-        Logger.Debug($"SendToSessionId - SessionId {sessionId} to SessionId {toSessionId} Message {name} Content {content.ToJson()}");
+        Logger.Debug($"SendBySessionId [{name}] [{sessionId}] [{toSessionId}] {content.ToJson()}");
     }
 
     public static void DebugSendGroup<T>(string? sessionId, string groupId, string name, T content)
     {
         if (!_isDebug) return;
 
-        Logger.Debug($"DebugSendGroup - SessionId {sessionId} GroupId {groupId} Message {name} Content {content.ToJson()}");
+        Logger.Debug($"SendGroup [{name}] [{sessionId}] [{groupId}] {content.ToJson()}");
+
     }
 
     public static void DebugSendBroadcast<T>(string? sessionId, string name, T content)
     {
         if (!_isDebug) return;
 
-        Logger.Debug($"SendBroadcast - SessionId {sessionId} Message {name} Content {content.ToJson()}");
+        Logger.Debug( $"SendBroadcast [{name}] [{sessionId}] {content.ToJson()}");
     }
 }
-
