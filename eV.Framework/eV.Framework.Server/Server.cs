@@ -71,6 +71,9 @@ public class Server
         if (Configure.Instance.BaseOption.Debug)
             SessionDebug.EnableDebug();
 
+        if (Configure.Instance.BaseOption.Compress)
+            Serializer.EnableCompress();
+
         LoadModule.StartAll();
 
         Profile.Init(

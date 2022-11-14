@@ -6,6 +6,7 @@ namespace eV.Framework.Server.Options;
 public class BaseOption
 {
     public bool Debug { get; set; }
+    public bool Compress { get; set; }
     public string ProjectAssemblyString { get; set; } = string.Empty;
     public string PublicObjectAssemblyString { get; set; } = string.Empty;
     public string GameProfilePath { get; set; } = string.Empty;
