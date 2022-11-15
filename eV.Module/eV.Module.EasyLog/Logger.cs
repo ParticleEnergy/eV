@@ -3,6 +3,7 @@
 
 
 using eV.Module.EasyLog.Interface;
+
 namespace eV.Module.EasyLog;
 
 public static class Logger
@@ -13,42 +14,52 @@ public static class Logger
     {
         s_log = log;
     }
+
     public static void Debug(object message)
     {
         s_log.Debug(message);
     }
+
     public static void Debug(object message, Exception exception)
     {
         s_log.Debug(message, exception);
     }
+
     public static void Info(object message)
     {
         s_log.Info(message);
     }
+
     public static void Info(object message, Exception exception)
     {
         s_log.Info(message, exception);
     }
+
     public static void Warn(object message)
     {
         s_log.Warn(message);
     }
+
     public static void Warn(object message, Exception exception)
     {
         s_log.Warn(message, exception);
     }
+
     public static void Error(object message)
     {
         s_log.Error(message);
     }
+
     public static void Error(object message, Exception exception)
     {
         s_log.Error(message, exception);
     }
+
     public static void Fatal(object message)
     {
         s_log.Fatal(message);
     }
+
     public static void Fatal(object message, Exception exception)
     {
         s_log.Fatal(message, exception);

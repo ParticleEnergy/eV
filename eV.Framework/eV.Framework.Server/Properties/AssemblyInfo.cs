@@ -4,6 +4,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 using log4net.Config;
+
 [assembly: ComVisible(false)]
 [assembly: Guid("9a0fd4d8-150f-40fb-bb81-a7e539e42c2a")]
 [assembly: AssemblyTrademark("")]

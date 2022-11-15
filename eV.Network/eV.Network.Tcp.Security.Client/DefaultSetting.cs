@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using System.Security.Authentication;
+
 namespace eV.Network.Tcp.Security.Client;
 
 internal static class DefaultSetting

@@ -18,6 +18,7 @@ public class Client
     private readonly ITcpClient _client;
 
     private readonly Keepalive _keepalive;
+
     public Client(UnitySetting setting)
     {
         if (setting.Log != null)
@@ -28,12 +29,7 @@ public class Client
 
         if (setting.CertFile.Equals(""))
         {
-            ClientSetting clientSetting = new()
-            {
-                Host = setting.Host,
-                Port = setting.Port,
-                ReceiveBufferSize = setting.ReceiveBufferSize
-            };
+            ClientSetting clientSetting = new() { Host = setting.Host, Port = setting.Port, ReceiveBufferSize = setting.ReceiveBufferSize };
             _client = new eVNetworkClient(clientSetting);
         }
         else
@@ -56,6 +52,7 @@ public class Client
         Dispatch.RegisterClient(setting.ProjectAssemblyString, setting.PublicObjectAssemblyString);
         _keepalive = new Keepalive(setting.TcpKeepAliveInterval);
     }
+
     public void Connect()
     {
         _client.Connect();
@@ -73,28 +70,29 @@ public class Client
         OnConnect?.Invoke(session);
         _keepalive.Start(session);
     }
+
     private void ClientOnDisconnectCompleted(ITcpChannel _)
     {
         _keepalive.Stop();
         OnDisconnect?.Invoke();
     }
+
     #region event
+
     public event SessionEvent? OnConnect;
     public event Action? OnDisconnect;
+
     #endregion
 
-
     #region Session
+
     private static void ExtensionSession(Session session)
     {
         session.SendAction = (sessionId, data) =>
         {
             Packet packet = new();
             packet.SetName("ClientSendBySessionId");
-            packet.SetContent(Serializer.Serialize(new
-            {
-                ClientSendBySessionId = sessionId, Data = data
-            }));
+            packet.SetContent(Serializer.Serialize(new { ClientSendBySessionId = sessionId, Data = data }));
             return session.Send(Package.Pack(packet));
         };
 
@@ -102,10 +100,7 @@ public class Client
         {
             Packet packet = new();
             packet.SetName("ClientSendGroup");
-            packet.SetContent(Serializer.Serialize(new
-            {
-                GroupId = groupId, Data = data
-            }));
+            packet.SetContent(Serializer.Serialize(new { GroupId = groupId, Data = data }));
             session.Send(Package.Pack(packet));
         };
 
@@ -113,10 +108,7 @@ public class Client
         {
             Packet packet = new();
             packet.SetName("ClientSendBroadcast");
-            packet.SetContent(Serializer.Serialize(new
-            {
-                Data = data
-            }));
+            packet.SetContent(Serializer.Serialize(new { Data = data }));
             session.Send(Package.Pack(packet));
         };
 
@@ -124,10 +116,7 @@ public class Client
         {
             Packet packet = new();
             packet.SetName("ClientJoinGroup");
-            packet.SetContent(Serializer.Serialize(new
-            {
-                GroupId = groupId, SessionId = sessionId
-            }));
+            packet.SetContent(Serializer.Serialize(new { GroupId = groupId, SessionId = sessionId }));
             return session.Send(Package.Pack(packet));
         };
 
@@ -135,12 +124,10 @@ public class Client
         {
             Packet packet = new();
             packet.SetName("ClientLeaveGroup");
-            packet.SetContent(Serializer.Serialize(new
-            {
-                GroupId = groupId, SessionId = sessionId
-            }));
+            packet.SetContent(Serializer.Serialize(new { GroupId = groupId, SessionId = sessionId }));
             return session.Send(Package.Pack(packet));
         };
     }
+
     #endregion
 }

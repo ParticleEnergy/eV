@@ -5,6 +5,7 @@ using System.Net;
 using Confluent.Kafka;
 using eV.Framework.Server.Options;
 using StackExchange.Redis;
+
 namespace eV.Framework.Server.Utils;
 
 public static class ConfigUtils
@@ -32,13 +33,7 @@ public static class ConfigUtils
 
     public static KeyValuePair<ProducerConfig, ConsumerConfig> GetKafkaConfig(KafkaOption option)
     {
-        ProducerConfig producerConfig = new()
-        {
-            BootstrapServers = option.Address,
-            ClientId = Dns.GetHostName(),
-            SocketKeepaliveEnable = true
-
-        };
+        ProducerConfig producerConfig = new() { BootstrapServers = option.Address, ClientId = Dns.GetHostName(), SocketKeepaliveEnable = true };
         ConsumerConfig consumerConfig = new()
         {
             BootstrapServers = option.Address,
@@ -79,6 +74,7 @@ public static class ConfigUtils
                     break;
             }
         }
+
         if (!option.SecurityProtocol.Equals(""))
         {
             switch (option.SecurityProtocol)
@@ -105,26 +101,31 @@ public static class ConfigUtils
                     break;
             }
         }
+
         if (!option.SaslUsername.Equals(""))
         {
             producerConfig.SaslUsername = option.SaslUsername;
             consumerConfig.SaslUsername = option.SaslUsername;
         }
+
         if (!option.SaslPassword.Equals(""))
         {
             producerConfig.SaslPassword = option.SaslPassword;
             consumerConfig.SaslPassword = option.SaslPassword;
         }
+
         if (option.SocketTimeoutMs > 0)
         {
             producerConfig.SocketTimeoutMs = option.SocketTimeoutMs;
             consumerConfig.SocketTimeoutMs = option.SocketTimeoutMs;
         }
+
         if (option.SocketReceiveBufferBytes > 0)
         {
             producerConfig.SocketReceiveBufferBytes = option.SocketReceiveBufferBytes;
             consumerConfig.SocketReceiveBufferBytes = option.SocketReceiveBufferBytes;
         }
+
         if (option.SocketSendBufferBytes > 0)
         {
             producerConfig.SocketSendBufferBytes = option.SocketSendBufferBytes;
@@ -135,10 +136,12 @@ public static class ConfigUtils
         {
             consumerConfig.HeartbeatIntervalMs = option.HeartbeatIntervalMs;
         }
+
         if (option.SessionTimeoutMs > 0)
         {
             consumerConfig.SessionTimeoutMs = option.SessionTimeoutMs;
         }
+
         return KeyValuePair.Create(producerConfig, consumerConfig);
     }
 }

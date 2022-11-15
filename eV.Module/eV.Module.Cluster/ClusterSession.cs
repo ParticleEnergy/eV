@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using eV.Module.Cluster.Interface;
+
 namespace eV.Module.Cluster;
 
 public class ClusterSession
@@ -9,7 +10,8 @@ public class ClusterSession
     private readonly ICommunicationQueue _communicationQueue;
     private readonly ISessionRegistrationAuthority _sessionRegistrationAuthority;
 
-    public ClusterSession(ISessionRegistrationAuthority sessionRegistrationAuthority, ICommunicationQueue communicationQueue)
+    public ClusterSession(ISessionRegistrationAuthority sessionRegistrationAuthority,
+        ICommunicationQueue communicationQueue)
     {
         _sessionRegistrationAuthority = sessionRegistrationAuthority;
         _communicationQueue = communicationQueue;

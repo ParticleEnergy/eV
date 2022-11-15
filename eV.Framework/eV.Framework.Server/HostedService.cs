@@ -2,11 +2,11 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.Hosting;
+
 namespace eV.Framework.Server;
 
 internal sealed class HostedService : IHostedService
 {
-
     private readonly IHostApplicationLifetime _appLifetime;
     private readonly Server _server;
 
@@ -18,14 +18,8 @@ internal sealed class HostedService : IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _appLifetime.ApplicationStarted.Register(delegate
-        {
-            _server.Start();
-        });
-        _appLifetime.ApplicationStopped.Register(delegate
-        {
-            _server.Stop();
-        });
+        _appLifetime.ApplicationStarted.Register(delegate { _server.Start(); });
+        _appLifetime.ApplicationStopped.Register(delegate { _server.Stop(); });
         return Task.CompletedTask;
     }
 

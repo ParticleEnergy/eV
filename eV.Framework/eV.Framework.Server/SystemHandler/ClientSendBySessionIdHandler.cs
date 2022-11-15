@@ -4,6 +4,7 @@
 using eV.Framework.Server.Base;
 using eV.Module.Routing.Interface;
 using EasyLogger = eV.Module.EasyLog.Logger;
+
 namespace eV.Framework.Server.SystemHandler;
 
 public class ClientSendBySessionId
@@ -11,6 +12,7 @@ public class ClientSendBySessionId
     public string SessionId { get; set; } = string.Empty;
     public byte[]? Data { get; set; } = null;
 }
+
 public class ClientSendBySessionIdHandler : HandlerBase<ClientSendBySessionId>
 {
     protected override void Handle(ISession session, ClientSendBySessionId content)
@@ -20,11 +22,13 @@ public class ClientSendBySessionIdHandler : HandlerBase<ClientSendBySessionId>
             EasyLogger.Warn($"Session {session.SessionId} send by sessionId failed sessionId is empty");
             return;
         }
+
         if (content.Data is not { Length: > 0 })
         {
             EasyLogger.Warn($"Session {session.SessionId} send by sessionId failed data is empty");
             return;
         }
+
         ServerSession.Send(content.SessionId, content.Data);
     }
 }

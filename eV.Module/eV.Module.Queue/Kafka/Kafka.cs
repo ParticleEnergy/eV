@@ -4,14 +4,12 @@
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using eV.Module.EasyLog;
+
 namespace eV.Module.Queue.Kafka;
 
 public class Kafka<TKey, TValue>
 {
-    public IProducer<TKey, TValue> Producer
-    {
-        get;
-    }
+    public IProducer<TKey, TValue> Producer { get; }
     private readonly IAdminClient _adminClient;
 
     public CancellationTokenSource CancellationTokenSource { get; }
@@ -19,7 +17,9 @@ public class Kafka<TKey, TValue>
     private readonly Func<ConsumerConfig, IConsumer<TKey, TValue>> _createConsumer;
     private readonly ConsumerConfig _consumerConfig;
     private readonly CancellationToken _cancellationToken;
-    public Kafka(IAdminClient adminClient, IProducer<TKey, TValue> producer, ConsumerConfig consumerConfig, Func<ConsumerConfig, IConsumer<TKey, TValue>> createConsumer)
+
+    public Kafka(IAdminClient adminClient, IProducer<TKey, TValue> producer, ConsumerConfig consumerConfig,
+        Func<ConsumerConfig, IConsumer<TKey, TValue>> createConsumer)
     {
         _adminClient = adminClient;
 
@@ -30,26 +30,22 @@ public class Kafka<TKey, TValue>
         _cancellationToken = CancellationTokenSource.Token;
     }
 
-    public void Produce(string topic, TKey messageKey, TValue messageValue, Action<DeliveryReport<TKey, TValue>>? deliveryHandler = null)
+    public void Produce(string topic, TKey messageKey, TValue messageValue,
+        Action<DeliveryReport<TKey, TValue>>? deliveryHandler = null)
     {
         Producer.Produce(
             topic,
-            new Message<TKey, TValue>
-            {
-                Key = messageKey, Value = messageValue
-            },
+            new Message<TKey, TValue> { Key = messageKey, Value = messageValue },
             deliveryHandler
         );
     }
 
-    public void Produce(string topic, int partition, TKey messageKey, TValue messageValue, Action<DeliveryReport<TKey, TValue>>? deliveryHandler = null)
+    public void Produce(string topic, int partition, TKey messageKey, TValue messageValue,
+        Action<DeliveryReport<TKey, TValue>>? deliveryHandler = null)
     {
         Producer.Produce(
             new TopicPartition(topic, new Partition(partition)),
-            new Message<TKey, TValue>
-            {
-                Key = messageKey, Value = messageValue
-            },
+            new Message<TKey, TValue> { Key = messageKey, Value = messageValue },
             deliveryHandler
         );
     }
@@ -58,27 +54,23 @@ public class Kafka<TKey, TValue>
     {
         return Producer.ProduceAsync(
             topic,
-            new Message<TKey, TValue>
-            {
-                Key = messageKey, Value = messageValue
-            },
+            new Message<TKey, TValue> { Key = messageKey, Value = messageValue },
             _cancellationToken
         );
     }
 
-    public Task<DeliveryResult<TKey, TValue>> ProduceAsync(string topic, int partition, TKey messageKey, TValue messageValue)
+    public Task<DeliveryResult<TKey, TValue>> ProduceAsync(string topic, int partition, TKey messageKey,
+        TValue messageValue)
     {
         return Producer.ProduceAsync(
             new TopicPartition(topic, new Partition(partition)),
-            new Message<TKey, TValue>
-            {
-                Key = messageKey, Value = messageValue
-            },
+            new Message<TKey, TValue> { Key = messageKey, Value = messageValue },
             _cancellationToken
         );
     }
 
-    public void Consume(ConsumerConfig config, Action<IConsumer<TKey, TValue>> preparation, Func<ConsumeResult<TKey, TValue>, bool> consume, Action<IConsumer<TKey, TValue>, bool>? result = null)
+    public void Consume(ConsumerConfig config, Action<IConsumer<TKey, TValue>> preparation,
+        Func<ConsumeResult<TKey, TValue>, bool> consume, Action<IConsumer<TKey, TValue>, bool>? result = null)
     {
         config.BootstrapServers = _consumerConfig.BootstrapServers;
         config.AllowAutoCreateTopics = _consumerConfig.AllowAutoCreateTopics;
@@ -102,12 +94,15 @@ public class Kafka<TKey, TValue>
         ConsumeAction(_createConsumer(config), preparation, consume, result, config.EnableAutoCommit ?? true);
     }
 
-    public void Consume(Action<IConsumer<TKey, TValue>> preparation, Func<ConsumeResult<TKey, TValue>?, bool> consume, Action<IConsumer<TKey, TValue>, bool>? result = null)
+    public void Consume(Action<IConsumer<TKey, TValue>> preparation, Func<ConsumeResult<TKey, TValue>?, bool> consume,
+        Action<IConsumer<TKey, TValue>, bool>? result = null)
     {
-        ConsumeAction(_createConsumer(_consumerConfig), preparation, consume, result, _consumerConfig.EnableAutoCommit ?? true);
+        ConsumeAction(_createConsumer(_consumerConfig), preparation, consume, result,
+            _consumerConfig.EnableAutoCommit ?? true);
     }
 
-    private void ConsumeAction(IConsumer<TKey, TValue> consumer, Action<IConsumer<TKey, TValue>> preparation, Func<ConsumeResult<TKey, TValue>, bool> consume, Action<IConsumer<TKey, TValue>, bool>? result, bool autoCommit)
+    private void ConsumeAction(IConsumer<TKey, TValue> consumer, Action<IConsumer<TKey, TValue>> preparation,
+        Func<ConsumeResult<TKey, TValue>, bool> consume, Action<IConsumer<TKey, TValue>, bool>? result, bool autoCommit)
     {
         preparation(consumer);
 
@@ -122,6 +117,7 @@ public class Kafka<TKey, TValue>
                     {
                         consumer.Commit(data);
                     }
+
                     consumer.Close();
                     consumer.Dispose();
                     return;
@@ -129,7 +125,8 @@ public class Kafka<TKey, TValue>
 
                 if (data.IsPartitionEOF)
                 {
-                    Logger.Info($"Kafka Reached end of topic {data.Topic}, partition {data.Partition}, offset {data.Offset}.");
+                    Logger.Info(
+                        $"Kafka Reached end of topic {data.Topic}, partition {data.Partition}, offset {data.Offset}.");
                     continue;
                 }
 
@@ -142,20 +139,16 @@ public class Kafka<TKey, TValue>
                 {
                     try
                     {
-                        _adminClient.CreateTopicsAsync(new[]
-                        {
-                            new TopicSpecification
-                            {
-                                Name = e.ConsumerRecord.Topic
-                            }
-                        });
+                        _adminClient.CreateTopicsAsync(new[] { new TopicSpecification { Name = e.ConsumerRecord.Topic } });
                     }
                     catch (Exception exception)
                     {
                         Logger.Error(exception.Message, exception);
                     }
+
                     continue;
                 }
+
                 Logger.Error($"Kafka Error code:{e.Error.Code} reason: {e.Error.Reason}");
             }
         }

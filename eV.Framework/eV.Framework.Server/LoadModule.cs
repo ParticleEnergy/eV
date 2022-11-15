@@ -8,6 +8,7 @@ using eV.Module.Queue.Kafka;
 using eV.Module.Storage.Mongo;
 using eV.Module.Storage.Redis;
 using StackExchange.Redis;
+
 namespace eV.Framework.Server;
 
 public static class LoadModule
@@ -26,6 +27,7 @@ public static class LoadModule
     }
 
     #region Queue
+
     public static void KafkaStart()
     {
         if (Configure.Instance.KafkaOption == null)
@@ -49,6 +51,7 @@ public static class LoadModule
     #endregion
 
     #region Storage
+
     public static void RedisStart()
     {
         if (Configure.Instance.RedisOption == null)
@@ -71,5 +74,6 @@ public static class LoadModule
         if (Configure.Instance.MongodbOption != null)
             MongodbManager.Instance.Start(Configure.Instance.MongodbOption);
     }
+
     #endregion
 }

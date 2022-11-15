@@ -8,48 +8,36 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using eV.Module.EasyLog;
 using eV.Network.Core.Interface;
+
 namespace eV.Network.Core.Channel;
 
 public class TcpSecurityChannel : ITcpChannel
 {
     #region Event
+
     public event TcpChannelEvent? OpenCompleted;
     public event TcpChannelEvent? CloseCompleted;
+
     #endregion
+
     #region Time
-    public DateTime? ConnectedDateTime
-    {
-        get;
-        private set;
-    }
-    public DateTime? LastReceiveDateTime
-    {
-        get;
-        private set;
-    }
-    public DateTime? LastSendDateTime
-    {
-        get;
-        private set;
-    }
+
+    public DateTime? ConnectedDateTime { get; private set; }
+    public DateTime? LastReceiveDateTime { get; private set; }
+    public DateTime? LastSendDateTime { get; private set; }
+
     #endregion
+
     #region public
-    public RunState ChannelState
-    {
-        get;
-        private set;
-    }
-    public string ChannelId
-    {
-        get;
-    }
-    public EndPoint? RemoteEndPoint
-    {
-        get;
-        private set;
-    }
+
+    public RunState ChannelState { get; private set; }
+    public string ChannelId { get; }
+    public EndPoint? RemoteEndPoint { get; private set; }
+
     #endregion
+
     #region Resource
+
     private SslStream? _sslStream;
     private TcpClient? _tcpClient;
     private CancellationTokenSource? _cancellationTokenSource;
@@ -58,7 +46,9 @@ public class TcpSecurityChannel : ITcpChannel
     private readonly SslProtocols _sslProtocols;
     private readonly string _targetHost;
     private readonly string _certFile;
+
     #endregion
+
     public TcpSecurityChannel(string targetHost, string certFile, SslProtocols sslProtocols, int receiveBufferSize)
     {
         ChannelId = Guid.NewGuid().ToString();
@@ -72,6 +62,7 @@ public class TcpSecurityChannel : ITcpChannel
 
 
     #region Operate
+
     public void Open(TcpClient tcpClient)
     {
         if (ChannelState == RunState.On)
@@ -79,6 +70,7 @@ public class TcpSecurityChannel : ITcpChannel
             Logger.Warn("The channel is already turned on");
             return;
         }
+
         try
         {
             Init(tcpClient);
@@ -97,6 +89,7 @@ public class TcpSecurityChannel : ITcpChannel
             Logger.Error(e.Message, e);
         }
     }
+
     public void Close()
     {
         if (ChannelState == RunState.Off)
@@ -149,11 +142,12 @@ public class TcpSecurityChannel : ITcpChannel
             if (!StartReceive())
                 Logger.Debug($"Channel {ChannelId} receive shutdown");
         }, _cancellationTokenSource!.Token);
-
     }
+
     #endregion
 
     #region IO
+
     private bool StartReceive()
     {
         try
@@ -167,21 +161,25 @@ public class TcpSecurityChannel : ITcpChannel
                     ChannelError.Error(ChannelError.ErrorCode.TcpClientIsNull, Close);
                     return false;
                 }
+
                 if (!_tcpClient.Connected)
                 {
                     ChannelError.Error(ChannelError.ErrorCode.TcpClientNotConnect, Close);
                     return false;
                 }
+
                 if (_sslStream == null)
                 {
                     ChannelError.Error(ChannelError.ErrorCode.SslStreamIsNull, Close);
                     return false;
                 }
+
                 if (!_sslStream.CanRead)
                 {
                     ChannelError.Error(ChannelError.ErrorCode.SslStreamIoError, Close);
                     return false;
                 }
+
                 while (true)
                 {
                     int bytes = _sslStream.ReadAsync(_receiveBuffer, 0, _receiveBuffer.Length).Result;
@@ -190,8 +188,10 @@ public class TcpSecurityChannel : ITcpChannel
                     Receive?.Invoke(_receiveBuffer.Skip(0).Take(bytes).ToArray());
                     LastReceiveDateTime = DateTime.Now;
                 }
+
                 Array.Clear(_receiveBuffer, 0, _receiveBuffer.Length);
             }
+
             return true;
         }
         catch (Exception e)
@@ -201,7 +201,9 @@ public class TcpSecurityChannel : ITcpChannel
             return false;
         }
     }
+
     public Action<byte[]?>? Receive { get; set; }
+
     public bool Send(byte[] data)
     {
         try
@@ -213,21 +215,25 @@ public class TcpSecurityChannel : ITcpChannel
                 ChannelError.Error(ChannelError.ErrorCode.TcpClientIsNull, Close);
                 return false;
             }
+
             if (!_tcpClient.Connected)
             {
                 ChannelError.Error(ChannelError.ErrorCode.TcpClientNotConnect, Close);
                 return false;
             }
+
             if (_sslStream == null)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SslStreamIsNull, Close);
                 return false;
             }
+
             if (!_sslStream.CanWrite)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SslStreamIoError, Close);
                 return false;
             }
+
             _sslStream.WriteAsync(data, 0, data.Length);
             _sslStream.Flush();
             LastSendDateTime = DateTime.Now;
@@ -239,10 +245,13 @@ public class TcpSecurityChannel : ITcpChannel
             return false;
         }
     }
+
     #endregion
 
     #region Auth
-    private bool ValidateServerCertificate(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
+
+    private bool ValidateServerCertificate(object sender, X509Certificate? certificate, X509Chain? chain,
+        SslPolicyErrors sslPolicyErrors)
     {
         if (sslPolicyErrors == SslPolicyErrors.None)
             return true;
@@ -258,6 +267,7 @@ public class TcpSecurityChannel : ITcpChannel
             Close();
             return false;
         }
+
         X509CertificateCollection certs = new();
         X509Certificate cert = X509Certificate.CreateFromCertFile(_certFile);
         certs.Add(cert);
@@ -275,5 +285,6 @@ public class TcpSecurityChannel : ITcpChannel
             return false;
         }
     }
+
     #endregion
 }

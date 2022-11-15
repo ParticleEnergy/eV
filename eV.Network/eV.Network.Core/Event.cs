@@ -3,8 +3,11 @@
 
 using System.Net.Sockets;
 using eV.Network.Core.Interface;
+
 namespace eV.Network.Core;
 
 public delegate void AsyncCompletedEvent(SocketAsyncEventArgs socketAsyncEventArgs);
+
 public delegate void TcpChannelEvent(ITcpChannel channel);
+
 public delegate void UdpChannelEvent(IUdpChannel channel);

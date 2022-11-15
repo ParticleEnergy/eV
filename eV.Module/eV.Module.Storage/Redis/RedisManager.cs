@@ -3,11 +3,11 @@
 
 using eV.Module.EasyLog;
 using StackExchange.Redis;
+
 namespace eV.Module.Storage.Redis;
 
 public class RedisManager
 {
-
     private readonly Dictionary<string, ConnectionMultiplexer> _redisConnection;
     private bool _isStart;
 
@@ -16,10 +16,8 @@ public class RedisManager
         _isStart = false;
         _redisConnection = new Dictionary<string, ConnectionMultiplexer>();
     }
-    public static RedisManager Instance
-    {
-        get;
-    } = new();
+
+    public static RedisManager Instance { get; } = new();
 
     public void Start(Dictionary<string, ConfigurationOptions> redisOptions)
     {
@@ -58,6 +56,8 @@ public class RedisManager
 
     public IDatabase? GetRedis(string name)
     {
-        return _redisConnection.TryGetValue(name, out ConnectionMultiplexer? connection) ? connection.GetDatabase() : null;
+        return _redisConnection.TryGetValue(name, out ConnectionMultiplexer? connection)
+            ? connection.GetDatabase()
+            : null;
     }
 }

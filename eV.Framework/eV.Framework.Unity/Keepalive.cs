@@ -3,6 +3,7 @@
 
 using eV.Module.Routing;
 using eV.Module.Session;
+
 namespace eV.Framework.Unity;
 
 public class Keepalive
@@ -21,9 +22,7 @@ public class Keepalive
         {
             Packet packet = new();
             packet.SetName("ClientKeepalive");
-            packet.SetContent(Serializer.Serialize(new
-            {
-            }));
+            packet.SetContent(Serializer.Serialize(new { }));
             session.Send(Package.Pack(packet));
         }, 0, 0, _keepAliveInterval * 1000);
     }

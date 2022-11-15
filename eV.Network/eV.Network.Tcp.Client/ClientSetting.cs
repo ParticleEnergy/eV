@@ -6,9 +6,12 @@ namespace eV.Network.Tcp.Client;
 public class ClientSetting
 {
     public int ReceiveBufferSize { get; set; } = DefaultSetting.ReceiveBufferSize;
+
     #region Socket
+
     public string Host { get; set; } = DefaultSetting.Host;
     public int Port { get; set; } = DefaultSetting.Port;
+
     #endregion
 
 #if !NETSTANDARD

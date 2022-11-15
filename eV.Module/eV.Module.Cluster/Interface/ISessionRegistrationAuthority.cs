@@ -11,7 +11,6 @@ public interface ISessionRegistrationAuthority
     public List<string> GetAllSessionId();
 
 
-
     public void Start();
     public void Stop();
 }

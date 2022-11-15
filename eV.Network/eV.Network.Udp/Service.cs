@@ -8,19 +8,19 @@ using eV.Module.EasyLog;
 using eV.Network.Core;
 using eV.Network.Core.Channel;
 using eV.Network.Core.Interface;
+
 namespace eV.Network.Udp;
 
 public class Service : IServer
 {
     #region Public
-    public RunState ServiceState
-    {
-        get;
-        private set;
-    }
+
+    public RunState ServiceState { get; private set; }
+
     #endregion
 
     #region Setting
+
     private IPEndPoint? _listenEndPoint;
     private IPEndPoint? _multiCastEndPoint;
     private IPEndPoint? _broadcastEndPoint;
@@ -29,19 +29,25 @@ public class Service : IServer
     private bool _multicastLoopback;
     private int _receiveBufferSize;
     private int _maxConcurrentSend;
+
     #endregion
 
     #region Resource
+
     private readonly Socket _socket;
     private readonly UdpChannel _channel;
+
     #endregion
 
     #region Event
+
     public event UdpChannelEvent? OnBind;
     public event UdpChannelEvent? OnRelease;
+
     #endregion
 
     #region Construct
+
     public Service(ServiceSetting setting)
     {
         SetSetting(setting);
@@ -75,15 +81,18 @@ public class Service : IServer
             IPAddress.Any,
             setting.ListenPort
         );
-        _multicastOption = new MulticastOption(IPAddress.Parse(setting.MultiCastHost), IPAddress.Parse(setting.Localhost));
+        _multicastOption =
+            new MulticastOption(IPAddress.Parse(setting.MultiCastHost), IPAddress.Parse(setting.Localhost));
         _multicastTimeToLive = setting.MulticastTimeToLive;
         _multicastLoopback = setting.MulticastLoopback;
         _receiveBufferSize = setting.ReceiveBufferSize;
         _maxConcurrentSend = setting.MaxConcurrentSend;
     }
+
     #endregion
 
     #region Operate
+
     public void Start()
     {
         if (ServiceState == RunState.On)
@@ -91,6 +100,7 @@ public class Service : IServer
             Logger.Warn("The server is already turned on");
             return;
         }
+
         try
         {
             ServiceState = RunState.On;
@@ -112,6 +122,7 @@ public class Service : IServer
             Logger.Error(e.Message, e);
         }
     }
+
     public void Stop()
     {
         if (ServiceState == RunState.Off)
@@ -119,6 +130,7 @@ public class Service : IServer
             Logger.Warn("The server is already turned off");
             return;
         }
+
         ServiceState = RunState.Off;
         try
         {
@@ -135,20 +147,25 @@ public class Service : IServer
             Release();
         }
     }
+
     private void Release()
     {
         _channel.Close();
     }
+
     #endregion
 
     #region Channel
+
     private void OpenCompleted(IUdpChannel channel)
     {
         OnBind?.Invoke(channel);
     }
+
     private void CloseCompleted(IUdpChannel channel)
     {
         OnRelease?.Invoke(channel);
     }
+
     #endregion
 }

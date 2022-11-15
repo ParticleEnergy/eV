@@ -89,6 +89,7 @@ public static class Dispatch
                 Logger.Error($"The receiver corresponding to packet [{packet.GetName()}] is not found");
                 return new KeyValuePair<string, object>("", new object());
             }
+
             object content = Serializer.Deserialize(packet.GetContent(), route.ContentType);
             await route.Handler.Run(session, content);
 
@@ -98,8 +99,10 @@ public static class Dispatch
         {
             Logger.Error(e.Message, e);
         }
+
         return new KeyValuePair<string, object>("", new object());
     }
+
     private static IRoute? GetRoute(string name)
     {
         if (!s_receiveHandlers.TryGetValue(name, out Route? result))

@@ -11,7 +11,6 @@ namespace eV.Module.Storage.Mongo;
 
 public class MongodbManager
 {
-
     private readonly Dictionary<string, MongoClient> _clients;
     private bool _isStart;
 
@@ -20,10 +19,8 @@ public class MongodbManager
         _isStart = false;
         _clients = new Dictionary<string, MongoClient>();
     }
-    public static MongodbManager Instance
-    {
-        get;
-    } = new();
+
+    public static MongodbManager Instance { get; } = new();
 
     public void Start(Dictionary<string, string> config)
     {
@@ -36,9 +33,12 @@ public class MongodbManager
             {
                 var mongoConnectionUrl = new MongoUrl(connString);
                 var mongoClientSettings = MongoClientSettings.FromUrl(mongoConnectionUrl);
-                mongoClientSettings.ClusterConfigurator = clusterBuilder => {
-                    clusterBuilder.Subscribe<CommandStartedEvent>(commandStartedEvent => {
-                        Logger.Debug($"Mongodb [{commandStartedEvent.CommandName}] {commandStartedEvent.Command.ToJson()}");
+                mongoClientSettings.ClusterConfigurator = clusterBuilder =>
+                {
+                    clusterBuilder.Subscribe<CommandStartedEvent>(commandStartedEvent =>
+                    {
+                        Logger.Debug(
+                            $"Mongodb [{commandStartedEvent.CommandName}] {commandStartedEvent.Command.ToJson()}");
                     });
                 };
                 MongoClient client = new(mongoClientSettings);
@@ -56,12 +56,16 @@ public class MongodbManager
         _clients.TryGetValue(name, out MongoClient? client);
         return client;
     }
+
     public IMongoDatabase? GetDatabase(string database)
     {
         return _clients.TryGetValue(database, out MongoClient? client) ? client.GetDatabase(database) : null;
     }
+
     public IMongoCollection<T>? GetCollection<T>(string database, string collection)
     {
-        return _clients.TryGetValue(database, out MongoClient? client) ? client.GetDatabase(database).GetCollection<T>(collection) : null;
+        return _clients.TryGetValue(database, out MongoClient? client)
+            ? client.GetDatabase(database).GetCollection<T>(collection)
+            : null;
     }
 }

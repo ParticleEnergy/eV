@@ -21,25 +21,9 @@ public static class FieldType
     public const string List = "List";
     public const string Dict = "Dict";
 
-    public static List<string> BaseTypes => new()
-    {
-        String,
-        Int,
-        Double,
-        Bool
-    };
+    public static List<string> BaseTypes => new() { String, Int, Double, Bool };
 
-    public static List<string> PrimaryKeyTypes => new()
-    {
-        PrimaryKey,
-        PrimaryKeyList,
-        PrimaryKeyDictionary
-    };
+    public static List<string> PrimaryKeyTypes => new() { PrimaryKey, PrimaryKeyList, PrimaryKeyDictionary };
 
-    public static List<string> ForeignKeyTypes => new()
-    {
-        ForeignKeyObject,
-        ForeignKeyList,
-        ForeignKeyDictionary
-    };
+    public static List<string> ForeignKeyTypes => new() { ForeignKeyObject, ForeignKeyList, ForeignKeyDictionary };
 }

@@ -3,6 +3,7 @@
 
 using Quartz.Logging;
 using EasyLogger = eV.Module.EasyLog.Logger;
+
 namespace eV.Module.Job;
 
 public class Log : ILogProvider
@@ -34,6 +35,7 @@ public class Log : ILogProvider
                     EasyLogger.Debug(message, exception);
                     break;
             }
+
             return true;
         };
     }
@@ -50,10 +52,10 @@ public class Log : ILogProvider
 
     public sealed class NullScope : IDisposable
     {
-
         private NullScope()
         {
         }
+
         public static NullScope Instance { get; } = new();
 
         public void Dispose()

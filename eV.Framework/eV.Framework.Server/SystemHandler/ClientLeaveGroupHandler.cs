@@ -4,6 +4,7 @@
 using eV.Framework.Server.Base;
 using eV.Module.Routing.Interface;
 using EasyLogger = eV.Module.EasyLog.Logger;
+
 namespace eV.Framework.Server.SystemHandler;
 
 public class ClientLeaveGroup
@@ -11,6 +12,7 @@ public class ClientLeaveGroup
     public string GroupId { get; set; } = string.Empty;
     public string SessionId { get; set; } = string.Empty;
 }
+
 public class ClientLeaveGroupHandler : HandlerBase<ClientLeaveGroup>
 {
     protected override void Handle(ISession session, ClientLeaveGroup content)
@@ -20,11 +22,13 @@ public class ClientLeaveGroupHandler : HandlerBase<ClientLeaveGroup>
             EasyLogger.Warn($"Session {session.SessionId} LeaveGroup failed groupId is empty");
             return;
         }
+
         if (content.SessionId.Equals(""))
         {
             EasyLogger.Warn($"Session {session.SessionId} LeaveGroup failed sessionId is empty");
             return;
         }
+
         ServerSession.LeaveGroup(content.GroupId, content.SessionId);
     }
 }

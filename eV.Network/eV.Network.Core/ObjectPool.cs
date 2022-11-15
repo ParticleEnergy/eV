@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using System.Collections.Concurrent;
+
 namespace eV.Network.Core;
 
 public sealed class ObjectPool<T> where T : class

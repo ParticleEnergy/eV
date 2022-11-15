@@ -5,42 +5,29 @@ using System.Net;
 using System.Net.Sockets;
 using eV.Module.EasyLog;
 using eV.Network.Core.Interface;
+
 namespace eV.Network.Core.Channel;
 
 public class UdpChannel : IUdpChannel
 {
     #region Public
-    public RunState ChannelState
-    {
-        get;
-        private set;
-    }
-    public string ChannelId
-    {
-        get;
-    }
+
+    public RunState ChannelState { get; private set; }
+    public string ChannelId { get; }
     public EndPoint? RemoteEndPoint => null;
+
     #endregion
 
     #region Time
-    public DateTime? ConnectedDateTime
-    {
-        get;
-        private set;
-    }
-    public DateTime? LastReceiveDateTime
-    {
-        get;
-        private set;
-    }
-    public DateTime? LastSendDateTime
-    {
-        get;
-        private set;
-    }
+
+    public DateTime? ConnectedDateTime { get; private set; }
+    public DateTime? LastReceiveDateTime { get; private set; }
+    public DateTime? LastSendDateTime { get; private set; }
+
     #endregion
 
     #region Resource
+
     private Socket? _socket;
     private readonly SocketAsyncEventArgsCompleted _socketAsyncEventArgsCompleted;
     private readonly ObjectPool<SocketAsyncEventArgs> _sendSocketAsyncEventArgsPool;
@@ -48,14 +35,18 @@ public class UdpChannel : IUdpChannel
     private readonly byte[] _receiveBuffer;
     private readonly EndPoint _broadcastEndPoint;
     private readonly EndPoint _multiCastEndPoint;
+
     #endregion
 
     #region Event
+
     public event UdpChannelEvent? OpenCompleted;
     public event UdpChannelEvent? CloseCompleted;
+
     #endregion
 
     #region Construct
+
     public UdpChannel(int receiveBufferSize, EndPoint broadcastEndPoint, EndPoint multiCastEndPoint)
     {
         ChannelId = Guid.NewGuid().ToString();
@@ -78,8 +69,11 @@ public class UdpChannel : IUdpChannel
         // Send
         _sendSocketAsyncEventArgsPool = new ObjectPool<SocketAsyncEventArgs>();
     }
+
     #endregion
+
     #region Operate
+
     public void Open(Socket socket, int maxConcurrentSend)
     {
         if (ChannelState == RunState.On)
@@ -87,19 +81,23 @@ public class UdpChannel : IUdpChannel
             Logger.Warn("The channel is already turned on");
             return;
         }
+
         try
         {
             Init(socket, maxConcurrentSend);
 
             OpenCompleted?.Invoke(this);
             Logger.Info($"Channel {ChannelId} {RemoteEndPoint} open");
-            Logger.Info(StartReceiveFrom() ? $"Channel {ChannelId} {RemoteEndPoint} start receive" : $"Channel {ChannelId} {RemoteEndPoint} start receive failed");
+            Logger.Info(StartReceiveFrom()
+                ? $"Channel {ChannelId} {RemoteEndPoint} start receive"
+                : $"Channel {ChannelId} {RemoteEndPoint} start receive failed");
         }
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
         }
     }
+
     public void Close()
     {
         if (ChannelState == RunState.Off)
@@ -111,20 +109,19 @@ public class UdpChannel : IUdpChannel
             do
             {
                 _sendSocketAsyncEventArgsPool.Pop();
-            }
-            while (_sendSocketAsyncEventArgsPool.Count > 0);
+            } while (_sendSocketAsyncEventArgsPool.Count > 0);
 
             Array.Clear(_receiveBuffer, 0, _receiveBuffer.Length);
 
             Logger.Info($"Channel {ChannelId} {RemoteEndPoint} close");
             CloseCompleted?.Invoke(this);
-
         }
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
         }
     }
+
     /// <summary>
     /// 重置Channel
     /// </summary>
@@ -141,8 +138,11 @@ public class UdpChannel : IUdpChannel
         ChannelState = RunState.On;
         ConnectedDateTime = DateTime.Now;
     }
+
     #endregion
+
     #region IO
+
     private bool StartReceiveFrom()
     {
         if (ChannelState == RunState.Off)
@@ -152,20 +152,24 @@ public class UdpChannel : IUdpChannel
             ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
             return false;
         }
+
         if (!_socket.ReceiveFromAsync(_receiveSocketAsyncEventArgs))
             ProcessReceiveFrom(_receiveSocketAsyncEventArgs);
         return true;
     }
+
     public Action<byte[]?, EndPoint?>? Receive { get; set; }
 
     public bool SendBroadcast(byte[] data)
     {
         return Send(data, _broadcastEndPoint);
     }
+
     public bool SendMulticast(byte[] data)
     {
         return Send(data, _multiCastEndPoint);
     }
+
     public bool Send(byte[] data, EndPoint? destEndPoint)
     {
         if (ChannelState == RunState.Off)
@@ -182,6 +186,7 @@ public class UdpChannel : IUdpChannel
             Logger.Error("Maximum concurrent send quantity exceeded");
             return false;
         }
+
         socketAsyncEventArgs.SetBuffer(data, 0, data.Length);
         socketAsyncEventArgs.RemoteEndPoint = destEndPoint;
 
@@ -189,9 +194,11 @@ public class UdpChannel : IUdpChannel
             ProcessSendTo(socketAsyncEventArgs);
         return true;
     }
+
     #endregion
 
     #region Process
+
     private void ProcessReceiveFrom(SocketAsyncEventArgs socketAsyncEventArgs)
     {
         try
@@ -201,18 +208,23 @@ public class UdpChannel : IUdpChannel
                 ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
                 return;
             }
+
             if (socketAsyncEventArgs.SocketError != SocketError.Success)
             {
                 Logger.Debug($"Channel {ChannelId} Error {socketAsyncEventArgs.SocketError}");
                 ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
                 return;
             }
+
             if (socketAsyncEventArgs.BytesTransferred == 0)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SocketBytesTransferredIsZero, Close);
                 return;
             }
-            Receive?.Invoke(socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset).Take(socketAsyncEventArgs.BytesTransferred).ToArray(), socketAsyncEventArgs.RemoteEndPoint);
+
+            Receive?.Invoke(
+                socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset)
+                    .Take(socketAsyncEventArgs.BytesTransferred).ToArray(), socketAsyncEventArgs.RemoteEndPoint);
             LastReceiveDateTime = DateTime.Now;
             StartReceiveFrom();
         }
@@ -221,8 +233,8 @@ public class UdpChannel : IUdpChannel
             Logger.Error(e.Message, e);
             Close();
         }
-
     }
+
     private void ProcessSendTo(SocketAsyncEventArgs socketAsyncEventArgs)
     {
         try
@@ -232,11 +244,13 @@ public class UdpChannel : IUdpChannel
                 ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
                 return;
             }
+
             if (socketAsyncEventArgs.SocketError != SocketError.Success)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
                 return;
             }
+
             LastSendDateTime = DateTime.Now;
             socketAsyncEventArgs.RemoteEndPoint = null;
             _sendSocketAsyncEventArgsPool.Push(socketAsyncEventArgs);
@@ -246,5 +260,6 @@ public class UdpChannel : IUdpChannel
             Logger.Error(e.Message, e);
         }
     }
+
     #endregion
 }

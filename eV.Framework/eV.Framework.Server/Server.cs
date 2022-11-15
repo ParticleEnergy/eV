@@ -16,6 +16,7 @@ using eV.Network.Core.Interface;
 using eV.Network.Tcp.Server;
 using eVNetworkServer = eV.Network.Tcp.Server.Server;
 using EasyLogger = eV.Module.EasyLog.Logger;
+
 namespace eV.Framework.Server;
 
 public class Server
@@ -54,7 +55,8 @@ public class Server
                 ClusterName = Configure.Instance.ProjectName,
                 ConsumeSendPipelineNumber = Configure.Instance.ClusterOption.ConsumeSendPipelineNumber,
                 ConsumeSendGroupPipelineNumber = Configure.Instance.ClusterOption.ConsumeSendGroupPipelineNumber,
-                ConsumeSendBroadcastPipelineNumber = Configure.Instance.ClusterOption.ConsumeSendBroadcastPipelineNumber,
+                ConsumeSendBroadcastPipelineNumber =
+                    Configure.Instance.ClusterOption.ConsumeSendBroadcastPipelineNumber,
                 RedisOption = ConfigUtils.GetRedisConfig(Configure.Instance.ClusterOption.Redis),
                 KafkaOption = ConfigUtils.GetKafkaConfig(Configure.Instance.ClusterOption.Kafka),
                 SendAction = SessionUtils.SendAction,
@@ -138,7 +140,8 @@ public class Server
 
     private static void RegisterHandler()
     {
-        Dispatch.RegisterServer(Configure.Instance.BaseOption.ProjectAssemblyString, Configure.Instance.BaseOption.PublicObjectAssemblyString);
+        Dispatch.RegisterServer(Configure.Instance.BaseOption.ProjectAssemblyString,
+            Configure.Instance.BaseOption.PublicObjectAssemblyString);
 
         Dispatch.AddCustomHandler(typeof(ClientKeepaliveHandler), typeof(ClientKeepalive));
         Dispatch.AddCustomHandler(typeof(ClientJoinGroupHandler), typeof(ClientJoinGroup));

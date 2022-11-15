@@ -3,13 +3,16 @@
 
 using Confluent.Kafka;
 using eV.Module.EasyLog;
+
 namespace eV.Module.Queue.Kafka.Handler;
 
 public static class LogHandler
 {
-    public static void ProducerErrorHandler<TKey, TValue>(IProducer<TKey, TValue> _, LogMessage message) => Log(message);
+    public static void ProducerErrorHandler<TKey, TValue>(IProducer<TKey, TValue> _, LogMessage message) =>
+        Log(message);
 
-    public static void ConsumerErrorHandler<TKey, TValue>(IConsumer<TKey, TValue> _, LogMessage message) => Log(message);
+    public static void ConsumerErrorHandler<TKey, TValue>(IConsumer<TKey, TValue> _, LogMessage message) =>
+        Log(message);
 
     private static void Log(LogMessage message)
     {

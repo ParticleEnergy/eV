@@ -5,5 +5,6 @@ namespace eV.Module.GameProfile.Interface;
 
 public interface IProfileParser
 {
-    public Dictionary<string, object> Parser(Dictionary<string, Type> configType, Dictionary<string, string> configJsonString);
+    public Dictionary<string, object> Parser(Dictionary<string, Type> configType,
+        Dictionary<string, string> configJsonString);
 }

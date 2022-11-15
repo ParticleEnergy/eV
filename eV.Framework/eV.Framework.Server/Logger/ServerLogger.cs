@@ -4,6 +4,7 @@
 using log4net;
 using Microsoft.Extensions.Logging;
 using _logger = eV.Module.EasyLog.Logger;
+
 namespace eV.Framework.Server.Logger;
 
 public class ServerLogger : ILogger
@@ -14,7 +15,9 @@ public class ServerLogger : ILogger
     {
         _logger = LogManager.GetLogger(categoryName);
     }
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
+        Func<TState, Exception?, string> formatter)
     {
         string message = $"{formatter(state, exception)}";
         switch (logLevel)
@@ -69,10 +72,12 @@ public class ServerLogger : ILogger
                 break;
         }
     }
+
     public bool IsEnabled(LogLevel logLevel)
     {
         return true;
     }
+
     public IDisposable BeginScope<TState>(TState state)
     {
         return NullScope.Instance;

@@ -7,42 +7,49 @@ using eV.Module.EasyLog;
 using eV.Network.Core;
 using eV.Network.Core.Channel;
 using eV.Network.Core.Interface;
+
 namespace eV.Network.Tcp.Security.Client;
 
 public class Client : ITcpClient
 {
     #region Event
+
     public event TcpChannelEvent? ConnectCompleted;
     public event TcpChannelEvent? DisconnectCompleted;
+
     #endregion
 
     #region Public
-    public RunState ClientState
-    {
-        get;
-        private set;
-    }
+
+    public RunState ClientState { get; private set; }
+
     #endregion
 
     #region Setting
+
     private IPEndPoint? _ipEndPoint;
 #if !NETSTANDARD
     private int _tcpKeepAliveTime;
     private int _tcpKeepAliveInterval;
     private int _tcpKeepAliveRetryCount;
 #endif
+
     #endregion
 
     #region Resource
+
     private TcpClient? _tcpClient;
     private readonly TcpSecurityChannel _channel;
+
     #endregion
+
     public Client(ClientSetting setting)
     {
         SetSetting(setting);
         ClientState = RunState.Off;
 
-        _channel = new TcpSecurityChannel(setting.TargetHost, setting.CertFile, setting.SslProtocols, setting.ReceiveBufferSize);
+        _channel = new TcpSecurityChannel(setting.TargetHost, setting.CertFile, setting.SslProtocols,
+            setting.ReceiveBufferSize);
         _channel.OpenCompleted += OpenCompleted;
         _channel.CloseCompleted += CloseCompleted;
     }
@@ -77,6 +84,7 @@ public class Client : ITcpClient
             Logger.Error(e.Message, e);
         }
     }
+
     public void Disconnect()
     {
         if (ClientState == RunState.Off)
@@ -99,6 +107,7 @@ public class Client : ITcpClient
             Logger.Error(e.Message, e);
         }
     }
+
     private void Release()
     {
         _tcpClient?.Client.Close();
@@ -121,6 +130,7 @@ public class Client : ITcpClient
     }
 
     #region Channel
+
     private void OpenCompleted(ITcpChannel channel)
     {
         if (channel.ChannelId.Equals(""))
@@ -128,9 +138,11 @@ public class Client : ITcpClient
             Logger.Error($"Client {channel.RemoteEndPoint} open channel error by channelId is empty");
             return;
         }
+
         ConnectCompleted?.Invoke(channel);
         Logger.Info($"Connect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port} success");
     }
+
     private void CloseCompleted(ITcpChannel channel)
     {
         if (channel.ChannelId.Equals(""))
@@ -138,8 +150,10 @@ public class Client : ITcpClient
             Logger.Error($"Client {channel.RemoteEndPoint} close channel error by channelId is empty");
             return;
         }
+
         if (ClientState == RunState.On)
             Disconnect();
     }
+
     #endregion
 }

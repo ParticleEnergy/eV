@@ -2,8 +2,8 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using Confluent.Kafka;
-using eV.Module.EasyLog;
 using StackExchange.Redis;
+
 namespace eV.Module.Cluster;
 
 internal static class DefaultSetting

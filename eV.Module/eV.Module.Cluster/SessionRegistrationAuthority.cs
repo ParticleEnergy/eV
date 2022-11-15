@@ -4,6 +4,7 @@
 using eV.Module.Cluster.Interface;
 using eV.Module.EasyLog;
 using StackExchange.Redis;
+
 namespace eV.Module.Cluster;
 
 public class SessionRegistrationAuthority : ISessionRegistrationAuthority
@@ -29,21 +30,26 @@ public class SessionRegistrationAuthority : ISessionRegistrationAuthority
         _redis?.GetDatabase().StringSet(string.Format(SessionKey, _clusterName, sessionId), _nodeName);
         _redis?.GetDatabase().HashSet(string.Format(NodeKey, _clusterName, _nodeName), sessionId, sessionId);
     }
+
     public void Deregister(string sessionId)
     {
         _redis?.GetDatabase().KeyDelete(string.Format(SessionKey, _clusterName, sessionId));
         _redis?.GetDatabase().HashDelete(string.Format(NodeKey, _clusterName, _nodeName), sessionId);
     }
+
     public string GetNodeName(string sessionId)
     {
         var result = _redis?.GetDatabase().StringGet(string.Format(SessionKey, _clusterName, sessionId));
         return (result == "" ? "" : result.HasValue ? result.ToString() : "") ?? string.Empty;
     }
+
     public List<string> GetAllSessionId()
     {
         var resultHash = _redis?.GetDatabase().HashGetAll(string.Format(NodeKey, _clusterName, _nodeName));
 
-        return resultHash == null ? new List<string>() : resultHash.Select(hashEntry => hashEntry.Value.ToString()).ToList();
+        return resultHash == null
+            ? new List<string>()
+            : resultHash.Select(hashEntry => hashEntry.Value.ToString()).ToList();
     }
 
     public void Start()

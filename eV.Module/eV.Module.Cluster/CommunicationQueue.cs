@@ -4,6 +4,7 @@
 using Confluent.Kafka;
 using eV.Module.Cluster.Interface;
 using eV.Module.EasyLog;
+
 namespace eV.Module.Cluster;
 
 public class CommunicationQueue : ICommunicationQueue
@@ -32,7 +33,10 @@ public class CommunicationQueue : ICommunicationQueue
 
     private readonly Kafka _kafka;
 
-    public CommunicationQueue(string clusterName, string nodeName, int consumeSendPipelineNumber, int consumeSendGroupPipelineNumber, int consumeSendBroadcastPipelineNumber, ISessionRegistrationAuthority sessionRegistrationAuthority, KeyValuePair<ProducerConfig, ConsumerConfig> kafkaOption)
+    public CommunicationQueue(string clusterName, string nodeName, int consumeSendPipelineNumber,
+        int consumeSendGroupPipelineNumber, int consumeSendBroadcastPipelineNumber,
+        ISessionRegistrationAuthority sessionRegistrationAuthority,
+        KeyValuePair<ProducerConfig, ConsumerConfig> kafkaOption)
     {
         _clusterName = clusterName;
         _nodeName = nodeName;
@@ -103,30 +107,27 @@ public class CommunicationQueue : ICommunicationQueue
     {
         if (SendAction != null)
         {
-            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-Node:{_nodeName}-Send", _sendTopic, delegate(ConsumeResult<string, byte[]> result)
-            {
-                SendAction.Invoke(result.Message.Key, result.Message.Value);
-
-            });
+            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-Node:{_nodeName}-Send", _sendTopic,
+                delegate(ConsumeResult<string, byte[]> result) { SendAction.Invoke(result.Message.Key, result.Message.Value); });
         }
         else
         {
             Logger.Error("SendAction not defined");
         }
-
     }
 
     private void ConsumeSendGroup()
     {
         if (SendGroupAction != null)
         {
-            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendGroup", _sendGroupTopic, delegate(ConsumeResult<string, byte[]> result)
-            {
-                string[] queueData = result.Message.Key.Split(":");
-                if (queueData[0] == _nodeName)
-                    return;
-                SendGroupAction.Invoke(queueData[1], result.Message.Value);
-            });
+            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendGroup", _sendGroupTopic,
+                delegate(ConsumeResult<string, byte[]> result)
+                {
+                    string[] queueData = result.Message.Key.Split(":");
+                    if (queueData[0] == _nodeName)
+                        return;
+                    SendGroupAction.Invoke(queueData[1], result.Message.Value);
+                });
         }
         else
         {
@@ -138,14 +139,15 @@ public class CommunicationQueue : ICommunicationQueue
     {
         if (SendBroadcastAction != null)
         {
-            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendBroadcast", _sendBroadcastTopic, delegate(ConsumeResult<string, byte[]> result)
-            {
-                string[] queueData = result.Message.Key.Split(":");
-                if (queueData[0] == _nodeName)
-                    return;
+            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendBroadcast", _sendBroadcastTopic,
+                delegate(ConsumeResult<string, byte[]> result)
+                {
+                    string[] queueData = result.Message.Key.Split(":");
+                    if (queueData[0] == _nodeName)
+                        return;
 
-                SendBroadcastAction.Invoke(result.Message.Value);
-            });
+                    SendBroadcastAction.Invoke(result.Message.Value);
+                });
         }
         else
         {

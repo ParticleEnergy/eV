@@ -5,6 +5,7 @@ using System.Reflection;
 using eV.Module.EasyLog;
 using eV.Module.Queue.Attributes;
 using eV.Module.Queue.Interface;
+
 namespace eV.Module.Queue;
 
 public class Queue

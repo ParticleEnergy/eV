@@ -32,7 +32,7 @@ public static class SessionDebug
     {
         if (!_isDebug) return;
 
-        Logger.Debug( $"Send [{name}] [{sessionId}] {content.ToJson()}");
+        Logger.Debug($"Send [{name}] [{sessionId}] {content.ToJson()}");
     }
 
     public static void DebugSend<T>(string? sessionId, string toSessionId, string name, T content)
@@ -47,13 +47,12 @@ public static class SessionDebug
         if (!_isDebug) return;
 
         Logger.Debug($"SendGroup [{name}] [{sessionId}] [{groupId}] {content.ToJson()}");
-
     }
 
     public static void DebugSendBroadcast<T>(string? sessionId, string name, T content)
     {
         if (!_isDebug) return;
 
-        Logger.Debug( $"SendBroadcast [{name}] [{sessionId}] {content.ToJson()}");
+        Logger.Debug($"SendBroadcast [{name}] [{sessionId}] {content.ToJson()}");
     }
 }

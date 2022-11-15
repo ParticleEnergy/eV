@@ -5,11 +5,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using eV.Module.EasyLog;
 using eV.Tool.ExcelToJson.Excel;
+
 namespace eV.Tool.ExcelToJson.Utils;
 
 public static class FileUtils
 {
-
     public static List<ExcelInfo> GetExcelInfos(string path)
     {
         List<ExcelInfo> result = new();
@@ -28,6 +28,7 @@ public static class FileUtils
                 Logger.Error($"{file.FullName} file names can only consist of letters");
                 continue;
             }
+
             result.Add(new ExcelInfo(file.FullName, fileName, type));
         }
 
@@ -38,6 +39,7 @@ public static class FileUtils
     {
         return Regex.IsMatch(name, "^\\S[a-zA-Z]*$");
     }
+
     public static void InitOutJsonPath(string path)
     {
         DirectoryInfo dir = new(path);

@@ -6,6 +6,7 @@ using eV.Tool.ExcelToJson.Define;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+
 namespace eV.Tool.ExcelToJson.Excel;
 
 public class ExcelInfo
@@ -38,6 +39,7 @@ public class ExcelInfo
         {
             Logger.Error($"{FilePath} {e.Message}");
         }
+
         return null;
     }
 
@@ -49,6 +51,7 @@ public class ExcelInfo
             Logger.Error($"{FilePath} workbook is null");
             return;
         }
+
         for (int i = 0; i < workbook.NumberOfSheets; ++i)
         {
             var sheet = workbook.GetSheetAt(i);
@@ -72,22 +75,22 @@ public class ExcelInfo
                 {
                     sheetInfo.Hierarchy.Add(sheetNames[j]);
                 }
+
                 SubSheetInfos.Add(sheetInfo);
             }
         }
+
         if (MainSheetInfo == null)
         {
             Logger.Error($"{FilePath} main sheet not found");
         }
+
         SubSheetInfos.Sort();
     }
 
     private SheetInfo? GetSheetInfo(ISheet sheet)
     {
-        SheetInfo sheetInfo = new()
-        {
-            FullName = sheet.SheetName
-        };
+        SheetInfo sheetInfo = new() { FullName = sheet.SheetName };
 
         var commentRow = sheet.GetRow(Const.CommentRowIndex);
         var nameRow = sheet.GetRow(Const.NameRowIndex);
@@ -98,11 +101,13 @@ public class ExcelInfo
             Logger.Error($"{FilePath} Sheet: {sheet.SheetName} comment row not found");
             return null;
         }
+
         if (nameRow == null)
         {
             Logger.Error($"{FilePath} Sheet: {sheet.SheetName} name row not found");
             return null;
         }
+
         if (typeRow == null)
         {
             Logger.Error($"{FilePath} Sheet: {sheet.SheetName} type row not found");
@@ -121,11 +126,13 @@ public class ExcelInfo
                 Logger.Error($"{FilePath} Sheet: {sheet.SheetName} Cell: {i + 1} name is empty");
                 continue;
             }
+
             if (comment.Equals(""))
             {
                 Logger.Error($"{FilePath} Sheet: {sheet.SheetName} Cell: {i + 1} comment is empty");
                 continue;
             }
+
             if (type.Equals(""))
             {
                 Logger.Error($"{FilePath} Sheet: {sheet.SheetName} Cell: {i + 1} type is empty");
@@ -147,15 +154,19 @@ public class ExcelInfo
                     return null;
                 }
 
-                if (FieldType.PrimaryKeyTypes.Contains(fieldInfo.Type) && FieldType.PrimaryKeyTypes.Contains(alreadyExistFieldInfo.Type))
+                if (FieldType.PrimaryKeyTypes.Contains(fieldInfo.Type) &&
+                    FieldType.PrimaryKeyTypes.Contains(alreadyExistFieldInfo.Type))
                 {
-                    Logger.Error($"{FilePath} Sheet: {sheet.SheetName} Cell: {i + 1} a sheet can only contain one primary key");
+                    Logger.Error(
+                        $"{FilePath} Sheet: {sheet.SheetName} Cell: {i + 1} a sheet can only contain one primary key");
                     return null;
                 }
 
-                if (!FieldType.ForeignKeyTypes.Contains(fieldInfo.Type) || !FieldType.ForeignKeyTypes.Contains(alreadyExistFieldInfo.Type))
+                if (!FieldType.ForeignKeyTypes.Contains(fieldInfo.Type) ||
+                    !FieldType.ForeignKeyTypes.Contains(alreadyExistFieldInfo.Type))
                     continue;
-                Logger.Error($"{FilePath} Sheet: {sheet.SheetName} Cell: {i + 1} a sheet can only contain one foreign key");
+                Logger.Error(
+                    $"{FilePath} Sheet: {sheet.SheetName} Cell: {i + 1} a sheet can only contain one foreign key");
                 return null;
             }
 
@@ -179,12 +190,15 @@ public class ExcelInfo
             Logger.Error($"{FilePath} Sheet: {sheet.SheetName} must have primary key");
             return null;
         }
+
         if (!sheet.SheetName.Equals(Const.MainSheet) && sheetInfo.ForeignKeyFieldInfo == null)
         {
             Logger.Error($"{FilePath} Sheet: {sheet.SheetName} non main sheet must contain foreign keys");
             return null;
         }
-        if (sheetInfo.ForeignKeyFieldInfo == null && sheetInfo.PrimaryKeyFieldInfo == null && sheetInfo.FieldInfos.Count == 0)
+
+        if (sheetInfo.ForeignKeyFieldInfo == null && sheetInfo.PrimaryKeyFieldInfo == null &&
+            sheetInfo.FieldInfos.Count == 0)
         {
             Logger.Error($"{FilePath} Sheet: {sheet.SheetName} contains at least one field");
             return null;
@@ -199,6 +213,7 @@ public class ExcelInfo
                 Logger.Error($"{FilePath} {sheet.SheetName} Row: {i + 1} is null");
                 continue;
             }
+
             string pk = row.GetCell(sheetInfo.PrimaryKeyFieldInfo!.Index)?.ToString() ?? "";
 
             if (pk.Equals(""))
@@ -226,25 +241,22 @@ public class ExcelInfo
             return null;
         }
 
-        if (!sheetName.Equals(Const.MainSheet) && FieldType.PrimaryKey.Contains(type) && !FieldType.PrimaryKey.Equals(type))
+        if (!sheetName.Equals(Const.MainSheet) && FieldType.PrimaryKey.Contains(type) &&
+            !FieldType.PrimaryKey.Equals(type))
         {
-            Logger.Error($"{FilePath} Sheet: {sheetName} Cell: {index + 1} non main sheet primary keys are defined as pk");
+            Logger.Error(
+                $"{FilePath} Sheet: {sheetName} Cell: {index + 1} non main sheet primary keys are defined as pk");
             return null;
         }
 
         if (sheetName.Equals(Const.MainSheet) && FieldType.ForeignKeyTypes.Contains(type))
         {
-            Logger.Error($"{FilePath} Sheet: {sheetName} Cell: {index + 1} foreign key type cannot exist in main sheet");
+            Logger.Error(
+                $"{FilePath} Sheet: {sheetName} Cell: {index + 1} foreign key type cannot exist in main sheet");
             return null;
         }
 
-        FieldInfo fieldInfo = new()
-        {
-            Index = index,
-            Comment = comment,
-            Name = name,
-            Type = type
-        };
+        FieldInfo fieldInfo = new() { Index = index, Comment = comment, Name = name, Type = type };
 
         return fieldInfo;
     }

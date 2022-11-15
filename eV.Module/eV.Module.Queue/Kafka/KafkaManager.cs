@@ -5,6 +5,7 @@ using Confluent.Kafka;
 using eV.Module.EasyLog;
 using eV.Module.Queue.Kafka.Handler;
 using eV.Module.Queue.Kafka.Serializer;
+
 namespace eV.Module.Queue.Kafka;
 
 public class KafkaManger
@@ -12,10 +13,7 @@ public class KafkaManger
     private readonly Dictionary<string, Kafka<string, object>> _kafka;
     private bool _isStart;
 
-    public static KafkaManger Instance
-    {
-        get;
-    } = new();
+    public static KafkaManger Instance { get; } = new();
 
     private KafkaManger()
     {
@@ -32,7 +30,8 @@ public class KafkaManger
         foreach ((string name, (ProducerConfig? producerConfig, ConsumerConfig? consumerConfig))in kafkaConfigs)
             try
             {
-                Kafka<string, object> kafka = new(CreateAdminClient(producerConfig.BootstrapServers), CreateProducer(producerConfig), consumerConfig, CreateConsumer);
+                Kafka<string, object> kafka = new(CreateAdminClient(producerConfig.BootstrapServers),
+                    CreateProducer(producerConfig), consumerConfig, CreateConsumer);
                 _kafka[name] = kafka;
                 Logger.Info($"Kafka [{name}] connected success");
             }
@@ -55,20 +54,19 @@ public class KafkaManger
 
     private static IAdminClient CreateAdminClient(string bootstrapServers)
     {
-        return new AdminClientBuilder(new AdminClientConfig
-        {
-            BootstrapServers = bootstrapServers
-        }).Build();
+        return new AdminClientBuilder(new AdminClientConfig { BootstrapServers = bootstrapServers }).Build();
     }
 
     private static IProducer<string, object> CreateProducer(ProducerConfig config)
     {
-        return new ProducerBuilder<string, object>(config).SetErrorHandler(ErrorHandler.ProducerErrorHandler).SetLogHandler(LogHandler.ProducerErrorHandler).SetValueSerializer(new SerializeBson<object>()).Build();
+        return new ProducerBuilder<string, object>(config).SetErrorHandler(ErrorHandler.ProducerErrorHandler)
+            .SetLogHandler(LogHandler.ProducerErrorHandler).SetValueSerializer(new SerializeBson<object>()).Build();
     }
 
     private static IConsumer<string, object> CreateConsumer(ConsumerConfig config)
     {
-        return new ConsumerBuilder<string, object>(config).SetErrorHandler(ErrorHandler.ConsumerErrorHandler).SetLogHandler(LogHandler.ConsumerErrorHandler).SetValueDeserializer(new SerializeBson<object>()).Build();
+        return new ConsumerBuilder<string, object>(config).SetErrorHandler(ErrorHandler.ConsumerErrorHandler)
+            .SetLogHandler(LogHandler.ConsumerErrorHandler).SetValueDeserializer(new SerializeBson<object>()).Build();
     }
 
     public Kafka<string, object>? GetKafka(string name)

@@ -3,6 +3,7 @@
 
 
 using eV.Module.Routing.Interface;
+
 namespace eV.Framework.Unity.Base;
 
 public abstract class HandlerBase<TContent> : IHandler
@@ -12,5 +13,6 @@ public abstract class HandlerBase<TContent> : IHandler
         Handle(session, (TContent)content);
         return Task.CompletedTask;
     }
+
     protected abstract void Handle(ISession session, TContent content);
 }

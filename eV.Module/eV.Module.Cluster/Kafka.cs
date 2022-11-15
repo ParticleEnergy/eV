@@ -4,6 +4,7 @@
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using eV.Module.EasyLog;
+
 namespace eV.Module.Cluster;
 
 public class Kafka
@@ -28,10 +29,7 @@ public class Kafka
 
         (ProducerConfig? producerConfig, ConsumerConfig? consumerConfig) = kafkaOption;
 
-        _adminClient = new AdminClientBuilder(new AdminClientConfig
-        {
-            BootstrapServers = producerConfig.BootstrapServers
-        }).Build();
+        _adminClient = new AdminClientBuilder(new AdminClientConfig { BootstrapServers = producerConfig.BootstrapServers }).Build();
 
         _consumerConfig = consumerConfig;
         _consumerConfig.ClientId = $"eV.Cluster-{_consumerConfig.ClientId}";
@@ -39,17 +37,15 @@ public class Kafka
         _producer = new ProducerBuilder<string, byte[]>(producerConfig).SetErrorHandler(
             delegate(IProducer<string, byte[]> _, Error error)
             {
-                Logger.Error($"Cluster [{_clusterName}] [{_nodeName}] Kafka Error code:{error.Code} reason: {error.Reason}");
+                Logger.Error(
+                    $"Cluster [{_clusterName}] [{_nodeName}] Kafka Error code:{error.Code} reason: {error.Reason}");
             }
         ).SetLogHandler(delegate(IProducer<string, byte[]> _, LogMessage message) { Log(message); }).Build();
     }
 
     public void Produce(string topic, string key, byte[] value)
     {
-        _producer.Produce(topic, new Message<string, byte[]>
-        {
-            Key = key, Value = value
-        });
+        _producer.Produce(topic, new Message<string, byte[]> { Key = key, Value = value });
     }
 
 
@@ -84,21 +80,18 @@ public class Kafka
                 {
                     try
                     {
-                        _adminClient.CreateTopicsAsync(new[]
-                        {
-                            new TopicSpecification
-                            {
-                                Name = e.ConsumerRecord.Topic
-                            }
-                        });
+                        _adminClient.CreateTopicsAsync(new[] { new TopicSpecification { Name = e.ConsumerRecord.Topic } });
                     }
                     catch (Exception exception)
                     {
                         Logger.Error(exception.Message, exception);
                     }
+
                     continue;
                 }
-                Logger.Error($"Cluster [{_clusterName}] [{_nodeName}] Kafka Error code:{e.Error.Code} reason: {e.Error.Reason}");
+
+                Logger.Error(
+                    $"Cluster [{_clusterName}] [{_nodeName}] Kafka Error code:{e.Error.Code} reason: {e.Error.Reason}");
             }
         }
     }
@@ -128,7 +121,8 @@ public class Kafka
         return new ConsumerBuilder<string, byte[]>(consumerConfig).SetErrorHandler(
             delegate(IConsumer<string, byte[]> _, Error error)
             {
-                Logger.Error($"Cluster [{_clusterName}] [{_nodeName}] Kafka Error code:{error.Code} reason: {error.Reason}");
+                Logger.Error(
+                    $"Cluster [{_clusterName}] [{_nodeName}] Kafka Error code:{error.Code} reason: {error.Reason}");
             }
         ).SetLogHandler(delegate(IConsumer<string, byte[]> _, LogMessage message) { Log(message); }).Build();
     }

@@ -4,11 +4,13 @@
 
 using eV.Module.Queue.Interface;
 using EasyLogger = eV.Module.EasyLog.Logger;
+
 namespace eV.Framework.Server.Base;
 
 public abstract class QueueBase : IQueueHandler
 {
     public string QueueName { get; set; } = string.Empty;
+
     public void RunConsume()
     {
         try

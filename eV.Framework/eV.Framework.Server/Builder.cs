@@ -6,12 +6,14 @@ using eV.Framework.Server.Logger;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
 namespace eV.Framework.Server;
 
 public class Builder
 {
     private readonly IHostBuilder _builder;
     private Action<IServiceCollection>? _configureServicesDelegate;
+
     public Builder(string[]? args)
     {
         _builder = args == null ? Host.CreateDefaultBuilder() : Host.CreateDefaultBuilder(args);

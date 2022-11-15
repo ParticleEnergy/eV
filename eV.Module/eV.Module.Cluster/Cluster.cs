@@ -3,6 +3,7 @@
 
 using eV.Module.Cluster.Interface;
 using eV.Module.EasyLog;
+
 namespace eV.Module.Cluster;
 
 public class Cluster
@@ -15,7 +16,8 @@ public class Cluster
     public Cluster(ClusterSetting setting)
     {
         _nodeName = Guid.NewGuid().ToString();
-        _sessionRegistrationAuthority = new SessionRegistrationAuthority(setting.ClusterName, _nodeName, setting.RedisOption);
+        _sessionRegistrationAuthority =
+            new SessionRegistrationAuthority(setting.ClusterName, _nodeName, setting.RedisOption);
 
         _communicationQueue = new CommunicationQueue(
             setting.ClusterName,

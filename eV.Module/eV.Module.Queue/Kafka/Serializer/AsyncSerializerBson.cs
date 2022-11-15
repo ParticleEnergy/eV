@@ -4,6 +4,7 @@
 using Confluent.Kafka;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+
 namespace eV.Module.Queue.Kafka.Serializer;
 
 public class AsyncSerializerBson<T> : IAsyncSerializer<T>, IAsyncDeserializer<T>
@@ -12,6 +13,7 @@ public class AsyncSerializerBson<T> : IAsyncSerializer<T>, IAsyncDeserializer<T>
     {
         return Task.FromResult(data.ToBson());
     }
+
     public Task<T> DeserializeAsync(ReadOnlyMemory<byte> data, bool isNull, SerializationContext context)
     {
         return Task.FromResult(BsonSerializer.Deserialize<T>(data.ToArray()));

@@ -4,6 +4,7 @@
 using Confluent.Kafka;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+
 namespace eV.Module.Queue.Kafka.Serializer;
 
 public class SerializeBson<T> : ISerializer<T>, IDeserializer<T>
@@ -12,6 +13,7 @@ public class SerializeBson<T> : ISerializer<T>, IDeserializer<T>
     {
         return data.ToBson();
     }
+
     public T Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
     {
         return BsonSerializer.Deserialize<T>(data.ToArray());

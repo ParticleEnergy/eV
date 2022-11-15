@@ -3,6 +3,7 @@
 
 using System.Security.Authentication;
 using eV.Module.EasyLog.Interface;
+
 namespace eV.Framework.Unity;
 
 public class UnitySetting

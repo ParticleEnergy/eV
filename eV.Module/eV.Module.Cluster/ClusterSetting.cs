@@ -4,6 +4,7 @@
 using Confluent.Kafka;
 using eV.Module.EasyLog;
 using StackExchange.Redis;
+
 namespace eV.Module.Cluster;
 
 public class ClusterSetting
@@ -21,12 +22,8 @@ public class ClusterSetting
         Logger.Error("SendAction not defined");
         return false;
     };
-    public Action<string, byte[]>? SendGroupAction { get; set; } = delegate
-    {
-        Logger.Error("SendGroupAction not defined");
-    };
-    public Action<byte[]>? SendBroadcastAction { get; set; } = delegate
-    {
-        Logger.Error("SendBroadcastAction not defined");
-    };
+
+    public Action<string, byte[]>? SendGroupAction { get; set; } = delegate { Logger.Error("SendGroupAction not defined"); };
+
+    public Action<byte[]>? SendBroadcastAction { get; set; } = delegate { Logger.Error("SendBroadcastAction not defined"); };
 }

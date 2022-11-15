@@ -5,6 +5,7 @@ using System.Reflection;
 using eV.Module.EasyLog;
 using eV.Module.GameProfile.Attributes;
 using eV.Module.GameProfile.Interface;
+
 namespace eV.Module.GameProfile;
 
 public static class Profile
@@ -15,6 +16,7 @@ public static class Profile
     private static IProfileParser? s_profileParser;
     public static Dictionary<string, object> Config { get; private set; } = new();
     public static event Action? OnLoad;
+
     public static Func<Dictionary<string, string>> GetProfileContent = () =>
     {
         Dictionary<string, string> result = new();
@@ -39,6 +41,7 @@ public static class Profile
                     Logger.Error(e.Message, e);
                 }
             }
+
         return result;
     };
 
@@ -99,6 +102,7 @@ public static class Profile
                 result.Add(type.Name, type);
             }
         }
+
         return result;
     }
 
@@ -129,25 +133,10 @@ public static class Profile
         watcher.Filter = "*.json";
         watcher.IncludeSubdirectories = true;
         watcher.EnableRaisingEvents = true;
-        watcher.Changed += (_, _) =>
-        {
-            Load();
-        };
-        watcher.Created += (_, _) =>
-        {
-            Load();
-        };
-        watcher.Deleted += (_, _) =>
-        {
-            Load();
-        };
-        watcher.Renamed += (_, _) =>
-        {
-            Load();
-        };
-        watcher.Error += (_, args) =>
-        {
-            Logger.Error(args.GetException().Message, args.GetException());
-        };
+        watcher.Changed += (_, _) => { Load(); };
+        watcher.Created += (_, _) => { Load(); };
+        watcher.Deleted += (_, _) => { Load(); };
+        watcher.Renamed += (_, _) => { Load(); };
+        watcher.Error += (_, args) => { Logger.Error(args.GetException().Message, args.GetException()); };
     }
 }

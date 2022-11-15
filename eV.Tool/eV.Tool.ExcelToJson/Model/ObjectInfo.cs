@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using eV.Tool.ExcelToJson.Define;
+
 namespace eV.Tool.ExcelToJson.Model;
 
 public class ObjectInfo
@@ -47,12 +48,20 @@ public class ObjectInfo
         string result;
         if (IsMain)
         {
-            result = IsDependencies ? string.Format(_profileObject, Head, NamespaceName, NamespaceName, ClassName, ProfileType, ProfileDetailType, ClassName, ClassName, GetProperties()) : string.Format(_profileObjectNoDependencies, Head, NamespaceName, ClassName, ProfileType, ProfileDetailType, ClassName, ClassName, GetProperties());
+            result = IsDependencies
+                ? string.Format(_profileObject, Head, NamespaceName, NamespaceName, ClassName, ProfileType,
+                    ProfileDetailType, ClassName, ClassName, GetProperties())
+                : string.Format(_profileObjectNoDependencies, Head, NamespaceName, ClassName, ProfileType,
+                    ProfileDetailType, ClassName, ClassName, GetProperties());
         }
         else
         {
-            result = string.Format(_csharpVersion ? Template.ItemObject : ObjectComplexProperties.Count > 0 ? Template8.ItemObjectGeneric : Template8.ItemObject, Head, NamespaceName, ClassName, GetProperties());
+            result = string.Format(
+                _csharpVersion ? Template.ItemObject :
+                ObjectComplexProperties.Count > 0 ? Template8.ItemObjectGeneric : Template8.ItemObject, Head,
+                NamespaceName, ClassName, GetProperties());
         }
+
         return result;
     }
 
@@ -60,9 +69,12 @@ public class ObjectInfo
     {
         List<string> properties = new();
 
-        properties.AddRange(ObjectBaseProperties.Select(objectBaseProperty => string.Format(_baseProperty, objectBaseProperty.Comment, objectBaseProperty.Type, objectBaseProperty.Name, objectBaseProperty.DefaultValue)));
+        properties.AddRange(ObjectBaseProperties.Select(objectBaseProperty => string.Format(_baseProperty,
+            objectBaseProperty.Comment, objectBaseProperty.Type, objectBaseProperty.Name,
+            objectBaseProperty.DefaultValue)));
 
-        properties.AddRange(ObjectComplexProperties.Select(objectComplexProperty => string.Format(_complexProperty, objectComplexProperty.Comment, objectComplexProperty.Type, objectComplexProperty.Name)));
+        properties.AddRange(ObjectComplexProperties.Select(objectComplexProperty => string.Format(_complexProperty,
+            objectComplexProperty.Comment, objectComplexProperty.Type, objectComplexProperty.Name)));
 
         return string.Join("\n", properties);
     }

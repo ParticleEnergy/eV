@@ -5,12 +5,14 @@
 using eV.Module.Queue.Kafka;
 using eV.Module.Storage.Redis;
 using StackExchange.Redis;
+
 namespace eV.Framework.Server.Base;
 
 public class ServiceBase
 {
     private readonly KafkaManger _kafka = KafkaManger.Instance;
     private readonly RedisManager _redis = RedisManager.Instance;
+
     public IDatabase? GetRedis(string name)
     {
         return _redis.GetRedis(name);

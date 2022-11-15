@@ -3,25 +3,22 @@
 
 using eV.Module.GameProfile.Interface;
 using Newtonsoft.Json;
+
 namespace eV.Module.GameProfile;
 
 public class GameProfileParser : IProfileParser
 {
     public GameProfileParser()
     {
-
         JsonConvert.DefaultSettings = () =>
         {
-            JsonSerializerSettings jsonSerializerSettings = new()
-            {
-                DateFormatHandling = DateFormatHandling.MicrosoftDateFormat,
-                DateFormatString = "yyyy-MM-dd HH:mm:ss"
-            };
+            JsonSerializerSettings jsonSerializerSettings = new() { DateFormatHandling = DateFormatHandling.MicrosoftDateFormat, DateFormatString = "yyyy-MM-dd HH:mm:ss" };
             return jsonSerializerSettings;
         };
     }
 
-    public Dictionary<string, object> Parser(Dictionary<string, Type> configType, Dictionary<string, string> configJsonString)
+    public Dictionary<string, object> Parser(Dictionary<string, Type> configType,
+        Dictionary<string, string> configJsonString)
     {
         Dictionary<string, object> config = new();
         foreach (KeyValuePair<string, Type> ct in configType)
@@ -34,6 +31,7 @@ public class GameProfileParser : IProfileParser
             if (result != null)
                 config.Add(name, result);
         }
+
         return config;
     }
 }

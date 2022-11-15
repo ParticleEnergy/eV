@@ -6,15 +6,18 @@ using eV.Framework.Server.Utils;
 using eV.Module.Cluster;
 using eV.Module.Routing.Interface;
 using eV.Module.Session;
+
 namespace eV.Framework.Server.SessionDrive;
 
 public class ClusterSessionDrive : ISessionDrive
 {
     private readonly ClusterSession _clusterSession;
+
     public ClusterSessionDrive(ClusterSession clusterSession)
     {
         _clusterSession = clusterSession;
     }
+
     public bool Send(string sessionId, byte[] data)
     {
         Session? session = SessionDispatch.Instance.SessionManager.GetActiveSession(sessionId);
@@ -24,6 +27,7 @@ public class ClusterSessionDrive : ISessionDrive
         _clusterSession.Send(sessionId, data);
         return true;
     }
+
     public void SendGroup(string selfSessionId, string groupId, byte[] data)
     {
         SessionUtils.SendGroup(selfSessionId, groupId, data);
@@ -43,6 +47,7 @@ public class ClusterSessionDrive : ISessionDrive
         _clusterSession.Registry(session.SessionId!);
         return true;
     }
+
     public bool Release(ISession session)
     {
         if (!SessionUtils.Release(session))

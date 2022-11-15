@@ -6,6 +6,7 @@ using eV.Tool.ExcelToJson.Define;
 using eV.Tool.ExcelToJson.Excel;
 using eV.Tool.ExcelToJson.Model;
 using Microsoft.Extensions.Configuration;
+
 namespace eV.Tool.ExcelToJson.Core;
 
 public class AnalyticStructure
@@ -14,6 +15,7 @@ public class AnalyticStructure
     private readonly IConfigurationSection _configuration;
     private readonly List<ExcelInfo> _excelInfos;
     private readonly List<ObjectInfo> _objectInfos = new();
+
     public AnalyticStructure(IConfigurationSection configuration, List<ExcelInfo> excelInfos)
     {
         _configuration = configuration;
@@ -31,9 +33,12 @@ public class AnalyticStructure
         {
             Analytic(excel);
         }
+
         foreach (ObjectInfo objectInfo in _objectInfos)
         {
-            string file = objectInfo.IsMain ? $"{path}/{string.Format(Template.ObjectFileName, objectInfo.ClassName)}" : $"{path}/Object/{objectInfo.ClassName}.cs";
+            string file = objectInfo.IsMain
+                ? $"{path}/{string.Format(Template.ObjectFileName, objectInfo.ClassName)}"
+                : $"{path}/Object/{objectInfo.ClassName}.cs";
             Write?.Invoke(file, objectInfo.ToString());
         }
     }
@@ -46,7 +51,8 @@ public class AnalyticStructure
             FieldType.Bool => "bool",
             FieldType.Int => "int",
             FieldType.Double => "double",
-            _ => string.Join(", ", type.Replace(" ", "").Split(Const.SplitFlag)).ToLower().Replace(FieldType.Dict.ToLower(), "Dictionary").Replace(FieldType.List.ToLower(), "List")
+            _ => string.Join(", ", type.Replace(" ", "").Split(Const.SplitFlag)).ToLower()
+                .Replace(FieldType.Dict.ToLower(), "Dictionary").Replace(FieldType.List.ToLower(), "List")
         };
     }
 
@@ -66,12 +72,7 @@ public class AnalyticStructure
     {
         string outObjectNamespace = _configuration.GetSection(Const.OutObjectNamespace).Value;
         string outObjectFileHead = _configuration.GetSection(Const.OutObjectFileHead).Value;
-        return new ObjectInfo(_configuration.GetSection(Const.CSharpVersion).Value)
-        {
-            NamespaceName = outObjectNamespace,
-            Head = outObjectFileHead,
-            IsDependencies = true
-        };
+        return new ObjectInfo(_configuration.GetSection(Const.CSharpVersion).Value) { NamespaceName = outObjectNamespace, Head = outObjectFileHead, IsDependencies = true };
     }
 
     private ObjectInfo GetObjectInfo(SheetInfo sheetInfo)
@@ -80,35 +81,19 @@ public class AnalyticStructure
 
         if (sheetInfo.PrimaryKeyFieldInfo != null)
         {
-            objectInfo.ObjectBaseProperties.Add(new ObjectBaseProperty
-            {
-                Type = GetFiledType(FieldType.String),
-                Name = sheetInfo.PrimaryKeyFieldInfo.Name,
-                DefaultValue = GetDefaultValue(FieldType.String),
-                Comment = sheetInfo.PrimaryKeyFieldInfo.Comment
-            });
+            objectInfo.ObjectBaseProperties.Add(new ObjectBaseProperty { Type = GetFiledType(FieldType.String), Name = sheetInfo.PrimaryKeyFieldInfo.Name, DefaultValue = GetDefaultValue(FieldType.String), Comment = sheetInfo.PrimaryKeyFieldInfo.Comment });
         }
 
-        foreach (var fieldInfo in sheetInfo.FieldInfos.Where(fieldInfo => !FieldType.ForeignKeyTypes.Contains(fieldInfo.Type)))
+        foreach (var fieldInfo in sheetInfo.FieldInfos.Where(fieldInfo =>
+                     !FieldType.ForeignKeyTypes.Contains(fieldInfo.Type)))
         {
             if (fieldInfo.Type.StartsWith(FieldType.Dict) || fieldInfo.Type.StartsWith(FieldType.List))
             {
-                objectInfo.ObjectComplexProperties.Add(new ObjectComplexProperty
-                {
-                    Type = GetFiledType(fieldInfo.Type),
-                    Name = fieldInfo.Name,
-                    Comment = fieldInfo.Comment
-                });
+                objectInfo.ObjectComplexProperties.Add(new ObjectComplexProperty { Type = GetFiledType(fieldInfo.Type), Name = fieldInfo.Name, Comment = fieldInfo.Comment });
             }
             else
             {
-                objectInfo.ObjectBaseProperties.Add(new ObjectBaseProperty
-                {
-                    Type = GetFiledType(fieldInfo.Type),
-                    Name = fieldInfo.Name,
-                    DefaultValue = GetDefaultValue(fieldInfo.Type),
-                    Comment = fieldInfo.Comment
-                });
+                objectInfo.ObjectBaseProperties.Add(new ObjectBaseProperty { Type = GetFiledType(fieldInfo.Type), Name = fieldInfo.Name, DefaultValue = GetDefaultValue(fieldInfo.Type), Comment = fieldInfo.Comment });
             }
         }
 
@@ -120,14 +105,13 @@ public class AnalyticStructure
         if (excelInfo.MainSheetInfo == null)
             return;
 
-        Dictionary<string, ObjectInfo> objectInfos = new()
-        {
-            [Const.MainSheet] = GetObjectInfo(excelInfo.MainSheetInfo)
-        };
+        Dictionary<string, ObjectInfo> objectInfos = new() { [Const.MainSheet] = GetObjectInfo(excelInfo.MainSheetInfo) };
         objectInfos[Const.MainSheet].IsMain = true;
         objectInfos[Const.MainSheet].ClassName = excelInfo.FileName;
-        objectInfos[Const.MainSheet].ProfileType = excelInfo.MainSheetInfo.PrimaryKeyFieldInfo!.Type == FieldType.PrimaryKeyList ? "List" : "Dictionary";
-        objectInfos[Const.MainSheet].ProfileDetailType = excelInfo.MainSheetInfo.PrimaryKeyFieldInfo!.Type == FieldType.PrimaryKeyList ? "" : "string, ";
+        objectInfos[Const.MainSheet].ProfileType =
+            excelInfo.MainSheetInfo.PrimaryKeyFieldInfo!.Type == FieldType.PrimaryKeyList ? "List" : "Dictionary";
+        objectInfos[Const.MainSheet].ProfileDetailType =
+            excelInfo.MainSheetInfo.PrimaryKeyFieldInfo!.Type == FieldType.PrimaryKeyList ? "" : "string, ";
         objectInfos[Const.MainSheet].IsDependencies = excelInfo.SubSheetInfos.Count > 0;
 
         foreach (SheetInfo sheetInfo in excelInfo.SubSheetInfos)
@@ -144,37 +128,25 @@ public class AnalyticStructure
             switch (sheetInfo.ForeignKeyFieldInfo.Type)
             {
                 case FieldType.ForeignKeyDictionary:
-                    objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty
-                    {
-                        Type = $"Dictionary<string, {sheetInfo.Name}>",
-                        Name = $"{sheetInfo.Name}Dictionary",
-                        Comment = sheetInfo.Name
-                    });
+                    objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty { Type = $"Dictionary<string, {sheetInfo.Name}>", Name = $"{sheetInfo.Name}Dictionary", Comment = sheetInfo.Name });
                     break;
                 case FieldType.ForeignKeyList:
-                    objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty
-                    {
-                        Type = $"List<{sheetInfo.Name}>",
-                        Name = $"{sheetInfo.Name}List",
-                        Comment = sheetInfo.Name
-                    });
+                    objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty { Type = $"List<{sheetInfo.Name}>", Name = $"{sheetInfo.Name}List", Comment = sheetInfo.Name });
                     break;
                 default:
-                    objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty
-                    {
-                        Type = sheetInfo.Name,
-                        Name = sheetInfo.Name,
-                        Comment = sheetInfo.Name
-                    });
+                    objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty { Type = sheetInfo.Name, Name = sheetInfo.Name, Comment = sheetInfo.Name });
                     break;
             }
+
             objectInfos[sheetInfo.Name] = objectInfo;
         }
+
         _objectInfos.Add(objectInfos[Const.MainSheet]);
         foreach ((string _, ObjectInfo oi) in objectInfos)
         {
             bool flag = false;
-            foreach (var _ in _objectInfos.Where(alreadyExistObjectInfo => oi.ClassName == alreadyExistObjectInfo.ClassName))
+            foreach (var _ in _objectInfos.Where(alreadyExistObjectInfo =>
+                         oi.ClassName == alreadyExistObjectInfo.ClassName))
                 flag = true;
 
             if (flag)
@@ -188,7 +160,8 @@ public class AnalyticStructure
         List<KeyValuePair<string, SheetInfo>> allSheetInfos = new();
         foreach (ExcelInfo excelInfo in _excelInfos)
         {
-            allSheetInfos.AddRange(excelInfo.SubSheetInfos.Select(sheetInfo => KeyValuePair.Create(excelInfo.FilePath, sheetInfo)));
+            allSheetInfos.AddRange(
+                excelInfo.SubSheetInfos.Select(sheetInfo => KeyValuePair.Create(excelInfo.FilePath, sheetInfo)));
         }
 
         foreach ((string filePath1, SheetInfo sheetInfo1) in allSheetInfos)
@@ -200,7 +173,8 @@ public class AnalyticStructure
 
                 if (sheetInfo1.FieldInfos.Count != sheetInfo2.FieldInfos.Count)
                 {
-                    Logger.Error($"[{filePath1} Sheet: {sheetInfo1.FullName}] [{filePath2} Sheet: {sheetInfo2.FullName}] unequal number of fields");
+                    Logger.Error(
+                        $"[{filePath1} Sheet: {sheetInfo1.FullName}] [{filePath2} Sheet: {sheetInfo2.FullName}] unequal number of fields");
                     return false;
                 }
 
@@ -212,16 +186,19 @@ public class AnalyticStructure
 
                     bool flag = false;
 
-                    foreach (var _ in sheetInfo2.FieldInfos.Where(fieldInfo2 => fieldInfo1.Name.Equals(fieldInfo2.Name) && fieldInfo2.Type.Equals(fieldInfo2.Type)))
+                    foreach (var _ in sheetInfo2.FieldInfos.Where(fieldInfo2 =>
+                                 fieldInfo1.Name.Equals(fieldInfo2.Name) && fieldInfo2.Type.Equals(fieldInfo2.Type)))
                         flag = true;
 
                     if (flag)
                         continue;
-                    Logger.Error($"[{filePath1} Sheet: {sheetInfo1.FullName}] [{filePath2} Sheet: {sheetInfo2.FullName}] inconsistent fields [{fieldInfo1.Name}]");
+                    Logger.Error(
+                        $"[{filePath1} Sheet: {sheetInfo1.FullName}] [{filePath2} Sheet: {sheetInfo2.FullName}] inconsistent fields [{fieldInfo1.Name}]");
                     return false;
                 }
             }
         }
+
         return true;
     }
 }

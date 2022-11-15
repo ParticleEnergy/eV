@@ -9,10 +9,12 @@ public enum SessionState
     ///     激活
     /// </summary>
     Active,
+
     /// <summary>
     ///     空闲
     /// </summary>
     Free,
+
     /// <summary>
     ///     占用
     /// </summary>

@@ -3,6 +3,7 @@
 
 using eV.Module.EasyLog;
 using eV.Module.Routing.Interface;
+
 namespace eV.Module.Routing;
 
 public class DataParser
@@ -35,13 +36,15 @@ public class DataParser
                     _currentPacket = Package.Unpack(hand);
                 }
 
-                if (!CheckReceiveBufferLength(data, current, _currentPacket!.GetNameLength() + _currentPacket!.GetContentLength()))
+                if (!CheckReceiveBufferLength(data, current,
+                        _currentPacket!.GetNameLength() + _currentPacket!.GetContentLength()))
                     break;
 
                 if (_currentPacket.GetNameLength() > 0)
                 {
                     Packet packet = new();
-                    packet.SetName(Encoder.GetEncoding().GetString(data.Skip(current).Take(_currentPacket.GetNameLength()).ToArray()));
+                    packet.SetName(Encoder.GetEncoding()
+                        .GetString(data.Skip(current).Take(_currentPacket.GetNameLength()).ToArray()));
                     current += _currentPacket.GetNameLength();
 
                     if (_currentPacket.GetContentLength() > 0)
@@ -49,10 +52,13 @@ public class DataParser
                         packet.SetContent(data.Skip(current).Take(_currentPacket.GetContentLength()).ToArray());
                         current += _currentPacket.GetContentLength();
                     }
+
                     result.Add(packet);
                 }
+
                 _currentPacket = null;
             }
+
             return result;
         }
         catch (Exception e)

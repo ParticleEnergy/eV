@@ -5,7 +5,6 @@ namespace eV.Network.Tcp.Server;
 
 public class ServerSetting
 {
-
     public int MaxConnectionCount { get; set; } = DefaultSetting.MaxConnectionCount;
     public int ReceiveBufferSize { get; set; } = DefaultSetting.ReceiveBufferSize;
 
@@ -14,8 +13,10 @@ public class ServerSetting
     public int TcpKeepAliveRetryCount { get; set; } = DefaultSetting.TcpKeepAliveRetryCount;
 
     #region Socket
+
     public string Host { get; set; } = DefaultSetting.Host;
     public int Port { get; set; } = DefaultSetting.Port;
     public int Backlog { get; set; } = DefaultSetting.Backlog;
+
     #endregion
 }

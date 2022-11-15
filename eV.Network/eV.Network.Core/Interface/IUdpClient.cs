@@ -5,5 +5,4 @@ namespace eV.Network.Core.Interface;
 
 public interface IUdpClient : IClient
 {
-
 }

@@ -8,6 +8,7 @@ using eV.Tool.ExcelToJson.Excel;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NPOI.SS.UserModel;
+
 namespace eV.Tool.ExcelToJson.Core;
 
 public class AnalyticData
@@ -15,6 +16,7 @@ public class AnalyticData
     public Action<string, string>? Write { get; set; }
     private readonly IConfigurationSection _configuration;
     private readonly List<ExcelInfo> _excelInfos;
+
     public AnalyticData(IConfigurationSection configuration, List<ExcelInfo> excelInfos)
     {
         _configuration = configuration;
@@ -32,28 +34,35 @@ public class AnalyticData
             for (int i = excelInfo.SubSheetInfos.Count - 1; i >= 0; i--)
             {
                 SheetInfo sheetInfo = excelInfo.SubSheetInfos[i];
-                data.TryGetValue(sheetInfo.Hierarchy.Count, out List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? flag);
+                data.TryGetValue(sheetInfo.Hierarchy.Count,
+                    out List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? flag);
                 if (flag == null)
                 {
                     data[sheetInfo.Hierarchy.Count] = new List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>();
                 }
-                data.TryGetValue(sheetInfo.Hierarchy.Count + 1, out List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? d);
+
+                data.TryGetValue(sheetInfo.Hierarchy.Count + 1,
+                    out List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? d);
                 data[sheetInfo.Hierarchy.Count].Add(KeyValuePair.Create(sheetInfo, GetSubSheetData(sheetInfo, d)));
             }
+
             data.TryGetValue(0, out List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? subData);
 
             object? mainTable = GetMainSheetData(excelInfo.MainSheetInfo, subData);
             if (mainTable == null)
                 continue;
 
-            string jsonString = _configuration.GetSection(Const.JsonFormatting).Value.Equals("Indented") ? JsonConvert.SerializeObject(mainTable, Formatting.Indented) : JsonConvert.SerializeObject(mainTable);
+            string jsonString = _configuration.GetSection(Const.JsonFormatting).Value.Equals("Indented")
+                ? JsonConvert.SerializeObject(mainTable, Formatting.Indented)
+                : JsonConvert.SerializeObject(mainTable);
             string path = _configuration.GetSection(Const.OutJsonFilePath).Value;
             string file = $"{path}/{excelInfo.FileName}Profile.json";
             Write?.Invoke(file, jsonString);
         }
     }
 
-    private static Dictionary<string, object>? GetSubSheetData(SheetInfo sheetInfo, List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? data)
+    private static Dictionary<string, object>? GetSubSheetData(SheetInfo sheetInfo,
+        List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? data)
     {
         Dictionary<string, object> result = new();
 
@@ -110,7 +119,8 @@ public class AnalyticData
                                 dataRow[$"{subSheetInfo.Name}List"] = value;
                                 break;
                             default:
-                                Logger.Error($"Sub Sheet: {subSheetInfo.FullName} Row: {i + 1} foreign key cannot be empty");
+                                Logger.Error(
+                                    $"Sub Sheet: {subSheetInfo.FullName} Row: {i + 1} foreign key cannot be empty");
                                 break;
                         }
                     }
@@ -126,6 +136,7 @@ public class AnalyticData
                         {
                             result[fk] = new Dictionary<string, object>();
                         }
+
                         ((Dictionary<string, object>)result[fk])[pk] = dataRow;
                         break;
                     }
@@ -136,6 +147,7 @@ public class AnalyticData
                         {
                             result[fk] = new List<object>();
                         }
+
                         ((List<object>)result[fk]).Add(dataRow);
                         break;
                     }
@@ -148,7 +160,8 @@ public class AnalyticData
         return result;
     }
 
-    private static object? GetMainSheetData(SheetInfo sheetInfo, List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? subData)
+    private static object? GetMainSheetData(SheetInfo sheetInfo,
+        List<KeyValuePair<SheetInfo, Dictionary<string, object>?>>? subData)
     {
         Dictionary<string, Dictionary<string, object?>> dataDictionary = new();
         List<Dictionary<string, object?>> dataList = new();
@@ -208,7 +221,9 @@ public class AnalyticData
             }
         }
 
-        return sheetInfo.PrimaryKeyFieldInfo?.Type.Equals(FieldType.PrimaryKeyDictionary) == true ? dataDictionary : dataList;
+        return sheetInfo.PrimaryKeyFieldInfo?.Type.Equals(FieldType.PrimaryKeyDictionary) == true
+            ? dataDictionary
+            : dataList;
     }
 
     private static Dictionary<string, object?>? GetRow(IRow row, SheetInfo sheetInfo)
@@ -227,6 +242,7 @@ public class AnalyticData
             Logger.Error($"Sheet: {sheetInfo.FullName} primary key cannot be empty");
             return null;
         }
+
         dataRow[sheetInfo.PrimaryKeyFieldInfo.Name] = pk;
 
         foreach (FieldInfo fieldInfo in sheetInfo.FieldInfos)
@@ -287,6 +303,7 @@ public class AnalyticData
                 return null;
             }
         }
+
         return dataRow;
     }
 }

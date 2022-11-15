@@ -3,6 +3,7 @@
 
 using Confluent.Kafka;
 using eV.Module.EasyLog;
+
 namespace eV.Module.Queue.Kafka.Handler;
 
 public static class ErrorHandler

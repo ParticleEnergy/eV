@@ -8,12 +8,14 @@ using Quartz;
 using Quartz.Impl;
 using Quartz.Logging;
 using Logger = eV.Module.EasyLog.Logger;
+
 namespace eV.Module.Job;
 
 public class Job
 {
     private string _assemblyString = string.Empty;
     private IScheduler? _scheduler;
+
     public Job(string assemblyString)
     {
         LogProvider.SetCurrentLogProvider(new Log());
@@ -37,6 +39,7 @@ public class Job
         {
             _scheduler = scheduler;
         }
+
         await _scheduler.Start();
         _assemblyString = assemblyString;
     }
@@ -57,7 +60,8 @@ public class Job
 
             _scheduler?.ScheduleJob(handler.Job, handler.Trigger);
 
-            Logger.Info($"JobHandler [{type.FullName}] JobName: {handler.JobName} TriggerName: {handler.TriggerName} GroupName:{handler.GroupName} registration succeeded");
+            Logger.Info(
+                $"JobHandler [{type.FullName}] JobName: {handler.JobName} TriggerName: {handler.TriggerName} GroupName:{handler.GroupName} registration succeeded");
         }
     }
 

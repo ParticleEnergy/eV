@@ -78,5 +78,4 @@ namespace {1}.Object
         /// </summary>
         public {1}? {2} {{ get; set; }}
 ";
-
 }
