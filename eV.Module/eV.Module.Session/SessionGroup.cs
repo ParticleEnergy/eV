@@ -18,7 +18,11 @@ public class SessionGroup
     public void CreateGroup(string groupId)
     {
         Logger.Info($"Create group {groupId}");
-        _allGroup[groupId] = new ConcurrentDictionary<string, string>();
+        _allGroup.TryGetValue(groupId, out ConcurrentDictionary<string, string>? group);
+        if (group == null)
+        {
+            _allGroup[groupId] = new ConcurrentDictionary<string, string>();
+        }
     }
 
     public bool DeleteGroup(string groupId)

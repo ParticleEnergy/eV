@@ -12,6 +12,6 @@
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Module.EasyLog</RootNamespace>
-    <PackageVersion>1.5.5</PackageVersion>
+    <PackageVersion>1.5.6</PackageVersion>
   </PropertyGroup>
 </Project>

@@ -1,6 +1,7 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
+using System.Collections.Concurrent;
 using eV.Framework.Server.Interface;
 using eV.Module.Routing.Interface;
 using EasyLogger = eV.Module.EasyLog.Logger;
@@ -45,6 +46,21 @@ public static class ServerSession
     public static bool LeaveGroup(string groupId, string sessionId)
     {
         return SessionDispatch.Instance.SessionGroup.LeaveGroup(groupId, sessionId);
+    }
+
+    public static ConcurrentDictionary<string, string>? GetGroup(string groupId)
+    {
+        return SessionDispatch.Instance.SessionGroup.GetGroup(groupId);
+    }
+
+    public static void CreateGroup(string groupId)
+    {
+        SessionDispatch.Instance.SessionGroup.CreateGroup(groupId);
+    }
+
+    public static bool DeleteGroup(string groupId)
+    {
+        return SessionDispatch.Instance.SessionGroup.DeleteGroup(groupId);
     }
 
     public static bool Activate(ISession session)

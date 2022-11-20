@@ -209,8 +209,7 @@ public static class MongodbHelper
 
     #region Replace
 
-    public static ReplaceOneResult? Replace<T>(string database, string collection, FilterDefinition<T> filter, T data,
-        bool isUpsert = false) where T : IModel
+    public static ReplaceOneResult? Replace<T>(string database, string collection, FilterDefinition<T> filter, T data, bool isUpsert = false) where T : IModel
     {
         try
         {
@@ -225,8 +224,7 @@ public static class MongodbHelper
         }
     }
 
-    public static Task<ReplaceOneResult>? ReplaceAsync<T>(string database, string collection,
-        FilterDefinition<T> filter, T data, bool isUpsert = false) where T : IModel
+    public static Task<ReplaceOneResult>? ReplaceAsync<T>(string database, string collection, FilterDefinition<T> filter, T data, bool isUpsert = false) where T : IModel
     {
         try
         {
