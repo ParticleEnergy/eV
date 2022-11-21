@@ -93,4 +93,18 @@ public static class SessionUtils
             session.Send(data);
         }
     }
+
+    #region Group
+
+    public static bool CreateGroup(string groupId)
+    {
+        return SessionDispatch.Instance.SessionGroup.CreateGroup(groupId);
+    }
+
+    public static bool DeleteGroup(string groupId)
+    {
+        return SessionDispatch.Instance.SessionGroup.DeleteGroup(groupId);
+    }
+
+    #endregion
 }

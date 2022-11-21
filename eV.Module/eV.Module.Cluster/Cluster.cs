@@ -25,12 +25,16 @@ public class Cluster
             setting.ConsumeSendPipelineNumber,
             setting.ConsumeSendGroupPipelineNumber,
             setting.ConsumeSendBroadcastPipelineNumber,
+            setting.ConsumeCreateGroupPipelineNumber,
+            setting.ConsumeDeleteGroupPipelineNumber,
             _sessionRegistrationAuthority,
             setting.KafkaOption
         );
         _communicationQueue.SendAction += setting.SendAction;
         _communicationQueue.SendGroupAction += setting.SendGroupAction;
         _communicationQueue.SendBroadcastAction += setting.SendBroadcastAction;
+        _communicationQueue.CreateGroupAction += setting.CreateGroupAction;
+        _communicationQueue.DeleteGroupAction += setting.DeleteGroupAction;
 
         _clusterSession = new ClusterSession(_sessionRegistrationAuthority, _communicationQueue);
     }

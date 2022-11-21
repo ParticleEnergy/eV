@@ -33,4 +33,18 @@ public class SingleSessionDrive : ISessionDrive
     {
         return SessionUtils.Release(session);
     }
+
+    #region Group
+
+    public bool CreateGroup(string groupId)
+    {
+        return SessionUtils.CreateGroup(groupId);
+    }
+
+    public bool DeleteGroup(string groupId)
+    {
+        return SessionUtils.DeleteGroup(groupId);
+    }
+
+    #endregion
 }

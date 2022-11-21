@@ -13,6 +13,8 @@ public class ClusterSetting
     public int ConsumeSendPipelineNumber { get; set; } = DefaultSetting.ConsumeSendPipelineNumber;
     public int ConsumeSendGroupPipelineNumber { get; set; } = DefaultSetting.ConsumeSendGroupPipelineNumber;
     public int ConsumeSendBroadcastPipelineNumber { get; set; } = DefaultSetting.ConsumeSendBroadcastPipelineNumber;
+    public int ConsumeCreateGroupPipelineNumber { get; set; } = DefaultSetting.ConsumeCreateGroupPipelineNumber;
+    public int ConsumeDeleteGroupPipelineNumber { get; set; } = DefaultSetting.ConsumeDeleteGroupPipelineNumber;
 
     public ConfigurationOptions RedisOption { get; set; } = DefaultSetting.RedisOption;
     public KeyValuePair<ProducerConfig, ConsumerConfig> KafkaOption { get; set; } = DefaultSetting.KafkaOption;
@@ -24,6 +26,7 @@ public class ClusterSetting
     };
 
     public Action<string, byte[]>? SendGroupAction { get; set; } = delegate { Logger.Error("SendGroupAction not defined"); };
-
     public Action<byte[]>? SendBroadcastAction { get; set; } = delegate { Logger.Error("SendBroadcastAction not defined"); };
+    public Action<string>? CreateGroupAction { get; set; } = delegate { Logger.Error("CreateGroupAction not defined"); };
+    public Action<string>? DeleteGroupAction { get; set; } = delegate { Logger.Error("DeleteGroupAction not defined"); };
 }

@@ -55,12 +55,12 @@ public static class ServerSession
 
     public static bool CreateGroup(string groupId)
     {
-        return SessionDispatch.Instance.SessionGroup.CreateGroup(groupId);
+        return s_sessionDrive?.CreateGroup(groupId) ?? false;
     }
 
     public static bool DeleteGroup(string groupId)
     {
-        return SessionDispatch.Instance.SessionGroup.DeleteGroup(groupId);
+        return s_sessionDrive?.DeleteGroup(groupId) ?? false;
     }
 
     public static bool Activate(ISession session)

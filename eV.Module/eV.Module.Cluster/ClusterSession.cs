@@ -41,4 +41,14 @@ public class ClusterSession
     {
         _sessionRegistrationAuthority.Deregister(sessionId);
     }
+
+    public void CreateGroup(string groupId)
+    {
+
+    }
+
+    public void DeleteGroup(string groupId)
+    {
+
+    }
 }

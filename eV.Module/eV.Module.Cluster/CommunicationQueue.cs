@@ -15,6 +15,8 @@ public class CommunicationQueue : ICommunicationQueue
     public event Func<string, byte[], bool>? SendAction;
     public event Action<string, byte[]>? SendGroupAction;
     public event Action<byte[]>? SendBroadcastAction;
+    public event Action<string>? CreateGroupAction;
+    public event Action<string>? DeleteGroupAction;
 
     private const string GroupIdPrefix = "eV-Cluster-GroupId";
     private const string TopicPrefix = "eV-Cluster-Topic";
@@ -24,19 +26,30 @@ public class CommunicationQueue : ICommunicationQueue
     private readonly string _sendTopic;
     private readonly string _sendGroupTopic;
     private readonly string _sendBroadcastTopic;
+    private readonly string _createGroupTopic;
+    private readonly string _deleteGroupTopic;
 
     private readonly int _consumeSendPipelineNumber;
     private readonly int _consumeSendGroupPipelineNumber;
     private readonly int _consumeSendBroadcastPipelineNumber;
+    private readonly int _consumeCreateGroupPipelineNumber;
+    private readonly int _consumeDeleteGroupPipelineNumber;
 
     private readonly ISessionRegistrationAuthority _sessionRegistrationAuthority;
 
     private readonly Kafka _kafka;
 
-    public CommunicationQueue(string clusterName, string nodeName, int consumeSendPipelineNumber,
-        int consumeSendGroupPipelineNumber, int consumeSendBroadcastPipelineNumber,
+    public CommunicationQueue(
+        string clusterName,
+        string nodeName,
+        int consumeSendPipelineNumber,
+        int consumeSendGroupPipelineNumber,
+        int consumeSendBroadcastPipelineNumber,
+        int consumeCreateGroupPipelineNumber,
+        int consumeDeleteGroupPipelineNumber,
         ISessionRegistrationAuthority sessionRegistrationAuthority,
-        KeyValuePair<ProducerConfig, ConsumerConfig> kafkaOption)
+        KeyValuePair<ProducerConfig, ConsumerConfig> kafkaOption
+    )
     {
         _clusterName = clusterName;
         _nodeName = nodeName;
@@ -44,12 +57,16 @@ public class CommunicationQueue : ICommunicationQueue
         _consumeSendPipelineNumber = consumeSendPipelineNumber;
         _consumeSendGroupPipelineNumber = consumeSendGroupPipelineNumber;
         _consumeSendBroadcastPipelineNumber = consumeSendBroadcastPipelineNumber;
+        _consumeCreateGroupPipelineNumber = consumeCreateGroupPipelineNumber;
+        _consumeDeleteGroupPipelineNumber = consumeDeleteGroupPipelineNumber;
 
         _sessionRegistrationAuthority = sessionRegistrationAuthority;
 
         _sendTopic = string.Format(s_sendTopicFormat, TopicPrefix, _clusterName, _nodeName);
         _sendGroupTopic = $"{TopicPrefix}-Cluster:{_clusterName}-SendGroup";
         _sendBroadcastTopic = $"{TopicPrefix}-Cluster:{_clusterName}-SendBroadcast";
+        _createGroupTopic = $"{TopicPrefix}-Cluster:{_clusterName}-CreateGroup";
+        _deleteGroupTopic = $"{TopicPrefix}-Cluster:{_clusterName}-DeleteGroup";
 
         _kafka = new Kafka(_clusterName, _nodeName, kafkaOption);
     }
@@ -72,12 +89,30 @@ public class CommunicationQueue : ICommunicationQueue
 
     public void SendGroup(string groupId, byte[] data)
     {
+        if (SendGroupAction == null)
+            return;
         _kafka.Produce(_sendGroupTopic, $"{_nodeName}:{groupId}", data);
     }
 
     public void SendBroadcast(byte[] data)
     {
+        if (SendBroadcastAction == null)
+            return;
         _kafka.Produce(_sendBroadcastTopic, _nodeName, data);
+    }
+
+    public void CreateGroup(string groupId)
+    {
+        if (CreateGroupAction == null)
+            return;
+        _kafka.Produce(_createGroupTopic, _nodeName, System.Text.Encoding.UTF8.GetBytes(groupId));
+    }
+
+    public void DeleteGroup(string groupId)
+    {
+        if (DeleteGroupAction == null)
+            return;
+        _kafka.Produce(_deleteGroupTopic, _nodeName, System.Text.Encoding.UTF8.GetBytes(groupId));
     }
 
     public void Start()
@@ -96,6 +131,16 @@ public class CommunicationQueue : ICommunicationQueue
         {
             new Task(ConsumeSendBroadcast).Start();
         }
+
+        for (int i = 0; i < _consumeCreateGroupPipelineNumber; ++i)
+        {
+            new Task(ConsumeCreateGroup).Start();
+        }
+
+        for (int i = 0; i < _consumeDeleteGroupPipelineNumber; ++i)
+        {
+            new Task(ConsumeDeleteGroup).Start();
+        }
     }
 
     public void Stop()
@@ -107,7 +152,8 @@ public class CommunicationQueue : ICommunicationQueue
     {
         if (SendAction != null)
         {
-            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-Node:{_nodeName}-Send", _sendTopic,
+            _kafka.Consume(
+                $"{GroupIdPrefix}-Cluster:{_clusterName}-Node:{_nodeName}-Send", _sendTopic,
                 delegate(ConsumeResult<string, byte[]> result) { SendAction.Invoke(result.Message.Key, result.Message.Value); });
         }
         else
@@ -142,8 +188,7 @@ public class CommunicationQueue : ICommunicationQueue
             _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendBroadcast", _sendBroadcastTopic,
                 delegate(ConsumeResult<string, byte[]> result)
                 {
-                    string[] queueData = result.Message.Key.Split(":");
-                    if (queueData[0] == _nodeName)
+                    if (result.Message.Key == _nodeName)
                         return;
 
                     SendBroadcastAction.Invoke(result.Message.Value);
@@ -152,6 +197,44 @@ public class CommunicationQueue : ICommunicationQueue
         else
         {
             Logger.Error("SendBroadcastAction not defined");
+        }
+    }
+
+    private void ConsumeCreateGroup()
+    {
+        if (CreateGroupAction != null)
+        {
+            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-CreateGroup", _createGroupTopic,
+                delegate(ConsumeResult<string, byte[]> result)
+                {
+                    if (result.Message.Key == _nodeName)
+                        return;
+
+                    CreateGroupAction.Invoke(System.Text.Encoding.UTF8.GetString(result.Message.Value));
+                });
+        }
+        else
+        {
+            Logger.Error("CreateGroupAction not defined");
+        }
+    }
+
+    private void ConsumeDeleteGroup()
+    {
+        if (DeleteGroupAction != null)
+        {
+            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-DeleteGroup", _deleteGroupTopic,
+                delegate(ConsumeResult<string, byte[]> result)
+                {
+                    if (result.Message.Key == _nodeName)
+                        return;
+
+                    DeleteGroupAction.Invoke(System.Text.Encoding.UTF8.GetString(result.Message.Value));
+                });
+        }
+        else
+        {
+            Logger.Error("DeleteGroupAction not defined");
         }
     }
 }

@@ -55,4 +55,24 @@ public class ClusterSessionDrive : ISessionDrive
         _clusterSession.Deregister(session.SessionId!);
         return true;
     }
+
+    #region Group
+
+    public bool CreateGroup(string groupId)
+    {
+        if (!SessionUtils.CreateGroup(groupId))
+            return false;
+        _clusterSession.CreateGroup(groupId);
+        return true;
+    }
+
+    public bool DeleteGroup(string groupId)
+    {
+        if (!SessionUtils.DeleteGroup(groupId))
+            return false;
+        _clusterSession.DeleteGroup(groupId);
+        return true;
+    }
+
+    #endregion
 }
