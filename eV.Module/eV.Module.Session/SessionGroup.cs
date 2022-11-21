@@ -15,14 +15,17 @@ public class SessionGroup
         return _allGroup.TryGetValue(groupId, out ConcurrentDictionary<string, string>? result) ? result : null;
     }
 
-    public void CreateGroup(string groupId)
+    public bool CreateGroup(string groupId)
     {
-        Logger.Info($"Create group {groupId}");
         _allGroup.TryGetValue(groupId, out ConcurrentDictionary<string, string>? group);
         if (group == null)
         {
+            Logger.Info($"Create group {groupId}");
             _allGroup[groupId] = new ConcurrentDictionary<string, string>();
+            return true;
         }
+        Logger.Error($"Group {groupId} is already exists");
+        return false;
     }
 
     public bool DeleteGroup(string groupId)

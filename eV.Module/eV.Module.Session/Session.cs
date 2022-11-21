@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using System.Collections;
+using System.Collections.Concurrent;
 using eV.Module.EasyLog;
 using eV.Module.Routing;
 using eV.Module.Routing.Interface;
@@ -48,6 +49,9 @@ public sealed class Session : ISession
     public Action<string, byte[]>? SendBroadcastAction;
     public Func<string, string, bool>? JoinGroupAction;
     public Func<string, string, bool>? LeaveGroupAction;
+    public Func<string, ConcurrentDictionary<string, string>?>? GetGroupAction;
+    public Func<string, bool>? CreateGroupAction;
+    public Func<string, bool>? DeleteGroupAction;
 
     #endregion
 
@@ -68,14 +72,6 @@ public sealed class Session : ISession
     #endregion
 
     #region Group Property
-
-    public Dictionary<string, string> Group
-    {
-        get => _group;
-        set { }
-    }
-
-    private readonly Dictionary<string, string> _group = new();
 
     #endregion
 
@@ -123,10 +119,7 @@ public sealed class Session : ISession
     private void Release()
     {
         OnRelease?.Invoke(this);
-        foreach (KeyValuePair<string, string> g in _group)
-            LeaveGroup(g.Value);
         _sessionId = null;
-        _group.Clear();
         _dataParser.Reset();
         SessionData.Clear();
         SessionState = SessionState.Free;
@@ -285,20 +278,35 @@ public sealed class Session : ISession
     {
         if (JoinGroupAction == null || _sessionId is null or "")
             return false;
-        if (!JoinGroupAction.Invoke(groupId, _sessionId))
-            return false;
-        _group[groupId] = _sessionId;
-        return true;
+        return JoinGroupAction.Invoke(groupId, _sessionId);
     }
 
     public bool LeaveGroup(string groupId)
     {
         if (LeaveGroupAction == null || _sessionId is null or "")
             return false;
-        if (!LeaveGroupAction.Invoke(groupId, _sessionId))
+        return LeaveGroupAction.Invoke(groupId, _sessionId);
+    }
+
+    public ConcurrentDictionary<string, string>? GetGroup(string groupId)
+    {
+        if (GetGroupAction == null || _sessionId is null or "")
+            return null;
+        return GetGroupAction.Invoke(groupId);
+    }
+
+    public bool CreateGroup(string groupId)
+    {
+        if (CreateGroupAction == null || _sessionId is null or "")
             return false;
-        _group.Remove(groupId);
-        return true;
+        return CreateGroupAction.Invoke(groupId);
+    }
+
+    public bool DeleteGroup(string groupId)
+    {
+        if (DeleteGroupAction == null || _sessionId is null or "")
+            return false;
+        return DeleteGroupAction.Invoke(groupId);
     }
 
     #endregion

@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using System.Collections;
+using System.Collections.Concurrent;
 
 namespace eV.Module.Routing.Interface;
 
@@ -11,7 +12,6 @@ public interface ISession
 {
     public string? SessionId { get; set; }
     public Hashtable SessionData { get; }
-    public Dictionary<string, string> Group { get; set; }
     public DateTime? ConnectedDateTime { get; set; }
     public DateTime? LastActiveDateTime { get; set; }
     public bool Send(byte[] data);
@@ -21,6 +21,9 @@ public interface ISession
     public void SendBroadcast<T>(T data);
     public bool JoinGroup(string groupId);
     public bool LeaveGroup(string groupId);
+    public ConcurrentDictionary<string, string>? GetGroup(string groupId);
+    public bool CreateGroup(string groupId);
+    public bool DeleteGroup(string groupId);
     public void Activate(string sessionId);
     public void Shutdown();
 }

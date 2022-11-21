@@ -33,6 +33,9 @@ public class SessionManager
                 session.SendBroadcastAction = sessionExtend.SendBroadcast;
                 session.JoinGroupAction = sessionExtend.JoinGroup;
                 session.LeaveGroupAction = sessionExtend.LeaveGroup;
+                session.GetGroupAction = sessionExtend.GetGroup;
+                session.CreateGroupAction = sessionExtend.CreateGroup;
+                session.DeleteGroupAction = sessionExtend.DeleteGroup;
                 session.OnActivate += sessionExtend.OnActivate;
                 session.OnRelease += sessionExtend.OnRelease;
             }

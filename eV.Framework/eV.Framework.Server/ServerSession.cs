@@ -53,9 +53,9 @@ public static class ServerSession
         return SessionDispatch.Instance.SessionGroup.GetGroup(groupId);
     }
 
-    public static void CreateGroup(string groupId)
+    public static bool CreateGroup(string groupId)
     {
-        SessionDispatch.Instance.SessionGroup.CreateGroup(groupId);
+        return SessionDispatch.Instance.SessionGroup.CreateGroup(groupId);
     }
 
     public static bool DeleteGroup(string groupId)
