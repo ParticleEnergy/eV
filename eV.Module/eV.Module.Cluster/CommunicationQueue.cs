@@ -29,6 +29,12 @@ public class CommunicationQueue : ICommunicationQueue
     private readonly string _createGroupTopic;
     private readonly string _deleteGroupTopic;
 
+    private readonly string _sendConsumeGroupId;
+    private readonly string _sendGroupConsumeGroupId;
+    private readonly string _sendBroadcastConsumeGroupId;
+    private readonly string _createGroupConsumeGroupId;
+    private readonly string _deleteGroupConsumeGroupId;
+
     private readonly int _consumeSendPipelineNumber;
     private readonly int _consumeSendGroupPipelineNumber;
     private readonly int _consumeSendBroadcastPipelineNumber;
@@ -68,6 +74,11 @@ public class CommunicationQueue : ICommunicationQueue
         _createGroupTopic = $"{TopicPrefix}-Cluster:{_clusterName}-CreateGroup";
         _deleteGroupTopic = $"{TopicPrefix}-Cluster:{_clusterName}-DeleteGroup";
 
+        _sendConsumeGroupId = $"{GroupIdPrefix}-Cluster:{_clusterName}-Node:{_nodeName}-Send";
+        _sendGroupConsumeGroupId = $"{GroupIdPrefix}-Cluster:{_clusterName}-SendGroup";
+        _sendBroadcastConsumeGroupId = $"{GroupIdPrefix}-Cluster:{_clusterName}-SendBroadcast";
+        _createGroupConsumeGroupId = $"{GroupIdPrefix}-Cluster:{_clusterName}-CreateGroup";
+        _deleteGroupConsumeGroupId = $"{GroupIdPrefix}-Cluster:{_clusterName}-DeleteGroup";
         _kafka = new Kafka(_clusterName, _nodeName, kafkaOption);
     }
 
@@ -153,8 +164,12 @@ public class CommunicationQueue : ICommunicationQueue
         if (SendAction != null)
         {
             _kafka.Consume(
-                $"{GroupIdPrefix}-Cluster:{_clusterName}-Node:{_nodeName}-Send", _sendTopic,
-                delegate(ConsumeResult<string, byte[]> result) { SendAction.Invoke(result.Message.Key, result.Message.Value); });
+                _sendConsumeGroupId,
+                _sendTopic,
+                delegate(ConsumeResult<string, byte[]> result)
+                {
+                    SendAction.Invoke(result.Message.Key, result.Message.Value);
+                });
         }
         else
         {
@@ -166,7 +181,9 @@ public class CommunicationQueue : ICommunicationQueue
     {
         if (SendGroupAction != null)
         {
-            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendGroup", _sendGroupTopic,
+            _kafka.Consume(
+                _sendGroupConsumeGroupId,
+                _sendGroupTopic,
                 delegate(ConsumeResult<string, byte[]> result)
                 {
                     string[] queueData = result.Message.Key.Split(":");
@@ -185,7 +202,9 @@ public class CommunicationQueue : ICommunicationQueue
     {
         if (SendBroadcastAction != null)
         {
-            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-SendBroadcast", _sendBroadcastTopic,
+            _kafka.Consume(
+                _sendBroadcastConsumeGroupId,
+                _sendBroadcastTopic,
                 delegate(ConsumeResult<string, byte[]> result)
                 {
                     if (result.Message.Key == _nodeName)
@@ -204,7 +223,9 @@ public class CommunicationQueue : ICommunicationQueue
     {
         if (CreateGroupAction != null)
         {
-            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-CreateGroup", _createGroupTopic,
+            _kafka.Consume(
+                _createGroupConsumeGroupId,
+                _createGroupTopic,
                 delegate(ConsumeResult<string, byte[]> result)
                 {
                     if (result.Message.Key == _nodeName)
@@ -223,7 +244,9 @@ public class CommunicationQueue : ICommunicationQueue
     {
         if (DeleteGroupAction != null)
         {
-            _kafka.Consume($"{GroupIdPrefix}-Cluster:{_clusterName}-DeleteGroup", _deleteGroupTopic,
+            _kafka.Consume(
+                _deleteGroupConsumeGroupId,
+                _deleteGroupTopic,
                 delegate(ConsumeResult<string, byte[]> result)
                 {
                     if (result.Message.Key == _nodeName)
