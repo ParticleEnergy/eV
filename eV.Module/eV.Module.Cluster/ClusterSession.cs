@@ -44,11 +44,11 @@ public class ClusterSession
 
     public void CreateGroup(string groupId)
     {
-
+        _communicationQueue.CreateGroup(groupId);
     }
 
     public void DeleteGroup(string groupId)
     {
-
+        _communicationQueue.DeleteGroup(groupId);
     }
 }
