@@ -12,7 +12,7 @@
     <TargetFrameworks>net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.5.6</PackageVersion>
+    <PackageVersion>1.5.7</PackageVersion>
     <RootNamespace>eV.Module.Routing</RootNamespace>
   </PropertyGroup>
 
