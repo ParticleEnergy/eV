@@ -51,6 +51,18 @@ public sealed class Application
         return this;
     }
 
+    public Application SetServerOnStart(Action onStart)
+    {
+        ServerEvent.ServerOnStart = onStart;
+        return this;
+    }
+
+    public Application SetServerOnStop(Action onStop)
+    {
+        ServerEvent.ServerOnStop = onStop;
+        return this;
+    }
+
     public Application SetCultureInfo(string name)
     {
         CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(name, true) { DateTimeFormat = { ShortDatePattern = "yyyy-MM-dd", FullDateTimePattern = "yyyy-MM-dd HH:mm:ss", LongTimePattern = "HH:mm:ss" } };

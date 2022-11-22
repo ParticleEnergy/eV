@@ -40,6 +40,22 @@ public class Server
         _sessionExtension.OnReleaseEvent += ServerEvent.SessionOnRelease;
 
         InitServerSession();
+
+        if (Configure.Instance.BaseOption.Debug)
+            SessionDebug.EnableDebug();
+
+        if (Configure.Instance.BaseOption.Compress)
+            Serializer.EnableCompress();
+
+        LoadModule.StartAll();
+
+        Profile.Init(
+            Configure.Instance.BaseOption.PublicObjectAssemblyString,
+            Configure.Instance.BaseOption.GameProfilePath,
+            Configure.Instance.BaseOption.GameProfileMonitoringChange
+        );
+
+        RegisterHandler();
     }
 
     private void InitServerSession()
@@ -70,22 +86,7 @@ public class Server
 
     public void Start()
     {
-        if (Configure.Instance.BaseOption.Debug)
-            SessionDebug.EnableDebug();
-
-        if (Configure.Instance.BaseOption.Compress)
-            Serializer.EnableCompress();
-
-        LoadModule.StartAll();
-
-        Profile.Init(
-            Configure.Instance.BaseOption.PublicObjectAssemblyString,
-            Configure.Instance.BaseOption.GameProfilePath,
-            Configure.Instance.BaseOption.GameProfileMonitoringChange
-        );
-
-        RegisterHandler();
-
+        ServerEvent.OnStart();
         _cluster?.Start();
         _queue.Start();
         _server.Start();
@@ -94,6 +95,7 @@ public class Server
 
     public void Stop()
     {
+        ServerEvent.OnStop();
         _idleDetection.Stop();
         _cluster?.Stop();
         _server.Stop();

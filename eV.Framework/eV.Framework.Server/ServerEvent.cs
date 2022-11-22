@@ -10,6 +10,8 @@ internal static class ServerEvent
     public static SessionEvent? ServerOnConnected;
     public static SessionEvent? ServerSessionOnActivate;
     public static SessionEvent? ServerSessionOnRelease;
+    public static Action? ServerOnStart;
+    public static Action? ServerOnStop;
 
     public static void OnConnected(ISession session)
     {
@@ -24,5 +26,15 @@ internal static class ServerEvent
     public static void SessionOnRelease(ISession session)
     {
         ServerSessionOnRelease?.Invoke(session);
+    }
+
+    public static void OnStart()
+    {
+        ServerOnStart?.Invoke();
+    }
+
+    public static void OnStop()
+    {
+        ServerOnStop?.Invoke();
     }
 }
