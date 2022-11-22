@@ -16,7 +16,7 @@ public interface ISession
     public DateTime? LastActiveDateTime { get; set; }
     public bool Send(byte[] data);
     public bool Send<T>(T data);
-    public bool Send<T>(string groupId, T data);
+    public bool Send<T>(string sessionId, T data);
     public void SendGroup<T>(string groupId, T data);
     public void SendBroadcast<T>(T data);
     public bool JoinGroup(string groupId);
