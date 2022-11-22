@@ -12,7 +12,7 @@
     <TargetFrameworks>net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.5.7</PackageVersion>
+    <PackageVersion>1.5.7.1</PackageVersion>
     <RootNamespace>eV.Network.Core</RootNamespace>
   </PropertyGroup>
 
