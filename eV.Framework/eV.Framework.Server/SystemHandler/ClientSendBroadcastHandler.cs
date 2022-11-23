@@ -14,14 +14,15 @@ public class ClientSendBroadcast
 
 public class ClientSendBroadcastHandler : HandlerBase<ClientSendBroadcast>
 {
-    protected override void Handle(ISession session, ClientSendBroadcast content)
+    protected override Task Handle(ISession session, ClientSendBroadcast content)
     {
         if (content.Data is not { Length: > 0 })
         {
             EasyLogger.Warn($"Session {session.SessionId} send broadcast failed data is empty");
-            return;
+            return Task.CompletedTask;
         }
 
         ServerSession.SendBroadcast(session.SessionId!, content.Data);
+        return Task.CompletedTask;
     }
 }

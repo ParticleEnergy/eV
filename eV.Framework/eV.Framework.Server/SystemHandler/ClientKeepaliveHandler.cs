@@ -18,9 +18,10 @@ public class ClientKeepaliveHandler : HandlerBase<ClientKeepalive>
         Skip = true;
     }
 
-    protected override void Handle(ISession session, ClientKeepalive _)
+    protected override Task Handle(ISession session, ClientKeepalive _)
     {
         EasyLogger.Info(
             $"Session {session.SessionId} Connected Time - {session.ConnectedDateTime:hh:mm:ss} keepalive time - {DateTime.Now:hh:mm:ss}");
+        return Task.CompletedTask;
     }
 }

@@ -10,13 +10,12 @@ public abstract class HandlerBase<TContent> : IHandler
 {
     protected bool Skip = false;
 
-    public virtual Task Run(ISession session, object content)
+    public virtual async Task Run(ISession session, object content)
     {
         if (!Skip && session.SessionId is null or "")
-            return Task.CompletedTask;
-        Handle(session, (TContent)content);
-        return Task.CompletedTask;
+            return;
+        await Handle(session, (TContent)content);
     }
 
-    protected abstract void Handle(ISession session, TContent content);
+    protected abstract Task Handle(ISession session, TContent content);
 }

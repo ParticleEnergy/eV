@@ -15,20 +15,21 @@ public class ClientLeaveGroup
 
 public class ClientLeaveGroupHandler : HandlerBase<ClientLeaveGroup>
 {
-    protected override void Handle(ISession session, ClientLeaveGroup content)
+    protected override Task Handle(ISession session, ClientLeaveGroup content)
     {
         if (content.GroupId.Equals(""))
         {
             EasyLogger.Warn($"Session {session.SessionId} LeaveGroup failed groupId is empty");
-            return;
+            return Task.CompletedTask;
         }
 
         if (content.SessionId.Equals(""))
         {
             EasyLogger.Warn($"Session {session.SessionId} LeaveGroup failed sessionId is empty");
-            return;
+            return Task.CompletedTask;
         }
 
         ServerSession.LeaveGroup(content.GroupId, content.SessionId);
+        return Task.CompletedTask;
     }
 }

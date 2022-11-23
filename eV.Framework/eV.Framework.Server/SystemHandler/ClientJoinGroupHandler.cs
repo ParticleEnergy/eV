@@ -15,20 +15,21 @@ public class ClientJoinGroup
 
 public class ClientJoinGroupHandler : HandlerBase<ClientJoinGroup>
 {
-    protected override void Handle(ISession session, ClientJoinGroup content)
+    protected override Task Handle(ISession session, ClientJoinGroup content)
     {
         if (content.GroupId.Equals(""))
         {
             EasyLogger.Warn($"Session {session.SessionId} JoinGroup failed groupId is empty");
-            return;
+            return Task.CompletedTask;
         }
 
         if (content.SessionId.Equals(""))
         {
             EasyLogger.Warn($"Session {session.SessionId} JoinGroup failed sessionId is empty");
-            return;
+            return Task.CompletedTask;
         }
 
         ServerSession.JoinGroup(content.GroupId, content.SessionId);
+        return Task.CompletedTask;
     }
 }

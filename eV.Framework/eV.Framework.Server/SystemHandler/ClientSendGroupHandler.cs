@@ -15,20 +15,21 @@ public class ClientSendGroup
 
 public class ClientSendGroupHandler : HandlerBase<ClientSendGroup>
 {
-    protected override void Handle(ISession session, ClientSendGroup content)
+    protected override Task Handle(ISession session, ClientSendGroup content)
     {
         if (content.GroupId.Equals(""))
         {
             EasyLogger.Warn($"Session {session.SessionId} SendGroup failed groupId is empty");
-            return;
+            return Task.CompletedTask;
         }
 
         if (content.Data is not { Length: > 0 })
         {
             EasyLogger.Warn($"Session {session.SessionId} SendGroup failed data is empty");
-            return;
+            return Task.CompletedTask;
         }
 
         ServerSession.SendGroup(session.SessionId!, content.GroupId, content.Data);
+        return Task.CompletedTask;
     }
 }
