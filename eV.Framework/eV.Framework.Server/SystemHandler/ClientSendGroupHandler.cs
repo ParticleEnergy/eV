@@ -19,13 +19,13 @@ public class ClientSendGroupHandler : HandlerBase<ClientSendGroup>
     {
         if (content.GroupId.Equals(""))
         {
-            EasyLogger.Warn($"Session {session.SessionId} SendGroup failed groupId is empty");
+            EasyLogger.Warn($"Session [{session.SessionId}] SendGroup failed groupId is empty");
             return Task.CompletedTask;
         }
 
         if (content.Data is not { Length: > 0 })
         {
-            EasyLogger.Warn($"Session {session.SessionId} SendGroup failed data is empty");
+            EasyLogger.Warn($"Session [{session.SessionId}] SendGroup failed data is empty");
             return Task.CompletedTask;
         }
 

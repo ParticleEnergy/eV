@@ -18,7 +18,7 @@ public class ClientSendBroadcastHandler : HandlerBase<ClientSendBroadcast>
     {
         if (content.Data is not { Length: > 0 })
         {
-            EasyLogger.Warn($"Session {session.SessionId} send broadcast failed data is empty");
+            EasyLogger.Warn($"Session [{session.SessionId}] send broadcast failed data is empty");
             return Task.CompletedTask;
         }
 

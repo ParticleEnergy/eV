@@ -19,13 +19,13 @@ public class ClientJoinGroupHandler : HandlerBase<ClientJoinGroup>
     {
         if (content.GroupId.Equals(""))
         {
-            EasyLogger.Warn($"Session {session.SessionId} JoinGroup failed groupId is empty");
+            EasyLogger.Warn($"Session [{session.SessionId}] JoinGroup failed groupId is empty");
             return Task.CompletedTask;
         }
 
         if (content.SessionId.Equals(""))
         {
-            EasyLogger.Warn($"Session {session.SessionId} JoinGroup failed sessionId is empty");
+            EasyLogger.Warn($"Session [{session.SessionId}] JoinGroup failed sessionId is empty");
             return Task.CompletedTask;
         }
 

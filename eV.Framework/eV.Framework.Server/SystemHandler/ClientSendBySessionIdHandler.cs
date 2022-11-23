@@ -19,13 +19,13 @@ public class ClientSendBySessionIdHandler : HandlerBase<ClientSendBySessionId>
     {
         if (content.SessionId.Equals(""))
         {
-            EasyLogger.Warn($"Session {session.SessionId} send by sessionId failed sessionId is empty");
+            EasyLogger.Warn($"Session [{session.SessionId}] send by sessionId failed sessionId is empty");
             return Task.CompletedTask;
         }
 
         if (content.Data is not { Length: > 0 })
         {
-            EasyLogger.Warn($"Session {session.SessionId} send by sessionId failed data is empty");
+            EasyLogger.Warn($"Session [{session.SessionId}] send by sessionId failed data is empty");
             return Task.CompletedTask;
         }
 
