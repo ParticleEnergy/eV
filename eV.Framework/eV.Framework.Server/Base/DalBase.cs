@@ -40,14 +40,14 @@ public abstract class DalBase<T> where T : class, IModel
         MongodbHelper.Insert(Database, Collection, data);
     }
 
-    public virtual Task? InsertAsync(T data)
+    public virtual async Task InsertAsync(T data)
     {
-        return MongodbHelper.InsertAsync(Database, Collection, data);
+        await MongodbHelper.InsertAsync(Database, Collection, data);
     }
 
-    public virtual Task? InsertAsync(List<T> data)
+    public virtual async Task InsertAsync(List<T> data)
     {
-        return MongodbHelper.InsertAsync(Database, Collection, data);
+        await MongodbHelper.InsertAsync(Database, Collection, data);
     }
 
     #endregion
@@ -59,9 +59,9 @@ public abstract class DalBase<T> where T : class, IModel
         return MongodbHelper.Delete(Database, Collection, filter, one);
     }
 
-    public virtual Task<DeleteResult>? DeleteAsync(FilterDefinition<T> filter, bool one = true)
+    public virtual async Task<DeleteResult?> DeleteAsync(FilterDefinition<T> filter, bool one = true)
     {
-        return MongodbHelper.DeleteAsync(Database, Collection, filter, one);
+        return await MongodbHelper.DeleteAsync(Database, Collection, filter, one);
     }
 
     #endregion
@@ -73,10 +73,9 @@ public abstract class DalBase<T> where T : class, IModel
         return MongodbHelper.Update(Database, Collection, filter, update, one, isUpsert);
     }
 
-    public virtual Task<UpdateResult>? UpdateAsync(FilterDefinition<T> filter, UpdateDefinition<T> update,
-        bool one = true, bool isUpsert = false)
+    public virtual async Task<UpdateResult?> UpdateAsync(FilterDefinition<T> filter, UpdateDefinition<T> update, bool one = true, bool isUpsert = false)
     {
-        return MongodbHelper.UpdateAsync(Database, Collection, filter, update, one, isUpsert);
+        return await MongodbHelper.UpdateAsync(Database, Collection, filter, update, one, isUpsert);
     }
 
     #endregion
@@ -88,9 +87,9 @@ public abstract class DalBase<T> where T : class, IModel
         return MongodbHelper.Select(Database, Collection, filter, offset, limit);
     }
 
-    public virtual Task<IAsyncCursor<T>>? SelectAsync(FilterDefinition<T> filter, int offset, int limit)
+    public virtual async Task<IAsyncCursor<T>?> SelectAsync(FilterDefinition<T> filter, int offset, int limit)
     {
-        return MongodbHelper.SelectAsync(Database, Collection, filter, offset, limit);
+        return await MongodbHelper.SelectAsync(Database, Collection, filter, offset, limit);
     }
 
     #endregion
@@ -102,9 +101,9 @@ public abstract class DalBase<T> where T : class, IModel
         return MongodbHelper.Replace(Database, Collection, filter, data, isUpsert);
     }
 
-    public virtual Task<ReplaceOneResult>? ReplaceAsync(FilterDefinition<T> filter, T data, bool isUpsert = false)
+    public virtual async Task<ReplaceOneResult?> ReplaceAsync(FilterDefinition<T> filter, T data, bool isUpsert = false)
     {
-        return MongodbHelper.ReplaceAsync(Database, Collection, filter, data, isUpsert);
+        return await MongodbHelper.ReplaceAsync(Database, Collection, filter, data, isUpsert);
     }
 
     #endregion

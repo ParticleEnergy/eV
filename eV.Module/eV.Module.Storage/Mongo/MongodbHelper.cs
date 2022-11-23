@@ -15,7 +15,7 @@ public static class MongodbHelper
     {
         MongoClient? client = MongodbManager.Instance.GetClient(name);
         if (client == null)
-            Logger.Error($"Mongo client database [{name}] not found");
+            Logger.Error($"Mongodb client database [{name}] not found");
         return client;
     }
 
@@ -23,7 +23,7 @@ public static class MongodbHelper
     {
         IMongoDatabase? db = GetMongoClient(database)?.GetDatabase(database);
         if (db == null)
-            Logger.Error($"Mongo database [{database}] not found");
+            Logger.Error($"Mongodb database [{database}] not found");
         return db;
     }
 
@@ -31,7 +31,7 @@ public static class MongodbHelper
     {
         IMongoCollection<T>? c = GetDatabase(database)?.GetCollection<T>(collection);
         if (c == null)
-            Logger.Error($"Mongo database [{database}] collection [{collection}] not found");
+            Logger.Error($"Mongodb database [{database}] collection [{collection}] not found");
         return c;
     }
 
@@ -65,31 +65,41 @@ public static class MongodbHelper
         }
     }
 
-    public static Task? InsertAsync<T>(string database, string collection, T data) where T : IModel
+    public static async Task InsertAsync<T>(string database, string collection, T data) where T : IModel
     {
         try
         {
+            var mongoCollection = GetCollection<T>(database, collection);
+            if (mongoCollection == null)
+            {
+                return;
+            }
+
             data.CreatedAt = DateTime.Now;
-            return GetCollection<T>(database, collection)?.InsertOneAsync(data);
+            await mongoCollection.InsertOneAsync(data);
         }
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
-            return null;
         }
     }
 
-    public static Task? InsertAsync<T>(string database, string collection, List<T> data) where T : class, IModel
+    public static async Task InsertAsync<T>(string database, string collection, List<T> data) where T : class, IModel
     {
         try
         {
+            var mongoCollection = GetCollection<T>(database, collection);
+            if (mongoCollection == null)
+            {
+                return;
+            }
+
             data.ForEach(d => d.CreatedAt = DateTime.Now);
-            return GetCollection<T>(database, collection)?.InsertManyAsync(data);
+            await mongoCollection.InsertManyAsync(data);
         }
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
-            return null;
         }
     }
 
@@ -97,8 +107,7 @@ public static class MongodbHelper
 
     #region Delete
 
-    public static DeleteResult? Delete<T>(string database, string collection, FilterDefinition<T> filter,
-        bool one = true) where T : IModel
+    public static DeleteResult? Delete<T>(string database, string collection, FilterDefinition<T> filter, bool one = true) where T : IModel
     {
         try
         {
@@ -113,14 +122,17 @@ public static class MongodbHelper
         }
     }
 
-    public static Task<DeleteResult>? DeleteAsync<T>(string database, string collection, FilterDefinition<T> filter,
-        bool one = true) where T : IModel
+    public static async Task<DeleteResult?> DeleteAsync<T>(string database, string collection, FilterDefinition<T> filter, bool one = true) where T : IModel
     {
         try
         {
-            return one
-                ? GetCollection<T>(database, collection)?.DeleteOneAsync(filter)
-                : GetCollection<T>(database, collection)?.DeleteManyAsync(filter);
+            var mongoCollection = GetCollection<T>(database, collection);
+            if (mongoCollection != null)
+            {
+                return one ? await mongoCollection.DeleteOneAsync(filter) : await mongoCollection.DeleteManyAsync(filter);
+            }
+
+            return null;
         }
         catch (Exception e)
         {
@@ -133,8 +145,7 @@ public static class MongodbHelper
 
     #region Update
 
-    public static UpdateResult? Update<T>(string database, string collection, FilterDefinition<T> filter,
-        UpdateDefinition<T> update, bool one = true, bool isUpsert = false) where T : IModel
+    public static UpdateResult? Update<T>(string database, string collection, FilterDefinition<T> filter, UpdateDefinition<T> update, bool one = true, bool isUpsert = false) where T : IModel
     {
         try
         {
@@ -152,17 +163,21 @@ public static class MongodbHelper
         }
     }
 
-    public static Task<UpdateResult>? UpdateAsync<T>(string database, string collection, FilterDefinition<T> filter,
+    public static async Task<UpdateResult?> UpdateAsync<T>(string database, string collection, FilterDefinition<T> filter,
         UpdateDefinition<T> update, bool one = true, bool isUpsert = false) where T : IModel
     {
         try
         {
+            var mongoCollection = GetCollection<T>(database, collection);
+            if (mongoCollection == null)
+            {
+                return null;
+            }
+
             update.Set("UpdatedAt", DateTime.Now);
             return one
-                ? GetCollection<T>(database, collection)
-                    ?.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = isUpsert })
-                : GetCollection<T>(database, collection)
-                    ?.UpdateManyAsync(filter, update, new UpdateOptions { IsUpsert = isUpsert });
+                ? await mongoCollection.UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = isUpsert })
+                : await mongoCollection.UpdateManyAsync(filter, update, new UpdateOptions { IsUpsert = isUpsert });
         }
         catch (Exception e)
         {
@@ -180,8 +195,7 @@ public static class MongodbHelper
     {
         try
         {
-            return GetCollection<T>(database, collection)
-                ?.FindSync(filter, new FindOptions<T> { Skip = offset, Limit = limit });
+            return GetCollection<T>(database, collection)?.FindSync(filter, new FindOptions<T> { Skip = offset, Limit = limit });
         }
         catch (Exception e)
         {
@@ -190,13 +204,17 @@ public static class MongodbHelper
         }
     }
 
-    public static Task<IAsyncCursor<T>>? SelectAsync<T>(string database, string collection, FilterDefinition<T> filter,
-        int offset, int limit) where T : IModel
+    public static async Task<IAsyncCursor<T>?> SelectAsync<T>(string database, string collection, FilterDefinition<T> filter, int offset, int limit) where T : IModel
     {
         try
         {
-            return GetCollection<T>(database, collection)
-                ?.FindAsync(filter, new FindOptions<T> { Skip = offset, Limit = limit });
+            var mongoCollection = GetCollection<T>(database, collection);
+            if (mongoCollection != null)
+            {
+                return await mongoCollection.FindAsync(filter, new FindOptions<T> { Skip = offset, Limit = limit });
+            }
+
+            return null;
         }
         catch (Exception e)
         {
@@ -214,8 +232,7 @@ public static class MongodbHelper
         try
         {
             data.UpdatedAt = DateTime.Now;
-            return GetCollection<T>(database, collection)
-                ?.ReplaceOne(filter, data, new ReplaceOptions { IsUpsert = isUpsert });
+            return GetCollection<T>(database, collection)?.ReplaceOne(filter, data, new ReplaceOptions { IsUpsert = isUpsert });
         }
         catch (Exception e)
         {
@@ -224,13 +241,18 @@ public static class MongodbHelper
         }
     }
 
-    public static Task<ReplaceOneResult>? ReplaceAsync<T>(string database, string collection, FilterDefinition<T> filter, T data, bool isUpsert = false) where T : IModel
+    public static async Task<ReplaceOneResult?> ReplaceAsync<T>(string database, string collection, FilterDefinition<T> filter, T data, bool isUpsert = false) where T : IModel
     {
         try
         {
             data.UpdatedAt = DateTime.Now;
-            return GetCollection<T>(database, collection)
-                ?.ReplaceOneAsync(filter, data, new ReplaceOptions { IsUpsert = isUpsert });
+            var mongoCollection = GetCollection<T>(database, collection);
+            if (mongoCollection != null)
+            {
+                return await mongoCollection.ReplaceOneAsync(filter, data, new ReplaceOptions { IsUpsert = isUpsert });
+            }
+
+            return null;
         }
         catch (Exception e)
         {
