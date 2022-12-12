@@ -8,25 +8,13 @@ namespace eV.Module.Routing;
 
 public static class Serializer
 {
-    private static bool _isCompress;
-
-    public static void EnableCompress()
-    {
-        _isCompress = true;
-    }
-
-    public static void DisableCompress()
-    {
-        _isCompress = false;
-    }
-
     public static byte[] Serialize<T>(T data)
     {
-        return _isCompress ? GZip.Compress(data.ToBson()) : data.ToBson();
+        return GZip.Compress(data.ToBson());
     }
 
     public static object Deserialize(byte[] data, Type type)
     {
-        return BsonSerializer.Deserialize(_isCompress ? GZip.Decompress(data) : data, type);
+        return BsonSerializer.Deserialize(GZip.Decompress(data), type);
     }
 }
