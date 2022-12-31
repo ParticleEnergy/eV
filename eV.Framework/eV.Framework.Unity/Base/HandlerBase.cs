@@ -8,11 +8,10 @@ namespace eV.Framework.Unity.Base;
 
 public abstract class HandlerBase<TContent> : IHandler
 {
-    public virtual Task Run(ISession session, object content)
+    public virtual async Task Run(ISession session, object content)
     {
-        Handle(session, (TContent)content);
-        return Task.CompletedTask;
+        await Handle(session, (TContent)content);
     }
 
-    protected abstract void Handle(ISession session, TContent content);
+    protected abstract Task Handle(ISession session, TContent content);
 }
