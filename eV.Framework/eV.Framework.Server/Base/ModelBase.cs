@@ -9,7 +9,7 @@ namespace eV.Framework.Server.Base;
 
 public class ModelBase : IModel
 {
-    [BsonId] [BsonElement("_id")] public ObjectId Id { get; set; }
+    [BsonId] [BsonElement("_id")] public ObjectId Id { get; set; } = ObjectId.Empty;
 
     [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
     public DateTime CreatedAt { get; set; }
