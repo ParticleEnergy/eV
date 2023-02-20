@@ -148,7 +148,7 @@ public class Client : ITcpClient
 
     private void ProcessConnect(SocketAsyncEventArgs socketAsyncEventArgs)
     {
-        if (socketAsyncEventArgs.ConnectSocket != null)
+        if (socketAsyncEventArgs.ConnectSocket is { Connected: true })
         {
 #if !NETSTANDARD
             if (socketAsyncEventArgs.ConnectSocket.ProtocolType == ProtocolType.Tcp)
