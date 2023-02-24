@@ -44,7 +44,7 @@ public class Server
         if (Configure.Instance.BaseOption.Debug)
             SessionDebug.EnableDebug();
 
-        LoadModule.StartAll();
+        LoadModule.Start();
 
         Profile.Init(
             Configure.Instance.BaseOption.PublicObjectAssemblyString,
@@ -71,7 +71,6 @@ public class Server
                 ConsumeSendBroadcastPipelineNumber =
                     Configure.Instance.ClusterOption.ConsumeSendBroadcastPipelineNumber,
                 RedisOption = ConfigUtils.GetRedisConfig(Configure.Instance.ClusterOption.Redis),
-                KafkaOption = ConfigUtils.GetKafkaConfig(Configure.Instance.ClusterOption.Kafka),
                 SendAction = SessionUtils.SendAction,
                 SendBroadcastAction = SessionUtils.SendBroadcastAction
             });
@@ -95,7 +94,7 @@ public class Server
         _idleDetection.Stop();
         _cluster?.Stop();
         _server.Stop();
-        LoadModule.StopAll();
+        LoadModule.Stop();
     }
 
     private void ServerOnAcceptConnect(ITcpChannel channel)
