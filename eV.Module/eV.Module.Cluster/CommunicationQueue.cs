@@ -1,6 +1,7 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
+using System.Text;
 using Confluent.Kafka;
 using eV.Module.Cluster.Interface;
 using eV.Module.EasyLog;
@@ -116,14 +117,14 @@ public class CommunicationQueue : ICommunicationQueue
     {
         if (CreateGroupAction == null)
             return;
-        _kafka.Produce(_createGroupTopic, _nodeName, System.Text.Encoding.UTF8.GetBytes(groupId));
+        _kafka.Produce(_createGroupTopic, _nodeName, Encoding.UTF8.GetBytes(groupId));
     }
 
     public void DeleteGroup(string groupId)
     {
         if (DeleteGroupAction == null)
             return;
-        _kafka.Produce(_deleteGroupTopic, _nodeName, System.Text.Encoding.UTF8.GetBytes(groupId));
+        _kafka.Produce(_deleteGroupTopic, _nodeName, Encoding.UTF8.GetBytes(groupId));
     }
 
     public void Start()
@@ -231,7 +232,7 @@ public class CommunicationQueue : ICommunicationQueue
                     if (result.Message.Key == _nodeName)
                         return;
 
-                    CreateGroupAction.Invoke(System.Text.Encoding.UTF8.GetString(result.Message.Value));
+                    CreateGroupAction.Invoke(Encoding.UTF8.GetString(result.Message.Value));
                 });
         }
         else
@@ -252,7 +253,7 @@ public class CommunicationQueue : ICommunicationQueue
                     if (result.Message.Key == _nodeName)
                         return;
 
-                    DeleteGroupAction.Invoke(System.Text.Encoding.UTF8.GetString(result.Message.Value));
+                    DeleteGroupAction.Invoke(Encoding.UTF8.GetString(result.Message.Value));
                 });
         }
         else
