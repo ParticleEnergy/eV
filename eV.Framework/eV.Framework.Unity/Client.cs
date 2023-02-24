@@ -96,36 +96,12 @@ public class Client
             return session.Send(Package.Pack(packet));
         };
 
-        session.SendGroupAction = (_, groupId, data) =>
-        {
-            Packet packet = new();
-            packet.SetName("ClientSendGroup");
-            packet.SetContent(Serializer.Serialize(new { GroupId = groupId, Data = data }));
-            session.Send(Package.Pack(packet));
-        };
-
         session.SendBroadcastAction = (_, data) =>
         {
             Packet packet = new();
             packet.SetName("ClientSendBroadcast");
             packet.SetContent(Serializer.Serialize(new { Data = data }));
             session.Send(Package.Pack(packet));
-        };
-
-        session.JoinGroupAction = (groupId, sessionId) =>
-        {
-            Packet packet = new();
-            packet.SetName("ClientJoinGroup");
-            packet.SetContent(Serializer.Serialize(new { GroupId = groupId, SessionId = sessionId }));
-            return session.Send(Package.Pack(packet));
-        };
-
-        session.LeaveGroupAction = (groupId, sessionId) =>
-        {
-            Packet packet = new();
-            packet.SetName("ClientLeaveGroup");
-            packet.SetContent(Serializer.Serialize(new { GroupId = groupId, SessionId = sessionId }));
-            return session.Send(Package.Pack(packet));
         };
     }
 

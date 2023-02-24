@@ -9,11 +9,9 @@ public class SessionDispatch
 {
     private SessionDispatch()
     {
-        SessionGroup = new SessionGroup();
         SessionManager = new SessionManager();
     }
 
     public static SessionDispatch Instance { get; } = new();
-    public SessionGroup SessionGroup { get; }
     public SessionManager SessionManager { get; }
 }

@@ -28,39 +28,9 @@ public static class ServerSession
         return s_sessionDrive?.Send(sessionId, data) ?? false;
     }
 
-    public static void SendGroup(string selfSessionId, string groupId, byte[] data)
-    {
-        s_sessionDrive?.SendGroup(selfSessionId, groupId, data);
-    }
-
     public static void SendBroadcast(string selfSessionId, byte[] data)
     {
         s_sessionDrive?.SendBroadcast(selfSessionId, data);
-    }
-
-    public static bool JoinGroup(string groupId, string sessionId)
-    {
-        return SessionDispatch.Instance.SessionGroup.JoinGroup(groupId, sessionId);
-    }
-
-    public static bool LeaveGroup(string groupId, string sessionId)
-    {
-        return SessionDispatch.Instance.SessionGroup.LeaveGroup(groupId, sessionId);
-    }
-
-    public static ConcurrentDictionary<string, string>? GetGroup(string groupId)
-    {
-        return SessionDispatch.Instance.SessionGroup.GetGroup(groupId);
-    }
-
-    public static bool CreateGroup(string groupId)
-    {
-        return s_sessionDrive?.CreateGroup(groupId) ?? false;
-    }
-
-    public static bool DeleteGroup(string groupId)
-    {
-        return s_sessionDrive?.DeleteGroup(groupId) ?? false;
     }
 
     public static bool Activate(ISession session)

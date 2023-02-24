@@ -14,11 +14,6 @@ public class SingleSessionDrive : ISessionDrive
         return SessionUtils.Send(sessionId, data);
     }
 
-    public void SendGroup(string selfSessionId, string groupId, byte[] data)
-    {
-        SessionUtils.SendGroup(selfSessionId, groupId, data);
-    }
-
     public void SendBroadcast(string selfSessionId, byte[] data)
     {
         SessionUtils.SendBroadcast(selfSessionId, data);
@@ -33,18 +28,4 @@ public class SingleSessionDrive : ISessionDrive
     {
         return SessionUtils.Release(session);
     }
-
-    #region Group
-
-    public bool CreateGroup(string groupId)
-    {
-        return SessionUtils.CreateGroup(groupId);
-    }
-
-    public bool DeleteGroup(string groupId)
-    {
-        return SessionUtils.DeleteGroup(groupId);
-    }
-
-    #endregion
 }

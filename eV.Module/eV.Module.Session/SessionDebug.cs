@@ -42,13 +42,6 @@ public static class SessionDebug
         Logger.Debug($"SendBySessionId [{name}] [{sessionId}] [{toSessionId}] {content.ToJson()}");
     }
 
-    public static void DebugSendGroup<T>(string? sessionId, string groupId, string name, T content)
-    {
-        if (!_isDebug) return;
-
-        Logger.Debug($"SendGroup [{name}] [{sessionId}] [{groupId}] {content.ToJson()}");
-    }
-
     public static void DebugSendBroadcast<T>(string? sessionId, string name, T content)
     {
         if (!_isDebug) return;

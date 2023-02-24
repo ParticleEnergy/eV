@@ -16,24 +16,6 @@ public static class SessionUtils
         return session != null && session.Send(data);
     }
 
-    public static void SendGroup(string selfSessionId, string groupId, byte[] data)
-    {
-        ConcurrentDictionary<string, string>? groups = SessionDispatch.Instance.SessionGroup.GetGroup(groupId);
-        if (groups == null)
-        {
-            EasyLogger.Warn($"Group {groupId} not found");
-            return;
-        }
-
-        foreach (KeyValuePair<string, string> group in groups)
-        {
-            Session? session = SessionDispatch.Instance.SessionManager.GetActiveSession(group.Value);
-            if (session?.SessionId == null || session.SessionId.Equals(selfSessionId))
-                continue;
-            session.Send(data);
-        }
-    }
-
     public static void SendBroadcast(string selfSessionId, byte[] data)
     {
         if (SessionDispatch.Instance.SessionManager.GetActiveCount() <= 0)
@@ -63,24 +45,6 @@ public static class SessionUtils
         return session != null && session.Send(data);
     }
 
-    public static void SendGroupAction(string groupId, byte[] data)
-    {
-        ConcurrentDictionary<string, string>? groups = SessionDispatch.Instance.SessionGroup.GetGroup(groupId);
-        if (groups == null)
-        {
-            EasyLogger.Warn($"Group {groupId} not found");
-            return;
-        }
-
-        foreach (KeyValuePair<string, string> group in groups)
-        {
-            Session? session = SessionDispatch.Instance.SessionManager.GetActiveSession(group.Value);
-            if (session?.SessionId == null)
-                continue;
-            session.Send(data);
-        }
-    }
-
     public static void SendBroadcastAction(byte[] data)
     {
         if (SessionDispatch.Instance.SessionManager.GetActiveCount() <= 0)
@@ -93,18 +57,4 @@ public static class SessionUtils
             session.Send(data);
         }
     }
-
-    #region Group
-
-    public static bool CreateGroup(string groupId)
-    {
-        return SessionDispatch.Instance.SessionGroup.CreateGroup(groupId);
-    }
-
-    public static bool DeleteGroup(string groupId)
-    {
-        return SessionDispatch.Instance.SessionGroup.DeleteGroup(groupId);
-    }
-
-    #endregion
 }

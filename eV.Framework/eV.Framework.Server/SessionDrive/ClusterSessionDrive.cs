@@ -28,12 +28,6 @@ public class ClusterSessionDrive : ISessionDrive
         return true;
     }
 
-    public void SendGroup(string selfSessionId, string groupId, byte[] data)
-    {
-        SessionUtils.SendGroup(selfSessionId, groupId, data);
-        _clusterSession.SendGroup(groupId, data);
-    }
-
     public void SendBroadcast(string selfSessionId, byte[] data)
     {
         SessionUtils.SendBroadcast(selfSessionId, data);
@@ -55,24 +49,4 @@ public class ClusterSessionDrive : ISessionDrive
         _clusterSession.Deregister(session.SessionId!);
         return true;
     }
-
-    #region Group
-
-    public bool CreateGroup(string groupId)
-    {
-        if (!SessionUtils.CreateGroup(groupId))
-            return false;
-        _clusterSession.CreateGroup(groupId);
-        return true;
-    }
-
-    public bool DeleteGroup(string groupId)
-    {
-        if (!SessionUtils.DeleteGroup(groupId))
-            return false;
-        _clusterSession.DeleteGroup(groupId);
-        return true;
-    }
-
-    #endregion
 }

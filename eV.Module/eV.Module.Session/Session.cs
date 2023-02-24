@@ -45,13 +45,7 @@ public sealed class Session : ISession
     #region Action
 
     public Func<string, byte[], bool>? SendAction;
-    public Action<string, string, byte[]>? SendGroupAction;
     public Action<string, byte[]>? SendBroadcastAction;
-    public Func<string, string, bool>? JoinGroupAction;
-    public Func<string, string, bool>? LeaveGroupAction;
-    public Func<string, ConcurrentDictionary<string, string>?>? GetGroupAction;
-    public Func<string, bool>? CreateGroupAction;
-    public Func<string, bool>? DeleteGroupAction;
 
     #endregion
 
@@ -202,28 +196,6 @@ public sealed class Session : ISession
         }
     }
 
-    public void SendGroup<T>(string groupId, T data)
-    {
-        if (_sessionId is null or "")
-        {
-            Logger.Warn("SendGroup needs to activate the session");
-            return;
-        }
-
-        try
-        {
-            KeyValuePair<string, byte[]?> result = GetSendData(data);
-            if (result.Value == null || SendGroupAction == null)
-                return;
-            SendGroupAction?.Invoke(_sessionId, groupId, result.Value);
-            SessionDebug.DebugSendGroup(SessionId, groupId, result.Key, data);
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e.Message, e);
-        }
-    }
-
     public void SendBroadcast<T>(T data)
     {
         if (_sessionId is null or "")
@@ -268,45 +240,6 @@ public sealed class Session : ISession
             Logger.Error(e.Message, e);
             Shutdown();
         }
-    }
-
-    #endregion
-
-    #region Group
-
-    public bool JoinGroup(string groupId)
-    {
-        if (JoinGroupAction == null || _sessionId is null or "")
-            return false;
-        return JoinGroupAction.Invoke(groupId, _sessionId);
-    }
-
-    public bool LeaveGroup(string groupId)
-    {
-        if (LeaveGroupAction == null || _sessionId is null or "")
-            return false;
-        return LeaveGroupAction.Invoke(groupId, _sessionId);
-    }
-
-    public ConcurrentDictionary<string, string>? GetGroup(string groupId)
-    {
-        if (GetGroupAction == null || _sessionId is null or "")
-            return null;
-        return GetGroupAction.Invoke(groupId);
-    }
-
-    public bool CreateGroup(string groupId)
-    {
-        if (CreateGroupAction == null || _sessionId is null or "")
-            return false;
-        return CreateGroupAction.Invoke(groupId);
-    }
-
-    public bool DeleteGroup(string groupId)
-    {
-        if (DeleteGroupAction == null || _sessionId is null or "")
-            return false;
-        return DeleteGroupAction.Invoke(groupId);
     }
 
     #endregion

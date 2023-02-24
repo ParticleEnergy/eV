@@ -15,39 +15,9 @@ public class SessionExtension : ISessionExtend
         return ServerSession.Send(sessionId, data);
     }
 
-    public void SendGroup(string selfSessionId, string groupId, byte[] data)
-    {
-        ServerSession.SendGroup(selfSessionId, groupId, data);
-    }
-
     public void SendBroadcast(string selfSessionId, byte[] data)
     {
         ServerSession.SendBroadcast(selfSessionId, data);
-    }
-
-    public bool JoinGroup(string groupId, string sessionId)
-    {
-        return ServerSession.JoinGroup(groupId, sessionId);
-    }
-
-    public bool LeaveGroup(string groupId, string sessionId)
-    {
-        return ServerSession.LeaveGroup(groupId, sessionId);
-    }
-
-    public ConcurrentDictionary<string, string>? GetGroup(string groupId)
-    {
-        return ServerSession.GetGroup(groupId);
-    }
-
-    public bool CreateGroup(string groupId)
-    {
-        return ServerSession.CreateGroup(groupId);
-    }
-
-    public bool DeleteGroup(string groupId)
-    {
-        return ServerSession.DeleteGroup(groupId);
     }
 
     public void OnActivate(ISession session)

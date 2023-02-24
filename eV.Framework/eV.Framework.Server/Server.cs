@@ -73,7 +73,6 @@ public class Server
                 RedisOption = ConfigUtils.GetRedisConfig(Configure.Instance.ClusterOption.Redis),
                 KafkaOption = ConfigUtils.GetKafkaConfig(Configure.Instance.ClusterOption.Kafka),
                 SendAction = SessionUtils.SendAction,
-                SendGroupAction = SessionUtils.SendGroupAction,
                 SendBroadcastAction = SessionUtils.SendBroadcastAction
             });
 
@@ -143,10 +142,7 @@ public class Server
             Configure.Instance.BaseOption.PublicObjectAssemblyString);
 
         Dispatch.AddCustomHandler(typeof(ClientKeepaliveHandler), typeof(ClientKeepalive));
-        Dispatch.AddCustomHandler(typeof(ClientJoinGroupHandler), typeof(ClientJoinGroup));
-        Dispatch.AddCustomHandler(typeof(ClientLeaveGroupHandler), typeof(ClientLeaveGroup));
         Dispatch.AddCustomHandler(typeof(ClientSendBroadcastHandler), typeof(ClientSendBroadcast));
         Dispatch.AddCustomHandler(typeof(ClientSendBySessionIdHandler), typeof(ClientSendBySessionId));
-        Dispatch.AddCustomHandler(typeof(ClientSendGroupHandler), typeof(ClientSendGroup));
     }
 }
