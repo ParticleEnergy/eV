@@ -5,21 +5,41 @@ using System.Reflection;
 using eV.Module.EasyLog;
 using eV.Module.Queue.Attributes;
 using eV.Module.Queue.Interface;
+using StackExchange.Redis;
 
 namespace eV.Module.Queue;
 
 public class Queue
 {
-    private readonly string _assemblyString;
+    private bool _isStart;
+    private readonly CancellationTokenSource _cancellationTokenSource;
 
-    public Queue(string assemblyString)
+    private readonly Dictionary<Type, ConsumerIdentifier> _consumerIdentifiers = new();
+    private readonly Dictionary<Type, IQueueHandler> _handlers = new();
+
+    private readonly ConnectionMultiplexer _redis;
+
+    private readonly string _project;
+    private readonly string _nodeId;
+
+    public Queue(string project, string node, string queueAssemblyString, ConnectionMultiplexer redis)
     {
-        _assemblyString = assemblyString;
+        _cancellationTokenSource = new CancellationTokenSource();
+
+        _project = project;
+        _nodeId = node;
+        _redis = redis;
+
+        Register(queueAssemblyString);
+        MessageProcessor.InitMessageProcessor(_redis, _consumerIdentifiers);
     }
 
-    private void RegisterHandler()
+    private void Register(string assemblyString)
     {
-        Type[] allTypes = Assembly.Load(_assemblyString).GetExportedTypes();
+        if (_isStart)
+            return;
+
+        Type[] allTypes = Assembly.Load(assemblyString).GetExportedTypes();
 
         foreach (Type type in allTypes)
         {
@@ -31,14 +51,69 @@ public class Queue
             if (Activator.CreateInstance(type) is not IQueueHandler handler)
                 continue;
 
-            handler.RunConsume();
+            Type[]? contentTypes = type.BaseType?.GenericTypeArguments;
+            if (contentTypes is not { Length: > 0 })
+                continue;
 
-            Logger.Info($"QueueHandler [{type.FullName}] QueueName: {handler.QueueName} registration succeeded");
+            _consumerIdentifiers[contentTypes[0]] = new ConsumerIdentifier(
+                $"eV:Queue:{_project}:Stream:{contentTypes[0].Name}",
+                $"eV:Queue:{_project}:Group:{contentTypes[0].Name}",
+                $"eV:Queue:{_project}:Node:{_nodeId}:Consumer:{contentTypes[0].Name}"
+            );
+
+            _handlers[type] = handler;
+            Logger.Info($"Queue [{type.FullName}] registration succeeded");
         }
     }
 
-    public void Start()
+    private async Task InitStream(ConsumerIdentifier consumerIdentifier)
     {
-        RegisterHandler();
+        StreamGroupInfo[] groupInfos = await _redis.GetDatabase().StreamGroupInfoAsync(consumerIdentifier.Stream);
+        bool groupExists = groupInfos.Any(streamGroupInfo => streamGroupInfo.Name == consumerIdentifier.Group);
+
+        if (groupExists) return;
+
+        bool createStream = !await _redis.GetDatabase().KeyExistsAsync(consumerIdentifier.Stream);
+        await _redis.GetDatabase().StreamCreateConsumerGroupAsync(
+            consumerIdentifier.Stream,
+            consumerIdentifier.Group,
+            StreamPosition.NewMessages,
+            createStream
+        );
+    }
+
+    public async void Start()
+    {
+        if (_isStart)
+            return;
+        if (!_redis.IsConnected)
+            return;
+
+
+        foreach ((Type contentType, IQueueHandler handler) in _handlers)
+        {
+            if (!_consumerIdentifiers.ContainsKey(contentType))
+                continue;
+
+            _consumerIdentifiers.TryGetValue(contentType, out ConsumerIdentifier? consumerIdentifier);
+            if (consumerIdentifier == null)
+                continue;
+
+            await InitStream(consumerIdentifier);
+
+            await Task.Run(() => { handler.RunConsume(_cancellationTokenSource.Token); }, _cancellationTokenSource.Token);
+
+            Logger.Info($"Queue [{contentType.FullName}] start consume");
+        }
+
+        _isStart = true;
+    }
+
+    public void Stop()
+    {
+        if (!_isStart)
+            return;
+
+        _cancellationTokenSource.Cancel();
     }
 }

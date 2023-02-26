@@ -24,7 +24,8 @@ public static class LoadModule
 
 
         if (Configure.Instance.MongodbOption != null)
-            MongodbManager.Instance.Start(Configure.Instance.MongodbOption);    }
+            MongodbManager.Instance.Start(Configure.Instance.MongodbOption);
+    }
 
     public static void Stop()
     {

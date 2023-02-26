@@ -5,6 +5,5 @@ namespace eV.Module.Queue.Interface;
 
 public interface IQueueHandler
 {
-    public string QueueName { get; set; }
-    public void RunConsume();
+    public Task RunConsume(CancellationToken cancellationToken);
 }

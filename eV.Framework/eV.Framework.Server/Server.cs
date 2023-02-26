@@ -3,17 +3,20 @@
 
 
 using eV.Framework.Server.Logger;
+using eV.Framework.Server.Options;
 using eV.Framework.Server.SessionDrive;
 using eV.Framework.Server.SystemHandler;
 using eV.Framework.Server.Utils;
-using eV.Module.Cluster;
 using eV.Module.GameProfile;
 using eV.Module.Queue;
-using eV.Module.Routing;
 using eV.Module.Session;
+using eV.Module.Storage.Mongo;
+using eV.Module.Storage.Redis;
 using eV.Network.Core;
 using eV.Network.Core.Interface;
 using eV.Network.Tcp.Server;
+using StackExchange.Redis;
+using Dispatch = eV.Module.Routing.Dispatch;
 using eVNetworkServer = eV.Network.Tcp.Server.Server;
 using EasyLogger = eV.Module.EasyLog.Logger;
 
@@ -22,12 +25,13 @@ namespace eV.Framework.Server;
 public class Server
 {
     private readonly IdleDetection _idleDetection = new(Configure.Instance.ServerOption.SessionMaximumIdleTime);
-    private readonly Queue _queue = new(Configure.Instance.BaseOption.ProjectAssemblyString);
+    private Queue? _queue ;
     private readonly eVNetworkServer _server = new(GetServerSetting());
 
     private readonly SessionExtension _sessionExtension = new();
 
-    private Cluster? _cluster;
+    // private Cluster? _cluster;
+    private readonly string _nodeId = Guid.NewGuid().ToString();
 
     public Server()
     {
@@ -43,8 +47,6 @@ public class Server
 
         if (Configure.Instance.BaseOption.Debug)
             SessionDebug.EnableDebug();
-
-        LoadModule.Start();
 
         Profile.Init(
             Configure.Instance.BaseOption.PublicObjectAssemblyString,
@@ -63,27 +65,27 @@ public class Server
         }
         else
         {
-            _cluster = new Cluster(new ClusterSetting
-            {
-                ClusterName = Configure.Instance.ProjectName,
-                ConsumeSendPipelineNumber = Configure.Instance.ClusterOption.ConsumeSendPipelineNumber,
-                ConsumeSendGroupPipelineNumber = Configure.Instance.ClusterOption.ConsumeSendGroupPipelineNumber,
-                ConsumeSendBroadcastPipelineNumber =
-                    Configure.Instance.ClusterOption.ConsumeSendBroadcastPipelineNumber,
-                RedisOption = ConfigUtils.GetRedisConfig(Configure.Instance.ClusterOption.Redis),
-                SendAction = SessionUtils.SendAction,
-                SendBroadcastAction = SessionUtils.SendBroadcastAction
-            });
+            // _cluster = new Cluster(new ClusterSetting
+            // {
+            //     ClusterName = Configure.Instance.ProjectName,
+            //     ConsumeSendPipelineNumber = Configure.Instance.ClusterOption.ConsumeSendPipelineNumber,
+            //     ConsumeSendGroupPipelineNumber = Configure.Instance.ClusterOption.ConsumeSendGroupPipelineNumber,
+            //     ConsumeSendBroadcastPipelineNumber =
+            //         Configure.Instance.ClusterOption.ConsumeSendBroadcastPipelineNumber,
+            //     RedisOption = ConfigUtils.GetRedisConfig(Configure.Instance.ClusterOption.Redis),
+            //     SendAction = SessionUtils.SendAction,
+            //     SendBroadcastAction = SessionUtils.SendBroadcastAction
+            // });
 
-            ServerSession.SetSessionDrive(new ClusterSessionDrive(_cluster.GetClusterSession()));
+            // ServerSession.SetSessionDrive(new ClusterSessionDrive(_cluster.GetClusterSession()));
         }
     }
 
     public void Start()
     {
         ServerEvent.OnStart();
-        _cluster?.Start();
-        _queue.Start();
+        // _cluster?.Start();
+        // _queue.Start();
         _server.Start();
         _idleDetection.Start();
     }
@@ -92,7 +94,7 @@ public class Server
     {
         ServerEvent.OnStop();
         _idleDetection.Stop();
-        _cluster?.Stop();
+        // _cluster?.Stop();
         _server.Stop();
         LoadModule.Stop();
     }
@@ -143,5 +145,29 @@ public class Server
         Dispatch.AddCustomHandler(typeof(ClientKeepaliveHandler), typeof(ClientKeepalive));
         Dispatch.AddCustomHandler(typeof(ClientSendBroadcastHandler), typeof(ClientSendBroadcast));
         Dispatch.AddCustomHandler(typeof(ClientSendBySessionIdHandler), typeof(ClientSendBySessionId));
+    }
+
+    private async Task Init()
+    {
+        // Mongodb
+        if (Configure.Instance.MongodbOption != null)
+            MongodbManager.Instance.Start(Configure.Instance.MongodbOption);
+
+        // Redis
+        if (Configure.Instance.RedisOption == null)
+            return;
+        Dictionary<string, ConfigurationOptions> configs = new();
+
+        foreach ((string name, RedisOption option) in Configure.Instance.RedisOption)
+            configs[name] = ConfigUtils.GetRedisConfig(option);
+
+        await RedisManager.Instance.Start(configs);
+
+        // Queue
+        var queueRedis = RedisManager.Instance.GetRedisConnection("Queue");
+        if (queueRedis != null)
+        {
+            _queue = new Queue(Configure.Instance.ProjectName, _nodeId, Configure.Instance.BaseOption.ProjectAssemblyString, queueRedis);
+        }
     }
 }
