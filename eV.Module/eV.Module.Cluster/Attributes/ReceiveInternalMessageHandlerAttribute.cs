@@ -4,6 +4,6 @@
 namespace eV.Module.Cluster.Attributes;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public class QueueAttribute : Attribute
+public class ReceiveInternalMessageHandlerAttribute : Attribute
 {
 }

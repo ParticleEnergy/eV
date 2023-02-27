@@ -25,7 +25,7 @@ namespace eV.Framework.Server;
 public class Server
 {
     private readonly IdleDetection _idleDetection = new(Configure.Instance.ServerOption.SessionMaximumIdleTime);
-    private Queue? _queue ;
+    private Queue? _queue;
     private readonly eVNetworkServer _server = new(GetServerSetting());
 
     private readonly SessionExtension _sessionExtension = new();
@@ -139,8 +139,10 @@ public class Server
 
     private static void RegisterHandler()
     {
-        Dispatch.RegisterServer(Configure.Instance.BaseOption.ProjectAssemblyString,
-            Configure.Instance.BaseOption.PublicObjectAssemblyString);
+        Dispatch.RegisterServer(
+            Configure.Instance.BaseOption.ProjectAssemblyString,
+            Configure.Instance.BaseOption.PublicObjectAssemblyString
+        );
 
         Dispatch.AddCustomHandler(typeof(ClientKeepaliveHandler), typeof(ClientKeepalive));
         Dispatch.AddCustomHandler(typeof(ClientSendBroadcastHandler), typeof(ClientSendBroadcast));
@@ -164,7 +166,7 @@ public class Server
         await RedisManager.Instance.Start(configs);
 
         // Queue
-        var queueRedis = RedisManager.Instance.GetRedisConnection("Queue");
+        var queueRedis = RedisManager.Instance.GetRedisConnection(RedisNameReservedWord.QueueInstance);
         if (queueRedis != null)
         {
             _queue = new Queue(Configure.Instance.ProjectName, _nodeId, Configure.Instance.BaseOption.ProjectAssemblyString, queueRedis);

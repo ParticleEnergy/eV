@@ -15,14 +15,9 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="KubernetesClient" Version="8.0.12" />
-    <PackageReference Include="Confluent.Kafka" Version="1.9.2" />
-    <PackageReference Include="StackExchange.Redis" Version="2.6.48" />
+    <PackageReference Include="StackExchange.Redis" Version="2.6.96" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\eV.Module.EasyLog\eV.Module.EasyLog.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interface" />
   </ItemGroup>
 </Project>

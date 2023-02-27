@@ -31,6 +31,7 @@ public class Queue
         _redis = redis;
 
         Register(queueAssemblyString);
+
         MessageProcessor.InitMessageProcessor(_redis, _consumerIdentifiers);
     }
 
@@ -68,17 +69,33 @@ public class Queue
 
     private async Task InitStream(ConsumerIdentifier consumerIdentifier)
     {
-        StreamGroupInfo[] groupInfos = await _redis.GetDatabase().StreamGroupInfoAsync(consumerIdentifier.Stream);
-        bool groupExists = groupInfos.Any(streamGroupInfo => streamGroupInfo.Name == consumerIdentifier.Group);
+        try
+        {
+            StreamGroupInfo[] groupInfos = await _redis.GetDatabase().StreamGroupInfoAsync(consumerIdentifier.Stream);
+            bool groupExists = groupInfos.Any(streamGroupInfo => streamGroupInfo.Name == consumerIdentifier.Group);
 
-        if (groupExists) return;
+            if (groupExists) return;
 
-        bool createStream = !await _redis.GetDatabase().KeyExistsAsync(consumerIdentifier.Stream);
-        await _redis.GetDatabase().StreamCreateConsumerGroupAsync(
+            bool createStream = !await _redis.GetDatabase().KeyExistsAsync(consumerIdentifier.Stream);
+            await _redis.GetDatabase().StreamCreateConsumerGroupAsync(
+                consumerIdentifier.Stream,
+                consumerIdentifier.Group,
+                StreamPosition.NewMessages,
+                createStream
+            );
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e.Message, e);
+        }
+    }
+
+    private async Task ReleaseStream(ConsumerIdentifier consumerIdentifier)
+    {
+        await _redis.GetDatabase().StreamDeleteConsumerAsync(
             consumerIdentifier.Stream,
             consumerIdentifier.Group,
-            StreamPosition.NewMessages,
-            createStream
+            consumerIdentifier.Consumer
         );
     }
 
@@ -109,11 +126,22 @@ public class Queue
         _isStart = true;
     }
 
-    public void Stop()
+    public async void Stop()
     {
         if (!_isStart)
             return;
 
         _cancellationTokenSource.Cancel();
+
+        foreach (var contentType in _handlers.Keys.Where(contentType => _consumerIdentifiers.ContainsKey(contentType)))
+        {
+            _consumerIdentifiers.TryGetValue(contentType, out ConsumerIdentifier? consumerIdentifier);
+            if (consumerIdentifier == null)
+                continue;
+
+            await ReleaseStream(consumerIdentifier);
+        }
+
+        Logger.Info("Queue stop");
     }
 }

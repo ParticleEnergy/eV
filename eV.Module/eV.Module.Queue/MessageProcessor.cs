@@ -53,14 +53,14 @@ public class MessageProcessor
         }
     }
 
-    public StreamEntry[] Consume(string stream, string group, string consumer, RedisValue position, int count, bool noAck)
+    public StreamEntry[] Consume(ConsumerIdentifier consumerIdentifier, RedisValue position, int count, bool noAck)
     {
         try
         {
             return _redis.GetDatabase().StreamReadGroup(
-                stream,
-                group,
-                consumer,
+                consumerIdentifier.Stream,
+                consumerIdentifier.Group,
+                consumerIdentifier.Consumer,
                 position,
                 count,
                 noAck
@@ -73,9 +73,10 @@ public class MessageProcessor
         }
     }
 
-    public bool Acknowledge(string stream, string group, RedisValue id)
+    public bool Acknowledge(ConsumerIdentifier consumerIdentifier, RedisValue id)
     {
-        return _redis.GetDatabase().StreamAcknowledge(stream, group, id) > 0;
+
+        return _redis.GetDatabase().StreamAcknowledge(consumerIdentifier.Stream, consumerIdentifier.Group, id) > 0;
     }
 
     public ConsumerIdentifier? GetConsumerIdentifier(Type type)

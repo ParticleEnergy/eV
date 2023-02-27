@@ -2,66 +2,82 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using eV.Module.Cluster.Interface;
-using eV.Module.EasyLog;
 using StackExchange.Redis;
 
 namespace eV.Module.Cluster;
 
 public class SessionRegistrationAuthority : ISessionRegistrationAuthority
 {
-    private readonly string _clusterName;
-    private readonly string _nodeName;
-    private readonly ConfigurationOptions _redisOption;
+    private readonly string _clusterId;
+    private readonly string _nodeId;
 
-    private const string SessionKey = "eV:Cluster:{0}:SessionId:{1}";
-    private const string NodeKey = "eV:Cluster:{0}:Node{1}";
+    private readonly ConnectionMultiplexer _redis;
 
-    private ConnectionMultiplexer? _redis;
+    private const string HashTableKey = "eV:Cluster:{0}";
+    private const string SetKey = "eV:Cluster:{0}:node{1}";
 
-    public SessionRegistrationAuthority(string clusterName, string nodeName, ConfigurationOptions redisOption)
+    public SessionRegistrationAuthority(string clusterId, string nodeId, ConnectionMultiplexer redis)
     {
-        _clusterName = clusterName;
-        _nodeName = nodeName;
-        _redisOption = redisOption;
+        _clusterId = clusterId;
+        _nodeId = nodeId;
+        _redis = redis;
     }
 
-    public void Registry(string sessionId)
+    public async void Registry(string sessionId)
     {
-        _redis?.GetDatabase().StringSet(string.Format(SessionKey, _clusterName, sessionId), _nodeName);
-        _redis?.GetDatabase().HashSet(string.Format(NodeKey, _clusterName, _nodeName), sessionId, sessionId);
+        await _redis.GetDatabase().HashSetAsync(string.Format(HashTableKey, _clusterId), sessionId, _nodeId);
+        await _redis.GetDatabase().SetAddAsync(string.Format(SetKey, _clusterId, _nodeId), sessionId);
     }
 
-    public void Deregister(string sessionId)
+    public async void Deregister(string sessionId)
     {
-        _redis?.GetDatabase().KeyDelete(string.Format(SessionKey, _clusterName, sessionId));
-        _redis?.GetDatabase().HashDelete(string.Format(NodeKey, _clusterName, _nodeName), sessionId);
+        await _redis.GetDatabase().HashDeleteAsync(string.Format(HashTableKey, _clusterId), sessionId);
+        await _redis.GetDatabase().SetRemoveAsync(string.Format(SetKey, _clusterId, _nodeId), sessionId);
     }
 
-    public string GetNodeName(string sessionId)
+    public async Task<List<string>> GetAllNodeIds()
     {
-        var result = _redis?.GetDatabase().StringGet(string.Format(SessionKey, _clusterName, sessionId));
-        return (result == "" ? "" : result.HasValue ? result.ToString() : "") ?? string.Empty;
+        List<string> result = new();
+        result.AddRange(from redisValue in await _redis.GetDatabase().HashKeysAsync(string.Format(HashTableKey, _clusterId)) select redisValue.ToString());
+        return result;
     }
 
-    public List<string> GetAllSessionId()
+    public async Task<string> GetNodeId(string sessionId)
     {
-        var resultHash = _redis?.GetDatabase().HashGetAll(string.Format(NodeKey, _clusterName, _nodeName));
-
-        return resultHash == null
-            ? new List<string>()
-            : resultHash.Select(hashEntry => hashEntry.Value.ToString()).ToList();
+        var result = await _redis.GetDatabase().HashGetAsync(string.Format(HashTableKey, _clusterId), sessionId);
+        return result.ToString();
     }
 
-    public void Start()
+    public async Task<List<string>> GetAllSessionIds()
     {
-        ConnectionMultiplexer conn = ConnectionMultiplexer.Connect(_redisOption);
-        if (!conn.IsConnected)
-            Logger.Error($"Cluster [{_clusterName}] session registration authority redis connection error");
-        _redis = conn;
+        List<string> result = new();
+
+        result.AddRange(from hashEntry in await _redis.GetDatabase().HashGetAllAsync(string.Format(HashTableKey, _clusterId)) select hashEntry.Name.ToString());
+        return result;
     }
 
-    public void Stop()
+    public async Task<List<string>> GetSessionIdsByNode(string nodeId)
     {
-        _redis?.Close();
+        List<string> result = new();
+        result.AddRange(from value in await _redis.GetDatabase().SetMembersAsync(string.Format(SetKey, _clusterId, nodeId)) select value.ToString());
+        return result;
+    }
+
+    public async void Start()
+    {
+        if (await _redis.GetDatabase().KeyExistsAsync(string.Format(HashTableKey, _clusterId))) return;
+        await _redis.GetDatabase().HashSetAsync(string.Format(HashTableKey, _clusterId), Array.Empty<HashEntry>());
+    }
+
+    public async void Stop()
+    {
+        var batch = _redis.GetDatabase().CreateBatch();
+        foreach (string sessionId in await GetSessionIdsByNode(_nodeId))
+        {
+            await batch.HashDeleteAsync(string.Format(HashTableKey, _clusterId), sessionId);
+        }
+
+        await batch.KeyDeleteAsync(string.Format(SetKey, _clusterId, _nodeId));
+        batch.Execute();
     }
 }

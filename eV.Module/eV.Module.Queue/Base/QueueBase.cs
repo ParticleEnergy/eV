@@ -11,9 +11,7 @@ namespace eV.Module.Queue.Base;
 
 public abstract class QueueBase<T> : IQueueHandler
 {
-    private readonly string _stream;
-    private readonly string _group;
-    private readonly string _consumer;
+    private readonly ConsumerIdentifier? _consumerIdentifier;
 
     protected RedisValue Position { get; set; } = ">";
     protected int Count { get; set; } = 1;
@@ -25,25 +23,14 @@ public abstract class QueueBase<T> : IQueueHandler
     {
         if (MessageProcessor.Instance == null)
         {
-            _stream = "";
-            _group = "";
-            _consumer = "";
             return;
         }
 
-        ConsumerIdentifier? consumerIdentifier = MessageProcessor.Instance.GetConsumerIdentifier(typeof(T));
-        if (consumerIdentifier == null)
+        _consumerIdentifier = MessageProcessor.Instance.GetConsumerIdentifier(typeof(T));
+        if (_consumerIdentifier == null)
         {
-            _stream = "";
-            _group = "";
-            _consumer = "";
-            Logger.Error($"Message {typeof(T).Name} not found");
-            return;
+            Logger.Error($"QueueMessage {typeof(T).Name} not found");
         }
-
-        _stream = consumerIdentifier.Stream;
-        _group = consumerIdentifier.Group;
-        _consumer = consumerIdentifier.Consumer;
     }
 
     public async Task RunConsume(CancellationToken cancellationToken)
@@ -51,15 +38,17 @@ public abstract class QueueBase<T> : IQueueHandler
         if (MessageProcessor.Instance == null)
             return;
 
+        if (_consumerIdentifier == null)
+            return;
+
         while (cancellationToken.IsCancellationRequested)
         {
             var messages = MessageProcessor.Instance.Consume(
-                _stream,
-                _group,
-                _consumer,
+                _consumerIdentifier,
                 Position,
                 Count,
-                AutoAck);
+                AutoAck
+            );
 
             foreach (StreamEntry message in messages)
             {
@@ -69,13 +58,13 @@ public abstract class QueueBase<T> : IQueueHandler
                     if (data == null)
                     {
                         if (!AutoAck)
-                            MessageProcessor.Instance.Acknowledge(_stream, _group, message.Id);
+                            MessageProcessor.Instance.Acknowledge(_consumerIdentifier, message.Id);
                         continue;
                     }
 
                     if (await Consume(data) && !AutoAck)
                     {
-                        MessageProcessor.Instance.Acknowledge(_stream, _group, message.Id);
+                        MessageProcessor.Instance.Acknowledge(_consumerIdentifier, message.Id);
                     }
                 }
                 catch (Exception e)
@@ -84,12 +73,5 @@ public abstract class QueueBase<T> : IQueueHandler
                 }
             }
         }
-    }
-
-    public async Task<bool> Produce<TValue>(TValue data)
-    {
-        if (MessageProcessor.Instance == null)
-            return false;
-        return await MessageProcessor.Instance.Produce(data);
     }
 }

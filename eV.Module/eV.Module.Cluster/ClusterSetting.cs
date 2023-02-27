@@ -1,32 +1,20 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
-using Confluent.Kafka;
 using eV.Module.EasyLog;
-using StackExchange.Redis;
 
 namespace eV.Module.Cluster;
 
-public class ClusterSetting
+public class CommunicationSetting
 {
-    public string ClusterName { get; set; } = DefaultSetting.ClusterName;
-    public int ConsumeSendPipelineNumber { get; set; } = DefaultSetting.ConsumeSendPipelineNumber;
-    public int ConsumeSendGroupPipelineNumber { get; set; } = DefaultSetting.ConsumeSendGroupPipelineNumber;
-    public int ConsumeSendBroadcastPipelineNumber { get; set; } = DefaultSetting.ConsumeSendBroadcastPipelineNumber;
-    public int ConsumeCreateGroupPipelineNumber { get; set; } = DefaultSetting.ConsumeCreateGroupPipelineNumber;
-    public int ConsumeDeleteGroupPipelineNumber { get; set; } = DefaultSetting.ConsumeDeleteGroupPipelineNumber;
+    public int SendBatchProcessingQuantity { get; set; } = 1;
+    public int SendBroadcastBatchProcessingQuantity { get; set; } = 1;
 
-    public ConfigurationOptions RedisOption { get; set; } = DefaultSetting.RedisOption;
-    public KeyValuePair<ProducerConfig, ConsumerConfig> KafkaOption { get; set; } = DefaultSetting.KafkaOption;
-
-    public Func<string, byte[], bool>? SendAction { get; set; } = delegate
+    public Func<string, byte[], bool> SendAction { get; set; } = delegate
     {
         Logger.Error("SendAction not defined");
         return false;
     };
 
-    public Action<string, byte[]>? SendGroupAction { get; set; } = delegate { Logger.Error("SendGroupAction not defined"); };
-    public Action<byte[]>? SendBroadcastAction { get; set; } = delegate { Logger.Error("SendBroadcastAction not defined"); };
-    public Action<string>? CreateGroupAction { get; set; } = delegate { Logger.Error("CreateGroupAction not defined"); };
-    public Action<string>? DeleteGroupAction { get; set; } = delegate { Logger.Error("DeleteGroupAction not defined"); };
+    public Action<byte[]> SendBroadcastAction { get; set; } = delegate { Logger.Error("SendBroadcastAction not defined"); };
 }

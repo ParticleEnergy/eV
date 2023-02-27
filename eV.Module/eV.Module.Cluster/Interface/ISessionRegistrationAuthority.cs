@@ -7,10 +7,8 @@ public interface ISessionRegistrationAuthority
 {
     public void Registry(string sessionId);
     public void Deregister(string sessionId);
-    public string GetNodeName(string sessionId);
-    public List<string> GetAllSessionId();
-
-
-    public void Start();
-    public void Stop();
+    public Task<List<string>> GetAllNodeIds();
+    public Task<string> GetNodeId(string sessionId);
+    public Task<List<string>> GetAllSessionIds();
+    public Task<List<string>> GetSessionIdsByNode(string nodeId);
 }
