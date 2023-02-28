@@ -19,7 +19,7 @@ public class RedisManager
 
     public static RedisManager Instance { get; } = new();
 
-    public async Task Start(Dictionary<string, ConfigurationOptions> redisOptions)
+    public void Start(Dictionary<string, ConfigurationOptions> redisOptions)
     {
         if (_isStart)
             return;
@@ -28,7 +28,7 @@ public class RedisManager
         foreach ((string name, ConfigurationOptions option) in redisOptions)
             try
             {
-                ConnectionMultiplexer conn = await ConnectionMultiplexer.ConnectAsync(option);
+                ConnectionMultiplexer conn = ConnectionMultiplexer.Connect(option);
                 if (!conn.IsConnected)
                     continue;
                 _redisConnection.Add(name, conn);
@@ -40,12 +40,12 @@ public class RedisManager
             }
     }
 
-    public async void Stop()
+    public void Stop()
     {
         foreach ((string? name, ConnectionMultiplexer? connectionMultiplexer) in _redisConnection)
             try
             {
-                await connectionMultiplexer.CloseAsync();
+                connectionMultiplexer.Close();
                 Logger.Info($"Redis [{name}] stop");
             }
             catch (Exception e)

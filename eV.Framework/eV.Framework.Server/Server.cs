@@ -104,21 +104,22 @@ public class Server
         Dispatch.AddCustomHandler(typeof(ClientSendBySessionIdHandler), typeof(ClientSendBySessionId));
     }
 
-    public async void Start()
+    public void Start()
     {
         // Mongodb
         if (Configure.Instance.MongodbOption != null)
             MongodbManager.Instance.Start(Configure.Instance.MongodbOption);
 
         // Redis
-        if (Configure.Instance.RedisOption == null)
-            return;
-        Dictionary<string, ConfigurationOptions> configs = new();
+        if (Configure.Instance.RedisOption != null)
+        {
+            Dictionary<string, ConfigurationOptions> configs = new();
 
-        foreach ((string name, RedisOption option) in Configure.Instance.RedisOption)
-            configs[name] = ConfigUtils.GetRedisConfig(option);
+            foreach ((string name, RedisOption option) in Configure.Instance.RedisOption)
+                configs[name] = ConfigUtils.GetRedisConfig(option);
 
-        await RedisManager.Instance.Start(configs);
+            RedisManager.Instance.Start(configs);
+        }
 
         // Queue
         var queueRedis = RedisManager.Instance.GetRedisConnection(RedisNameReservedWord.QueueInstance);

@@ -67,17 +67,17 @@ public class Queue
         }
     }
 
-    private async Task InitStream(ConsumerIdentifier consumerIdentifier)
+    private void InitStream(ConsumerIdentifier consumerIdentifier)
     {
         try
         {
-            StreamGroupInfo[] groupInfos = await _redis.GetDatabase().StreamGroupInfoAsync(consumerIdentifier.Stream);
+            StreamGroupInfo[] groupInfos = _redis.GetDatabase().StreamGroupInfo(consumerIdentifier.Stream);
             bool groupExists = groupInfos.Any(streamGroupInfo => streamGroupInfo.Name == consumerIdentifier.Group);
 
             if (groupExists) return;
 
-            bool createStream = !await _redis.GetDatabase().KeyExistsAsync(consumerIdentifier.Stream);
-            await _redis.GetDatabase().StreamCreateConsumerGroupAsync(
+            bool createStream = !_redis.GetDatabase().KeyExists(consumerIdentifier.Stream);
+            _redis.GetDatabase().StreamCreateConsumerGroup(
                 consumerIdentifier.Stream,
                 consumerIdentifier.Group,
                 StreamPosition.NewMessages,
@@ -90,16 +90,16 @@ public class Queue
         }
     }
 
-    private async Task ReleaseStream(ConsumerIdentifier consumerIdentifier)
+    private void ReleaseStream(ConsumerIdentifier consumerIdentifier)
     {
-        await _redis.GetDatabase().StreamDeleteConsumerAsync(
+        _redis.GetDatabase().StreamDeleteConsumer(
             consumerIdentifier.Stream,
             consumerIdentifier.Group,
             consumerIdentifier.Consumer
         );
     }
 
-    public async void Start()
+    public void Start()
     {
         if (_isStart)
             return;
@@ -116,9 +116,9 @@ public class Queue
             if (consumerIdentifier == null)
                 continue;
 
-            await InitStream(consumerIdentifier);
+            InitStream(consumerIdentifier);
 
-            await Task.Run(() => { handler.RunConsume(_cancellationTokenSource.Token); }, _cancellationTokenSource.Token);
+            Task.Run(() => { handler.RunConsume(_cancellationTokenSource.Token); }, _cancellationTokenSource.Token);
 
             Logger.Info($"Queue [{contentType.FullName}] start consume");
         }
@@ -126,7 +126,7 @@ public class Queue
         _isStart = true;
     }
 
-    public async void Stop()
+    public void Stop()
     {
         if (!_isStart)
             return;
@@ -139,7 +139,7 @@ public class Queue
             if (consumerIdentifier == null)
                 continue;
 
-            await ReleaseStream(consumerIdentifier);
+            ReleaseStream(consumerIdentifier);
         }
 
         Logger.Info("Queue stop");

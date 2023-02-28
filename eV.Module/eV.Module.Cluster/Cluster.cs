@@ -88,17 +88,17 @@ public class Cluster
         }
     }
 
-    private async Task InitStream(ConsumerIdentifier consumerIdentifier)
+    private void InitStream(ConsumerIdentifier consumerIdentifier)
     {
         try
         {
-            StreamGroupInfo[] groupInfos = await _redis.GetDatabase().StreamGroupInfoAsync(consumerIdentifier.GetStream(_nodeId));
+            StreamGroupInfo[] groupInfos = _redis.GetDatabase().StreamGroupInfo(consumerIdentifier.GetStream(_nodeId));
             bool groupExists = groupInfos.Any(streamGroupInfo => streamGroupInfo.Name == consumerIdentifier.GetGroup(_nodeId));
 
             if (groupExists) return;
 
-            bool createStream = !await _redis.GetDatabase().KeyExistsAsync(consumerIdentifier.GetStream(_nodeId));
-            await _redis.GetDatabase().StreamCreateConsumerGroupAsync(
+            bool createStream = !_redis.GetDatabase().KeyExists(consumerIdentifier.GetStream(_nodeId));
+            _redis.GetDatabase().StreamCreateConsumerGroup(
                 consumerIdentifier.GetStream(_nodeId),
                 consumerIdentifier.GetGroup(_nodeId),
                 StreamPosition.NewMessages,
@@ -107,30 +107,30 @@ public class Cluster
         }
         catch (Exception e)
         {
-            Logger.Error(e.Message,e);
+            Logger.Error(e.Message, e);
         }
     }
 
-    private async Task ReleaseStream(ConsumerIdentifier consumerIdentifier)
+    private void ReleaseStream(ConsumerIdentifier consumerIdentifier)
     {
         try
         {
             // 删除组
-            await _redis.GetDatabase().StreamDeleteConsumerGroupAsync(
+            _redis.GetDatabase().StreamDeleteConsumerGroup(
                 consumerIdentifier.GetStream(_nodeId),
                 consumerIdentifier.GetGroup(_nodeId)
             );
 
             // 删除流
-            await _redis.GetDatabase().KeyDeleteAsync(consumerIdentifier.GetStream(_nodeId));
+            _redis.GetDatabase().KeyDelete(consumerIdentifier.GetStream(_nodeId));
         }
         catch (Exception e)
         {
-            Logger.Error(e.Message,e);
+            Logger.Error(e.Message, e);
         }
     }
 
-    public async void Start()
+    public void Start()
     {
         if (_isStart)
             return;
@@ -142,19 +142,19 @@ public class Cluster
         // Send
         foreach (ConsumerIdentifier consumerIdentifier in _send.ConsumerIdentifiers.Values)
         {
-            await InitStream(consumerIdentifier);
+            InitStream(consumerIdentifier);
         }
 
-        await _send.Run(_cancellationTokenSource.Token);
+        _send.Run(_cancellationTokenSource.Token);
         Logger.Info("Cluster Send start consume");
 
         // SendBroadcast
         foreach (ConsumerIdentifier consumerIdentifier in _sendBroadcast.ConsumerIdentifiers.Values)
         {
-            await InitStream(consumerIdentifier);
+            InitStream(consumerIdentifier);
         }
 
-        await _sendBroadcast.Run(_cancellationTokenSource.Token);
+        _sendBroadcast.Run(_cancellationTokenSource.Token);
         Logger.Info("Cluster SendBroadcast start consume");
 
         // Internal
@@ -167,9 +167,9 @@ public class Cluster
             if (consumerIdentifier == null)
                 continue;
 
-            await InitStream(consumerIdentifier);
+            InitStream(consumerIdentifier);
 
-            await Task.Run(() => { handler.Run(_cancellationTokenSource.Token); }, _cancellationTokenSource.Token);
+            Task.Run(() => { handler.Run(_cancellationTokenSource.Token); }, _cancellationTokenSource.Token);
 
             Logger.Info($"Cluster [{contentType.FullName}] start consume");
         }
@@ -177,7 +177,7 @@ public class Cluster
         _isStart = true;
     }
 
-    public async void Stop()
+    public void Stop()
     {
         if (!_isStart)
             return;
@@ -189,13 +189,13 @@ public class Cluster
         // Send
         foreach (ConsumerIdentifier consumerIdentifier in _send.ConsumerIdentifiers.Values)
         {
-            await ReleaseStream(consumerIdentifier);
+            ReleaseStream(consumerIdentifier);
         }
 
         // SendBroadcast
         foreach (ConsumerIdentifier consumerIdentifier in _sendBroadcast.ConsumerIdentifiers.Values)
         {
-            await ReleaseStream(consumerIdentifier);
+            ReleaseStream(consumerIdentifier);
         }
 
         foreach (Type contentType in _handlers.Keys)
@@ -207,7 +207,7 @@ public class Cluster
             if (consumerIdentifier == null)
                 continue;
 
-            await ReleaseStream(consumerIdentifier);
+            ReleaseStream(consumerIdentifier);
         }
 
         Logger.Info("Cluster stop");

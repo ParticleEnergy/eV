@@ -10,7 +10,7 @@ namespace eV.Module.Cluster.Communication;
 
 public class Send : IInternalHandler
 {
-    public  Dictionary<int, ConsumerIdentifier> ConsumerIdentifiers { get; } = new();
+    public Dictionary<int, ConsumerIdentifier> ConsumerIdentifiers { get; } = new();
 
     private readonly Func<string, byte[], bool> _action;
     private readonly int _batchProcessingQuantity;
@@ -31,7 +31,7 @@ public class Send : IInternalHandler
     }
 
 
-    public async Task Run(CancellationToken cancellationToken)
+    public Task Run(CancellationToken cancellationToken)
     {
         for (int i = 0; i < _batchProcessingQuantity; i++)
         {
@@ -41,11 +41,13 @@ public class Send : IInternalHandler
             if (!ConsumerIdentifiers.TryGetValue(i, out ConsumerIdentifier? consumerIdentifier))
                 continue;
 
-            await Task.Run(() => { Action(consumerIdentifier, cancellationToken); }, cancellationToken);
+            Task.Run(() => { Action(consumerIdentifier, cancellationToken); }, cancellationToken);
         }
+
+        return Task.CompletedTask;
     }
 
-    public void Action(ConsumerIdentifier consumerIdentifier, CancellationToken cancellationToken)
+    private void Action(ConsumerIdentifier consumerIdentifier, CancellationToken cancellationToken)
     {
         if (CommunicationManager.Instance == null)
             return;
