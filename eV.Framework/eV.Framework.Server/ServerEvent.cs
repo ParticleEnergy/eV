@@ -18,14 +18,16 @@ internal static class ServerEvent
         ServerOnConnected?.Invoke(session);
     }
 
-    public static void SessionOnActivate(ISession session)
+    public static Task SessionOnActivate(ISession session)
     {
         ServerSessionOnActivate?.Invoke(session);
+        return Task.CompletedTask;
     }
 
-    public static void SessionOnRelease(ISession session)
+    public static Task SessionOnRelease(ISession session)
     {
         ServerSessionOnRelease?.Invoke(session);
+        return Task.CompletedTask;
     }
 
     public static void OnStart()

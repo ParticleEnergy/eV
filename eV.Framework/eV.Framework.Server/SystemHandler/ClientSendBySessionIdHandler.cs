@@ -15,21 +15,20 @@ public class ClientSendBySessionId
 
 public class ClientSendBySessionIdHandler : HandlerBase<ClientSendBySessionId>
 {
-    protected override Task Handle(ISession session, ClientSendBySessionId content)
+    protected override async Task Handle(ISession session, ClientSendBySessionId content)
     {
         if (content.SessionId.Equals(""))
         {
             EasyLogger.Warn($"Session [{session.SessionId}] send by sessionId failed sessionId is empty");
-            return Task.CompletedTask;
+            return;
         }
 
         if (content.Data is not { Length: > 0 })
         {
             EasyLogger.Warn($"Session [{session.SessionId}] send by sessionId failed data is empty");
-            return Task.CompletedTask;
+            return;
         }
 
-        ServerSession.Send(content.SessionId, content.Data);
-        return Task.CompletedTask;
+        await ServerSession.Instance.Send(content.SessionId, content.Data);
     }
 }

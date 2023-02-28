@@ -7,8 +7,8 @@ namespace eV.Module.Session.Interface;
 
 public interface ISessionExtend
 {
-    public bool Send(string sessionId, byte[] data);
-    public void SendBroadcast(string selfSessionId, byte[] data);
-    public void OnActivate(ISession session);
-    public void OnRelease(ISession session);
+    public Task<bool> Send(string sessionId, byte[] data);
+    public Task SendBroadcast(string selfSessionId, byte[] data);
+    public Task OnActivate(ISession session);
+    public Task OnRelease(ISession session);
 }

@@ -23,13 +23,13 @@ public class SessionRegistrationAuthority : ISessionRegistrationAuthority
         _redis = redis;
     }
 
-    public async void Registry(string sessionId)
+    public async Task Registry(string sessionId)
     {
         await _redis.GetDatabase().HashSetAsync(string.Format(HashTableKey, _clusterId), sessionId, _nodeId);
         await _redis.GetDatabase().SetAddAsync(string.Format(SetKey, _clusterId, _nodeId), sessionId);
     }
 
-    public async void Deregister(string sessionId)
+    public async Task Deregister(string sessionId)
     {
         await _redis.GetDatabase().HashDeleteAsync(string.Format(HashTableKey, _clusterId), sessionId);
         await _redis.GetDatabase().SetRemoveAsync(string.Format(SetKey, _clusterId, _nodeId), sessionId);

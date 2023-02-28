@@ -93,7 +93,7 @@ public class Client
             Packet packet = new();
             packet.SetName("ClientSendBySessionId");
             packet.SetContent(Serializer.Serialize(new { ClientSendBySessionId = sessionId, Data = data }));
-            return session.Send(Package.Pack(packet));
+            return Task.FromResult(session.Send(Package.Pack(packet)));
         };
 
         session.SendBroadcastAction = (_, data) =>
@@ -102,6 +102,7 @@ public class Client
             packet.SetName("ClientSendBroadcast");
             packet.SetContent(Serializer.Serialize(new { Data = data }));
             session.Send(Package.Pack(packet));
+            return Task.CompletedTask;
         };
     }
 

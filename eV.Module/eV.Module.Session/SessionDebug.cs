@@ -16,11 +16,6 @@ public static class SessionDebug
         _isDebug = true;
     }
 
-    public static void DisableDebug()
-    {
-        _isDebug = false;
-    }
-
     public static void DebugReceive(string? sessionId, string name, object content)
     {
         Logger.Debug(_isDebug

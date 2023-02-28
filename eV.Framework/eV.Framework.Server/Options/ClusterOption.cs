@@ -5,9 +5,6 @@ namespace eV.Framework.Server.Options;
 
 public class ClusterOption
 {
-    public string ClusterName { get; set; } = string.Empty;
-    public int ConsumeSendPipelineNumber { get; set; }
-    public int ConsumeSendGroupPipelineNumber { get; set; }
-    public int ConsumeSendBroadcastPipelineNumber { get; set; }
-    public RedisOption Redis { get; set; } = new();
+    public int SendBatchProcessingQuantity { get; set; }
+    public int SendBroadcastBatchProcessingQuantity { get; set; }
 }

@@ -43,8 +43,8 @@ public sealed class Session : ISession
 
     #region Action
 
-    public Func<string, byte[], bool>? SendAction;
-    public Action<string, byte[]>? SendBroadcastAction;
+    public Func<string, byte[], Task<bool>>? SendAction;
+    public Func<string, byte[], Task>? SendBroadcastAction;
 
     #endregion
 
@@ -91,13 +91,14 @@ public sealed class Session : ISession
         SessionState = SessionState.Occupy;
     }
 
-    public void Activate(string sessionId)
+    public Task Activate(string sessionId)
     {
         if (SessionState == SessionState.Active)
-            return;
+            return Task.CompletedTask;
         _sessionId = sessionId;
         SessionState = SessionState.Active;
         OnActivate?.Invoke(this);
+        return Task.CompletedTask;
     }
 
     public void Shutdown()
@@ -172,7 +173,7 @@ public sealed class Session : ISession
         }
     }
 
-    public bool Send<T>(string sessionId, T data)
+    public async Task<bool> Send<T>(string sessionId, T data)
     {
         if (_sessionId is null or "")
         {
@@ -183,7 +184,7 @@ public sealed class Session : ISession
         try
         {
             KeyValuePair<string, byte[]?> result = GetSendData(data);
-            if (result.Value == null || SendAction == null || SendAction.Invoke(sessionId, result.Value))
+            if (result.Value == null || SendAction == null || await SendAction.Invoke(sessionId, result.Value))
                 return false;
             SessionDebug.DebugSend(SessionId, sessionId, result.Key, data);
             return true;
@@ -195,19 +196,19 @@ public sealed class Session : ISession
         }
     }
 
-    public void SendBroadcast<T>(T data)
+    public Task SendBroadcast<T>(T data)
     {
         if (_sessionId is null or "")
         {
             Logger.Warn("SendBroadcast needs to activate the session");
-            return;
+            return Task.CompletedTask;
         }
 
         try
         {
             KeyValuePair<string, byte[]?> result = GetSendData(data);
             if (result.Value == null || SendBroadcastAction == null)
-                return;
+                return Task.CompletedTask;
             SendBroadcastAction?.Invoke(_sessionId, result.Value);
             SessionDebug.DebugSendBroadcast(SessionId, result.Key, data);
         }
@@ -215,6 +216,7 @@ public sealed class Session : ISession
         {
             Logger.Error(e.Message, e);
         }
+        return Task.CompletedTask;
     }
 
     private async void Receive(byte[]? data)

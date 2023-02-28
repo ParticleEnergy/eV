@@ -9,19 +9,22 @@ namespace eV.Framework.Server;
 
 public class SessionExtension : ISessionExtend
 {
-    public bool Send(string sessionId, byte[] data)
+    public event SessionEvent? OnActivateEvent;
+    public event SessionEvent? OnReleaseEvent;
+
+    public async Task<bool> Send(string sessionId, byte[] data)
     {
-        return ServerSession.Send(sessionId, data);
+        return await ServerSession.Instance.Send(sessionId, data);
     }
 
-    public void SendBroadcast(string selfSessionId, byte[] data)
+    public async Task SendBroadcast(string selfSessionId, byte[] data)
     {
-        ServerSession.SendBroadcast(selfSessionId, data);
+        await ServerSession.Instance.SendBroadcast(selfSessionId, data);
     }
 
-    public void OnActivate(ISession session)
+    public async Task OnActivate(ISession session)
     {
-        if (ServerSession.Activate(session))
+        if (await ServerSession.Instance.Activate(session))
         {
             OnActivateEvent?.Invoke(session);
         }
@@ -32,11 +35,11 @@ public class SessionExtension : ISessionExtend
         }
     }
 
-    public void OnRelease(ISession session)
+    public async Task OnRelease(ISession session)
     {
         if (session.SessionId is not (null or ""))
         {
-            if (!ServerSession.Release(session))
+            if (!await ServerSession.Instance.Release(session))
                 EasyLogger.Warn($"Session {session.SessionId} Session remove active group error");
         }
         else
@@ -46,7 +49,4 @@ public class SessionExtension : ISessionExtend
 
         OnReleaseEvent?.Invoke(session);
     }
-
-    public event SessionEvent? OnActivateEvent;
-    public event SessionEvent? OnReleaseEvent;
 }

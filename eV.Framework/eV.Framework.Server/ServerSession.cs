@@ -1,44 +1,75 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
-using eV.Framework.Server.Interface;
+using eV.Module.Cluster;
 using eV.Module.Routing.Interface;
-using EasyLogger = eV.Module.EasyLog.Logger;
+using eV.Module.Session;
 
 namespace eV.Framework.Server;
 
-public static class ServerSession
+public class ServerSession
 {
-    private static ISessionDrive? s_sessionDrive;
+    public static ServerSession Instance { get; } = new();
 
-    public static void SetSessionDrive(ISessionDrive sessionDrive)
+    private ServerSession()
     {
-        if (s_sessionDrive != null)
+    }
+
+    public async Task<bool> Send(string sessionId, byte[] data)
+    {
+        Session? session = SessionDispatch.Instance.SessionManager.GetActiveSession(sessionId);
+        if (session != null)
+            return session.Send(data);
+
+        if (CommunicationManager.Instance != null)
         {
-            EasyLogger.Error("Can only be set at startup");
-            return;
+            return await CommunicationManager.Instance.Send(sessionId, data);
         }
 
-        s_sessionDrive = sessionDrive;
+        return false;
     }
 
-    public static bool Send(string sessionId, byte[] data)
+    public async Task SendBroadcast(string selfSessionId, byte[] data)
     {
-        return s_sessionDrive?.Send(sessionId, data) ?? false;
+        if (SessionDispatch.Instance.SessionManager.GetActiveCount() <= 0)
+            return;
+
+        foreach ((string _, Session? session) in SessionDispatch.Instance.SessionManager.GetAllActiveSession())
+        {
+            if (session.SessionId == null || session.SessionId.Equals(selfSessionId))
+                continue;
+            session.Send(data);
+        }
+
+        if (CommunicationManager.Instance != null)
+        {
+            await CommunicationManager.Instance.SendBroadcast(data);
+        }
     }
 
-    public static void SendBroadcast(string selfSessionId, byte[] data)
+    public async Task<bool> Activate(ISession session)
     {
-        s_sessionDrive?.SendBroadcast(selfSessionId, data);
+        if (!SessionDispatch.Instance.SessionManager.AddActiveSession((Session)session))
+            return false;
+
+        if (CommunicationManager.Instance != null)
+        {
+            await CommunicationManager.Instance.SessionRegistrationAuthority.Registry(session.SessionId!);
+        }
+
+        return true;
     }
 
-    public static bool Activate(ISession session)
+    public async Task<bool> Release(ISession session)
     {
-        return s_sessionDrive?.Activate(session) ?? false;
-    }
+        if (!SessionDispatch.Instance.SessionManager.RemoveActiveSession((Session)session))
+            return false;
 
-    public static bool Release(ISession session)
-    {
-        return s_sessionDrive?.Release(session) ?? false;
+        if (CommunicationManager.Instance != null)
+        {
+            await CommunicationManager.Instance.SessionRegistrationAuthority.Deregister(session.SessionId!);
+        }
+
+        return true;
     }
 }

@@ -5,8 +5,8 @@ namespace eV.Module.Cluster.Interface;
 
 public interface ISessionRegistrationAuthority
 {
-    public void Registry(string sessionId);
-    public void Deregister(string sessionId);
+    public Task Registry(string sessionId);
+    public Task Deregister(string sessionId);
     public Task<List<string>> GetAllNodeIds();
     public Task<string> GetNodeId(string sessionId);
     public Task<List<string>> GetAllSessionIds();
