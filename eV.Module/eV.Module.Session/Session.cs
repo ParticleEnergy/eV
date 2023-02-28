@@ -44,7 +44,7 @@ public sealed class Session : ISession
     #region Action
 
     public Func<string, byte[], Task<bool>>? SendAction;
-    public Func<string, byte[], Task>? SendBroadcastAction;
+    public Action<string, byte[]>? SendBroadcastAction;
 
     #endregion
 
@@ -91,14 +91,13 @@ public sealed class Session : ISession
         SessionState = SessionState.Occupy;
     }
 
-    public Task Activate(string sessionId)
+    public void Activate(string sessionId)
     {
         if (SessionState == SessionState.Active)
-            return Task.CompletedTask;
+            return;
         _sessionId = sessionId;
         SessionState = SessionState.Active;
         OnActivate?.Invoke(this);
-        return Task.CompletedTask;
     }
 
     public void Shutdown()
@@ -196,19 +195,19 @@ public sealed class Session : ISession
         }
     }
 
-    public Task SendBroadcast<T>(T data)
+    public void SendBroadcast<T>(T data)
     {
         if (_sessionId is null or "")
         {
             Logger.Warn("SendBroadcast needs to activate the session");
-            return Task.CompletedTask;
+            return;
         }
 
         try
         {
             KeyValuePair<string, byte[]?> result = GetSendData(data);
             if (result.Value == null || SendBroadcastAction == null)
-                return Task.CompletedTask;
+                return;
             SendBroadcastAction?.Invoke(_sessionId, result.Value);
             SessionDebug.DebugSendBroadcast(SessionId, result.Key, data);
         }
@@ -216,7 +215,6 @@ public sealed class Session : ISession
         {
             Logger.Error(e.Message, e);
         }
-        return Task.CompletedTask;
     }
 
     private async void Receive(byte[]? data)

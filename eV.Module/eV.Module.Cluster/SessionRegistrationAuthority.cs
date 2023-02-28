@@ -23,16 +23,16 @@ public class SessionRegistrationAuthority : ISessionRegistrationAuthority
         _redis = redis;
     }
 
-    public async Task Registry(string sessionId)
+    public void Registry(string sessionId)
     {
-        await _redis.GetDatabase().HashSetAsync(string.Format(HashTableKey, _clusterId), sessionId, _nodeId);
-        await _redis.GetDatabase().SetAddAsync(string.Format(SetKey, _clusterId, _nodeId), sessionId);
+        _redis.GetDatabase().HashSet(string.Format(HashTableKey, _clusterId), sessionId, _nodeId);
+        _redis.GetDatabase().SetAdd(string.Format(SetKey, _clusterId, _nodeId), sessionId);
     }
 
-    public async Task Deregister(string sessionId)
+    public void Deregister(string sessionId)
     {
-        await _redis.GetDatabase().HashDeleteAsync(string.Format(HashTableKey, _clusterId), sessionId);
-        await _redis.GetDatabase().SetRemoveAsync(string.Format(SetKey, _clusterId, _nodeId), sessionId);
+        _redis.GetDatabase().HashDelete(string.Format(HashTableKey, _clusterId), sessionId);
+        _redis.GetDatabase().SetRemove(string.Format(SetKey, _clusterId, _nodeId), sessionId);
     }
 
     public async Task<List<string>> GetAllNodeIds()
@@ -63,10 +63,10 @@ public class SessionRegistrationAuthority : ISessionRegistrationAuthority
         return result;
     }
 
-    public async void Start()
+    public void Start()
     {
-        if (await _redis.GetDatabase().KeyExistsAsync(string.Format(HashTableKey, _clusterId))) return;
-        await _redis.GetDatabase().HashSetAsync(string.Format(HashTableKey, _clusterId), Array.Empty<HashEntry>());
+        if (_redis.GetDatabase().KeyExists(string.Format(HashTableKey, _clusterId))) return;
+        _redis.GetDatabase().HashSet(string.Format(HashTableKey, _clusterId), Array.Empty<HashEntry>());
     }
 
     public async void Stop()

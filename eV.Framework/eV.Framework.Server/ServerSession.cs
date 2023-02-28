@@ -47,27 +47,27 @@ public class ServerSession
         }
     }
 
-    public async Task<bool> Activate(ISession session)
+    public bool Activate(ISession session)
     {
         if (!SessionDispatch.Instance.SessionManager.AddActiveSession((Session)session))
             return false;
 
         if (CommunicationManager.Instance != null)
         {
-            await CommunicationManager.Instance.SessionRegistrationAuthority.Registry(session.SessionId!);
+            CommunicationManager.Instance.SessionRegistrationAuthority.Registry(session.SessionId!);
         }
 
         return true;
     }
 
-    public async Task<bool> Release(ISession session)
+    public bool Release(ISession session)
     {
         if (!SessionDispatch.Instance.SessionManager.RemoveActiveSession((Session)session))
             return false;
 
         if (CommunicationManager.Instance != null)
         {
-            await CommunicationManager.Instance.SessionRegistrationAuthority.Deregister(session.SessionId!);
+            CommunicationManager.Instance.SessionRegistrationAuthority.Deregister(session.SessionId!);
         }
 
         return true;

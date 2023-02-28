@@ -71,17 +71,21 @@ public class Queue
     {
         try
         {
-            StreamGroupInfo[] groupInfos = _redis.GetDatabase().StreamGroupInfo(consumerIdentifier.Stream);
-            bool groupExists = groupInfos.Any(streamGroupInfo => streamGroupInfo.Name == consumerIdentifier.Group);
+            bool isExistsStream = _redis.GetDatabase().KeyExists(consumerIdentifier.Stream);
+            if (isExistsStream)
+            {
+                StreamGroupInfo[] groupInfos = _redis.GetDatabase().StreamGroupInfo(consumerIdentifier.Stream);
 
-            if (groupExists) return;
+                bool groupExists = groupInfos.Any(streamGroupInfo => streamGroupInfo.Name == consumerIdentifier.Group);
 
-            bool createStream = !_redis.GetDatabase().KeyExists(consumerIdentifier.Stream);
+                if (groupExists) return;
+            }
+
             _redis.GetDatabase().StreamCreateConsumerGroup(
                 consumerIdentifier.Stream,
                 consumerIdentifier.Group,
                 StreamPosition.NewMessages,
-                createStream
+                !isExistsStream
             );
         }
         catch (Exception e)
@@ -124,6 +128,7 @@ public class Queue
         }
 
         _isStart = true;
+        Logger.Info("Queue start");
     }
 
     public void Stop()

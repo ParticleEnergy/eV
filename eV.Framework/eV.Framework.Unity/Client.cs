@@ -102,7 +102,6 @@ public class Client
             packet.SetName("ClientSendBroadcast");
             packet.SetContent(Serializer.Serialize(new { Data = data }));
             session.Send(Package.Pack(packet));
-            return Task.CompletedTask;
         };
     }
 

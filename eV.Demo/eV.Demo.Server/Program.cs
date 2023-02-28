@@ -1,3 +1,8 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿// Zero
 
-Console.WriteLine("Hello, World!");
+using eV.Framework.Server;
+
+await Application
+    .CreateBuilder(args)
+    .Build()
+    .RunAsync();

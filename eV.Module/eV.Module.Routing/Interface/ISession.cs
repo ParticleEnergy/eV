@@ -5,7 +5,7 @@ using System.Collections;
 
 namespace eV.Module.Routing.Interface;
 
-public delegate Task SessionEvent(ISession session);
+public delegate void SessionEvent(ISession session);
 
 public interface ISession
 {
@@ -16,7 +16,7 @@ public interface ISession
     public bool Send(byte[] data);
     public bool Send<T>(T data);
     public Task<bool> Send<T>(string sessionId, T data);
-    public Task SendBroadcast<T>(T data);
-    public Task Activate(string sessionId);
+    public void SendBroadcast<T>(T data);
+    public void Activate(string sessionId);
     public void Shutdown();
 }

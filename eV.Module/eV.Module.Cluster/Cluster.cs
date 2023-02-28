@@ -92,17 +92,21 @@ public class Cluster
     {
         try
         {
-            StreamGroupInfo[] groupInfos = _redis.GetDatabase().StreamGroupInfo(consumerIdentifier.GetStream(_nodeId));
-            bool groupExists = groupInfos.Any(streamGroupInfo => streamGroupInfo.Name == consumerIdentifier.GetGroup(_nodeId));
+            bool isExistsStream = _redis.GetDatabase().KeyExists(consumerIdentifier.GetStream(_nodeId));
+            if (isExistsStream)
+            {
+                StreamGroupInfo[] groupInfos = _redis.GetDatabase().StreamGroupInfo(consumerIdentifier.GetStream(_nodeId));
 
-            if (groupExists) return;
+                bool groupExists = groupInfos.Any(streamGroupInfo => streamGroupInfo.Name == consumerIdentifier.GetGroup(_nodeId));
 
-            bool createStream = !_redis.GetDatabase().KeyExists(consumerIdentifier.GetStream(_nodeId));
+                if (groupExists) return;
+            }
+
             _redis.GetDatabase().StreamCreateConsumerGroup(
                 consumerIdentifier.GetStream(_nodeId),
                 consumerIdentifier.GetGroup(_nodeId),
                 StreamPosition.NewMessages,
-                createStream
+                !isExistsStream
             );
         }
         catch (Exception e)
@@ -175,6 +179,8 @@ public class Cluster
         }
 
         _isStart = true;
+
+        Logger.Info("Cluster start");
     }
 
     public void Stop()
