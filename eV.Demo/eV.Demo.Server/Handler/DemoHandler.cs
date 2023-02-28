@@ -1,4 +1,5 @@
 using eV.Demo.Server.Message;
+using eV.Demo.Server.Service;
 using eV.Framework.Server.Base;
 using eV.Module.EasyLog;
 using eV.Module.Routing.Attributes;
@@ -14,13 +15,14 @@ public class DemoHandler : HandlerBase<CMessage>
         Skip = true;
     }
 
-    protected override Task Handle(ISession session, CMessage content)
+    protected override async Task Handle(ISession session, CMessage content)
     {
-        Logger.Info(content.Text);
+        DemoService demoService = new();
+
         if (session.SessionId == null || session.SessionId.Equals(""))
             session.Activate(Guid.NewGuid().ToString());
 
         session.Send(new SMessage { Text = content.Text });
-        return Task.CompletedTask;
+        await demoService.Produce(new QMessage{Text = content.Text});
     }
 }

@@ -4,6 +4,6 @@
 namespace eV.Module.Queue.Attributes;
 
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-public class QueueAttribute : Attribute
+public class QueueConsumerAttribute : Attribute
 {
 }

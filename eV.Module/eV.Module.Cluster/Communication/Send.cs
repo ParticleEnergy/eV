@@ -47,14 +47,19 @@ public class Send : IInternalHandler
         return Task.CompletedTask;
     }
 
-    private void Action(ConsumerIdentifier consumerIdentifier, CancellationToken cancellationToken)
+    private async void Action(ConsumerIdentifier consumerIdentifier, CancellationToken cancellationToken)
     {
         if (CommunicationManager.Instance == null)
             return;
 
         while (cancellationToken.IsCancellationRequested)
         {
-            var messages = CommunicationManager.Instance.Consume(consumerIdentifier, _batchProcessingQuantity);
+            var messages = CommunicationManager.Instance.Consume(consumerIdentifier);
+
+            if (messages.Length <=0 )
+                continue;
+
+            List<RedisValue> deleteIds = new();
             foreach (StreamEntry message in messages)
             {
                 try
@@ -66,12 +71,15 @@ public class Send : IInternalHandler
 
                     byte[] data = Convert.FromBase64String(body);
                     _action.Invoke(sessionId, data);
+                    deleteIds.Add(message.Id);
                 }
                 catch (Exception e)
                 {
                     Logger.Error(e.Message, e);
                 }
             }
+            if (deleteIds.Count > 0)
+                await CommunicationManager.Instance.DeleteMessage(consumerIdentifier, deleteIds.ToArray());
         }
     }
 }

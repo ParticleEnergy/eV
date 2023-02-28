@@ -167,7 +167,7 @@ public class CommunicationManager
         }
     }
 
-    public IEnumerable<StreamEntry> Consume(ConsumerIdentifier consumerIdentifier, int count)
+    public StreamEntry[] Consume(ConsumerIdentifier consumerIdentifier)
     {
         try
         {
@@ -176,7 +176,7 @@ public class CommunicationManager
                 consumerIdentifier.GetGroup(NodeId),
                 consumerIdentifier.GetConsumer(NodeId),
                 ">",
-                count,
+                1,
                 true
             );
         }
@@ -185,6 +185,11 @@ public class CommunicationManager
             Logger.Error(e.Message, e);
             return Array.Empty<StreamEntry>();
         }
+    }
+
+    public async Task DeleteMessage(ConsumerIdentifier consumerIdentifier, RedisValue[] ids)
+    {
+        await _redis.GetDatabase().StreamDeleteAsync(consumerIdentifier.GetStream(NodeId), ids);
     }
 
     public ConsumerIdentifier? GetConsumerIdentifier(Type type)

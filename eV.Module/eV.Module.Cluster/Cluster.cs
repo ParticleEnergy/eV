@@ -48,16 +48,6 @@ public class Cluster
         _sendBroadcast = new SendBroadcast(_clusterId, communicationSetting.SendBroadcastAction, communicationSetting.SendBroadcastBatchProcessingQuantity);
 
         Register(clusterAssemblyString);
-
-        CommunicationManager.InitCommunicationManager
-        (
-            nodeId,
-            redis,
-            _sessionRegistrationAuthority,
-            _consumerIdentifiers,
-            _send.ConsumerIdentifiers,
-            _sendBroadcast.ConsumerIdentifiers
-        );
     }
 
     private void Register(string assemblyString)
@@ -86,14 +76,23 @@ public class Cluster
             _handlers[type] = handler;
             Logger.Info($"InternalHandler [{type.FullName}] registration succeeded");
         }
+
+        CommunicationManager.InitCommunicationManager
+        (
+            _nodeId,
+            _redis,
+            _sessionRegistrationAuthority,
+            _consumerIdentifiers,
+            _send.ConsumerIdentifiers,
+            _sendBroadcast.ConsumerIdentifiers
+        );
     }
 
     private void InitStream(ConsumerIdentifier consumerIdentifier)
     {
         try
         {
-            bool isExistsStream = _redis.GetDatabase().KeyExists(consumerIdentifier.GetStream(_nodeId));
-            if (isExistsStream)
+            if (_redis.GetDatabase().KeyExists(consumerIdentifier.GetStream(_nodeId)))
             {
                 StreamGroupInfo[] groupInfos = _redis.GetDatabase().StreamGroupInfo(consumerIdentifier.GetStream(_nodeId));
 
@@ -105,8 +104,7 @@ public class Cluster
             _redis.GetDatabase().StreamCreateConsumerGroup(
                 consumerIdentifier.GetStream(_nodeId),
                 consumerIdentifier.GetGroup(_nodeId),
-                StreamPosition.NewMessages,
-                !isExistsStream
+                StreamPosition.NewMessages
             );
         }
         catch (Exception e)
@@ -175,7 +173,7 @@ public class Cluster
 
             Task.Run(() => { handler.Run(_cancellationTokenSource.Token); }, _cancellationTokenSource.Token);
 
-            Logger.Info($"Cluster [{contentType.FullName}] start consume");
+            Logger.Info($"ReceiveInternalHandler [{contentType.FullName}] start consume");
         }
 
         _isStart = true;

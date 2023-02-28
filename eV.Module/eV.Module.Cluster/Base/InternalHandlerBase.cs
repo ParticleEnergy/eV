@@ -12,36 +12,27 @@ namespace eV.Module.Cluster.Base;
 public abstract class InternalHandlerBase<T> : IInternalHandler
 {
     protected abstract Task Consume(T data);
-    protected int Count { get; set; } = 1;
-
-    private readonly ConsumerIdentifier? _consumerIdentifier;
-
-    public InternalHandlerBase()
-    {
-        if (CommunicationManager.Instance == null)
-        {
-            return;
-        }
-
-        _consumerIdentifier = CommunicationManager.Instance.GetConsumerIdentifier(typeof(T));
-        if (_consumerIdentifier == null)
-        {
-            Logger.Error($"InternalMessage {typeof(T).Name} not found");
-        }
-    }
 
     public async Task Run(CancellationToken cancellationToken)
     {
         if (CommunicationManager.Instance == null)
             return;
 
-        if (_consumerIdentifier == null)
+        ConsumerIdentifier? consumerIdentifier = CommunicationManager.Instance.GetConsumerIdentifier(typeof(T));
+        if (consumerIdentifier == null)
+        {
+            Logger.Error($"InternalMessage {typeof(T).Name} not found");
             return;
+        }
 
         while (cancellationToken.IsCancellationRequested)
         {
-            var messages = CommunicationManager.Instance.Consume(_consumerIdentifier, Count);
+            var messages = CommunicationManager.Instance.Consume(consumerIdentifier);
 
+            if (messages.Length <= 0)
+                continue;
+
+            List<RedisValue> deleteIds = new();
             foreach (StreamEntry message in messages)
             {
                 try
@@ -53,12 +44,15 @@ public abstract class InternalHandlerBase<T> : IInternalHandler
                     }
 
                     await Consume(data);
+                    deleteIds.Add(message.Id);
                 }
                 catch (Exception e)
                 {
                     Logger.Error(e.Message, e);
                 }
             }
+            if (deleteIds.Count > 0)
+                await CommunicationManager.Instance.DeleteMessage(consumerIdentifier, deleteIds.ToArray());
         }
     }
 }

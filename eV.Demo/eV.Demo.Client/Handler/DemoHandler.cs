@@ -15,7 +15,7 @@ public class DemoHandler : HandlerBase<SMessage>
         Logger.Info(content.Text);
 
         session.Send(new CMessage { Text = content.Text });
-        Thread.Sleep(10000);
+        Thread.Sleep(1000);
         return Task.CompletedTask;
     }
 }

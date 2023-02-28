@@ -126,7 +126,6 @@ public class Server
         if (queueRedis != null)
         {
             _queue = new Queue(Configure.Instance.ProjectName, _nodeId, Configure.Instance.BaseOption.ProjectAssemblyString, queueRedis);
-            _queue.Start();
         }
 
         // cluster
@@ -160,10 +159,12 @@ public class Server
                     SendBatchProcessingQuantity = Configure.Instance.ClusterOption == null ? 1 : Configure.Instance.ClusterOption.SendBatchProcessingQuantity,
                     SendBroadcastBatchProcessingQuantity = Configure.Instance.ClusterOption == null ? 1 : Configure.Instance.ClusterOption.SendBroadcastBatchProcessingQuantity
                 });
-            _cluster.Start();
         }
 
         RegisterHandler();
+
+        _queue?.Start();
+        _cluster?.Start();
 
         ServerEvent.OnStart();
         _server.Start();
@@ -180,6 +181,7 @@ public class Server
 
         _cluster?.Stop();
         _queue?.Stop();
+
         RedisManager.Instance.Stop();
     }
 }

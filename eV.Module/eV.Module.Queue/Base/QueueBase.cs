@@ -11,45 +11,36 @@ namespace eV.Module.Queue.Base;
 
 public abstract class QueueBase<T> : IQueueHandler
 {
-    private readonly ConsumerIdentifier? _consumerIdentifier;
-
     protected RedisValue Position { get; set; } = ">";
     protected int Count { get; set; } = 1;
     protected bool AutoAck { get; set; } = false;
 
     protected abstract Task<bool> Consume(T data);
 
-    public QueueBase()
-    {
-        if (MessageProcessor.Instance == null)
-        {
-            return;
-        }
-
-        _consumerIdentifier = MessageProcessor.Instance.GetConsumerIdentifier(typeof(T));
-        if (_consumerIdentifier == null)
-        {
-            Logger.Error($"QueueMessage {typeof(T).Name} not found");
-        }
-    }
-
     public async Task RunConsume(CancellationToken cancellationToken)
     {
         if (MessageProcessor.Instance == null)
             return;
 
-        if (_consumerIdentifier == null)
+        ConsumerIdentifier? consumerIdentifier = MessageProcessor.Instance.GetConsumerIdentifier(typeof(T));
+        if (consumerIdentifier == null)
+        {
+            Logger.Error($"QueueMessage {typeof(T).Name} not found");
             return;
+        }
 
-        while (cancellationToken.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested)
         {
             var messages = MessageProcessor.Instance.Consume(
-                _consumerIdentifier,
+                consumerIdentifier,
                 Position,
                 Count,
                 AutoAck
             );
+            if (messages.Length <= 0)
+                continue;
 
+            List<RedisValue> deleteIds = new();
             foreach (StreamEntry message in messages)
             {
                 try
@@ -58,20 +49,30 @@ public abstract class QueueBase<T> : IQueueHandler
                     if (data == null)
                     {
                         if (!AutoAck)
-                            MessageProcessor.Instance.Acknowledge(_consumerIdentifier, message.Id);
+                        {
+                            if (MessageProcessor.Instance.AckMessage(consumerIdentifier, message.Id))
+                            {
+                                deleteIds.Add(message.Id);
+                            }
+                        }
                         continue;
                     }
 
-                    if (await Consume(data) && !AutoAck)
+                    if (!await Consume(data)) continue;
+
+                    if (!AutoAck)
                     {
-                        MessageProcessor.Instance.Acknowledge(_consumerIdentifier, message.Id);
+                        MessageProcessor.Instance.AckMessage(consumerIdentifier, message.Id);
                     }
+                    deleteIds.Add(message.Id);
                 }
                 catch (Exception e)
                 {
                     Logger.Error(e.Message, e);
                 }
             }
+            if (deleteIds.Count > 0)
+                await MessageProcessor.Instance.DeleteMessage(consumerIdentifier, deleteIds.ToArray());
         }
     }
 }

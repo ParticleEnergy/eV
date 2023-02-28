@@ -31,8 +31,6 @@ public class Queue
         _redis = redis;
 
         Register(queueAssemblyString);
-
-        MessageProcessor.InitMessageProcessor(_redis, _consumerIdentifiers);
     }
 
     private void Register(string assemblyString)
@@ -44,7 +42,7 @@ public class Queue
 
         foreach (Type type in allTypes)
         {
-            object[] jobAttributes = type.GetCustomAttributes(typeof(QueueAttribute), true);
+            object[] jobAttributes = type.GetCustomAttributes(typeof(QueueConsumerAttribute), true);
 
             if (jobAttributes.Length <= 0)
                 continue;
@@ -62,17 +60,18 @@ public class Queue
                 $"eV:Queue:{_project}:Node:{_nodeId}:Consumer:{contentTypes[0].Name}"
             );
 
-            _handlers[type] = handler;
-            Logger.Info($"Queue [{type.FullName}] registration succeeded");
+            _handlers[contentTypes[0]] = handler;
+            Logger.Info($"Queue Consumer [{type.FullName}] registration succeeded");
         }
+
+        MessageProcessor.InitMessageProcessor(_redis, _consumerIdentifiers);
     }
 
     private void InitStream(ConsumerIdentifier consumerIdentifier)
     {
         try
         {
-            bool isExistsStream = _redis.GetDatabase().KeyExists(consumerIdentifier.Stream);
-            if (isExistsStream)
+            if (_redis.GetDatabase().KeyExists(consumerIdentifier.Stream))
             {
                 StreamGroupInfo[] groupInfos = _redis.GetDatabase().StreamGroupInfo(consumerIdentifier.Stream);
 
@@ -84,8 +83,7 @@ public class Queue
             _redis.GetDatabase().StreamCreateConsumerGroup(
                 consumerIdentifier.Stream,
                 consumerIdentifier.Group,
-                StreamPosition.NewMessages,
-                !isExistsStream
+                StreamPosition.NewMessages
             );
         }
         catch (Exception e)
@@ -109,7 +107,6 @@ public class Queue
             return;
         if (!_redis.IsConnected)
             return;
-
 
         foreach ((Type contentType, IQueueHandler handler) in _handlers)
         {
