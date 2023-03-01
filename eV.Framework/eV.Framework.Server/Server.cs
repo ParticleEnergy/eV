@@ -61,10 +61,7 @@ public class Server
 
     private static ServerSetting GetServerSetting()
     {
-        ServerSetting serverSetting = new()
-        {
-            TcpKeepAlive = Configure.Instance.ServerOption.TcpKeepAlive
-        };
+        ServerSetting serverSetting = new() { TcpKeepAlive = Configure.Instance.ServerOption.TcpKeepAlive };
         if (!Configure.Instance.ServerOption.Host.Equals(""))
             serverSetting.Host = Configure.Instance.ServerOption.Host;
 
@@ -80,12 +77,6 @@ public class Server
         if (Configure.Instance.ServerOption.ReceiveBufferSize > 0)
             serverSetting.ReceiveBufferSize = Configure.Instance.ServerOption.ReceiveBufferSize;
 
-        if (Configure.Instance.ServerOption.TcpKeepAliveTime > 0)
-            serverSetting.TcpKeepAliveTime = Configure.Instance.ServerOption.TcpKeepAliveTime;
-
-        if (Configure.Instance.ServerOption.TcpKeepAliveInterval > 0)
-            serverSetting.TcpKeepAliveInterval = Configure.Instance.ServerOption.TcpKeepAliveInterval;
-
         return serverSetting;
     }
 
@@ -96,7 +87,6 @@ public class Server
             Configure.Instance.BaseOption.PublicObjectAssemblyString
         );
 
-        Dispatch.AddCustomHandler(typeof(ClientKeepaliveHandler), typeof(ClientKeepalive));
         Dispatch.AddCustomHandler(typeof(ClientSendBroadcastHandler), typeof(ClientSendBroadcast));
         Dispatch.AddCustomHandler(typeof(ClientSendBySessionIdHandler), typeof(ClientSendBySessionId));
     }

@@ -18,7 +18,5 @@ public class UnitySetting
     public string TargetHost { get; set; } = DefaultSetting.TargetHost;
     public string CertFile { get; set; } = string.Empty;
     public bool TcpKeepAlive { get; set; } = DefaultSetting.TcpKeepAlive;
-    public int TcpKeepAliveTime { get; set; } = DefaultSetting.TcpKeepAliveTime;
-    public int TcpKeepAliveInterval { get; set; } = DefaultSetting.TcpKeepAliveInterval;
     public ILog? Log { get; set; } = null;
 }

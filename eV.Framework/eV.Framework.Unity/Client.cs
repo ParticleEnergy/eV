@@ -17,8 +17,6 @@ public class Client
 {
     private readonly ITcpClient _client;
 
-    private readonly Keepalive _keepalive;
-
     public Client(UnitySetting setting)
     {
         if (setting.Log != null)
@@ -29,15 +27,7 @@ public class Client
 
         if (setting.CertFile.Equals(""))
         {
-            ClientSetting clientSetting = new()
-            {
-                Host = setting.Host,
-                Port = setting.Port,
-                ReceiveBufferSize = setting.ReceiveBufferSize,
-                TcpKeepAlive = setting.TcpKeepAlive,
-                TcpKeepAliveTime = setting.TcpKeepAliveTime,
-                TcpKeepAliveInterval = setting.TcpKeepAliveInterval
-            };
+            ClientSetting clientSetting = new() { Host = setting.Host, Port = setting.Port, ReceiveBufferSize = setting.ReceiveBufferSize, TcpKeepAlive = setting.TcpKeepAlive };
             _client = new eVNetworkClient(clientSetting);
         }
         else
@@ -58,7 +48,6 @@ public class Client
         _client.DisconnectCompleted += ClientOnDisconnectCompleted;
 
         Dispatch.RegisterClient(setting.ProjectAssemblyString, setting.PublicObjectAssemblyString);
-        _keepalive = new Keepalive(setting.TcpKeepAliveInterval);
     }
 
     public void Connect()
@@ -76,12 +65,10 @@ public class Client
         Session session = new(channel);
         ExtensionSession(session);
         OnConnect?.Invoke(session);
-        _keepalive.Start(session);
     }
 
     private void ClientOnDisconnectCompleted(ITcpChannel _)
     {
-        _keepalive.Stop();
         OnDisconnect?.Invoke();
     }
 

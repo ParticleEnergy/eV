@@ -10,6 +10,4 @@ internal static class DefaultSetting
     public const int ReceiveBufferSize = 2048;
 
     public const bool TcpKeepAlive = true;
-    public const int TcpKeepAliveTime = 600;
-    public const int TcpKeepAliveInterval = 60;
 }

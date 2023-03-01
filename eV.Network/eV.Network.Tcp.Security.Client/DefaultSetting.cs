@@ -13,6 +13,4 @@ internal static class DefaultSetting
     public const SslProtocols SslProtocols = (SslProtocols)192;
     public const string TargetHost = "eV";
     public const bool TcpKeepAlive = true;
-    public const int TcpKeepAliveTime = 600;
-    public const int TcpKeepAliveInterval = 60;
 }

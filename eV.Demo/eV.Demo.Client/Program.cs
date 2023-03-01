@@ -6,7 +6,11 @@ using eV.Module.Routing.Interface;
 
 UnitySetting setting = new()
 {
-    Host = "127.0.0.1", TcpKeepAlive = true,TcpKeepAliveInterval = 3,TcpKeepAliveTime = 10,Port = 8000, ProjectAssemblyString = "eV.Demo.Client", PublicObjectAssemblyString = "eV.Demo.Client",
+    Host = "127.0.0.1",
+    TcpKeepAlive = true,
+    Port = 8000,
+    ProjectAssemblyString = "eV.Demo.Client",
+    PublicObjectAssemblyString = "eV.Demo.Client",
 };
 Client client = new(setting);
 client.OnConnect += delegate(ISession session)

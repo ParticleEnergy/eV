@@ -15,7 +15,4 @@ public class ClientSetting
     #endregion
 
     public bool TcpKeepAlive { get; set; } = DefaultSetting.TcpKeepAlive;
-    public int TcpKeepAliveTime { get; set; } = DefaultSetting.TcpKeepAliveTime;
-    public int TcpKeepAliveInterval { get; set; } = DefaultSetting.TcpKeepAliveInterval;
-
 }
