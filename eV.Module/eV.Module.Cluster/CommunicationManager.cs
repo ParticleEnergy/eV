@@ -156,8 +156,9 @@ public class CommunicationManager
                     _sendBroadcastConsumerIdentifiers[random.Next(0, _sendBroadcastConsumerIdentifiers.Count)].GetStream(nodeId),
                     "data",
                     Convert.ToBase64String(data)
-                    );
+                );
             }
+
             return true;
         }
         catch (Exception e)

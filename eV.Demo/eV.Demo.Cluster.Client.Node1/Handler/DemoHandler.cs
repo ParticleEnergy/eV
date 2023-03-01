@@ -13,7 +13,7 @@ public class DemoHandler : HandlerBase<SMessage>
     {
         Logger.Info(content.Text);
         session.Activate("Client.Node2");
-        session.Send("Server.Node2",  new CMessage() { Text = "ClientNode1" });
+        session.Send("Server.Node2", new CMessage() { Text = "ClientNode1" });
         return Task.CompletedTask;
     }
 }

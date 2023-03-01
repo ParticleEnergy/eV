@@ -225,7 +225,6 @@ public sealed class Session : ISession
             {
                 Logger.Debug($"SendBroadcast [{result.Key}] [{SessionId}] {JsonSerializer.Serialize(data)}");
             }
-
         }
         catch (Exception e)
         {

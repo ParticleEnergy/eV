@@ -55,6 +55,7 @@ public abstract class InternalHandlerBase<T> : IInternalHandler
                     Logger.Error(e.Message, e);
                 }
             }
+
             if (deleteIds.Count > 0)
                 await CommunicationManager.Instance.DeleteMessage(stream, deleteIds.ToArray());
         }

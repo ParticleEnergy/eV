@@ -55,6 +55,7 @@ public abstract class QueueBase<T> : IQueueHandler
                                 deleteIds.Add(message.Id);
                             }
                         }
+
                         continue;
                     }
 
@@ -64,6 +65,7 @@ public abstract class QueueBase<T> : IQueueHandler
                     {
                         MessageProcessor.Instance.AckMessage(consumerIdentifier, message.Id);
                     }
+
                     deleteIds.Add(message.Id);
                 }
                 catch (Exception e)
@@ -71,6 +73,7 @@ public abstract class QueueBase<T> : IQueueHandler
                     Logger.Error(e.Message, e);
                 }
             }
+
             if (deleteIds.Count > 0)
                 await MessageProcessor.Instance.DeleteMessage(consumerIdentifier, deleteIds.ToArray());
         }

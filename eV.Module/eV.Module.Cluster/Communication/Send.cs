@@ -60,7 +60,7 @@ public class Send : IInternalHandler
         {
             var messages = CommunicationManager.Instance.Consume(stream, group, consumer);
 
-            if (messages.Length <=0 )
+            if (messages.Length <= 0)
                 continue;
 
             List<RedisValue> deleteIds = new();
@@ -82,6 +82,7 @@ public class Send : IInternalHandler
                     Logger.Error(e.Message, e);
                 }
             }
+
             if (deleteIds.Count > 0)
                 await CommunicationManager.Instance.DeleteMessage(stream, deleteIds.ToArray());
         }

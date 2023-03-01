@@ -95,7 +95,7 @@ public static class Dispatch
 
             if (Logger.IsDebug())
             {
-                Logger.Debug( $"ReceiveMessage [{packet.GetName()}] [{session.SessionId}] {JsonSerializer.Serialize(content)}");
+                Logger.Debug($"ReceiveMessage [{packet.GetName()}] [{session.SessionId}] {JsonSerializer.Serialize(content)}");
             }
             else
             {

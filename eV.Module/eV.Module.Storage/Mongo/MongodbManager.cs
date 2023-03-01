@@ -44,6 +44,7 @@ public class MongodbManager
                         });
                     };
                 }
+
                 MongoClient client = new(mongoClientSettings);
                 _clients.Add(dbName, client);
                 Logger.Info($"Mongodb [{dbName}] connected success");
