@@ -14,7 +14,7 @@ public class DemoHandler : HandlerBase<CMessage>
         Skip = true;
     }
 
-    protected override async Task Handle(ISession session, CMessage content)
+    protected override Task Handle(ISession session, CMessage content)
     {
         DemoService demoService = new();
 
@@ -23,5 +23,6 @@ public class DemoHandler : HandlerBase<CMessage>
 
         session.Send(new SMessage { Text = "Server" });
         // await demoService.Produce(new QMessage{Text = content.Text});
+        return Task.CompletedTask;
     }
 }

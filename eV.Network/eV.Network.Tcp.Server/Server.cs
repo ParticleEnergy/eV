@@ -60,8 +60,7 @@ public class Server : IServer
         _socket = new Socket(_ipEndPoint!.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
         _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
         _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, _tcpKeepAliveInterval);
-        _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount,
-            _tcpKeepAliveRetryCount);
+        _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, _tcpKeepAliveRetryCount);
 
         _socketAsyncEventArgsCompleted = new SocketAsyncEventArgsCompleted();
         _socketAsyncEventArgsCompleted.ProcessAccept += ProcessAccept;
