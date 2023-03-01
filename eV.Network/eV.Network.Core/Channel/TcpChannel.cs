@@ -10,30 +10,6 @@ namespace eV.Network.Core.Channel;
 
 public class TcpChannel : ITcpChannel
 {
-    public TcpChannel(int receiveBufferSize)
-    {
-        ChannelId = Guid.NewGuid().ToString();
-        ChannelState = RunState.Off;
-
-        // Completed
-        SocketAsyncEventArgsCompleted socketAsyncEventArgsCompleted = new();
-        socketAsyncEventArgsCompleted.ProcessReceive += ProcessReceive;
-        socketAsyncEventArgsCompleted.ProcessSend += ProcessSend;
-        socketAsyncEventArgsCompleted.ProcessDisconnect += ProcessDisconnect;
-        // Receive
-        _receiveBuffer = new byte[receiveBufferSize];
-        _receiveSocketAsyncEventArgs = new SocketAsyncEventArgs();
-        _receiveSocketAsyncEventArgs.Completed += socketAsyncEventArgsCompleted.OnCompleted;
-        _receiveSocketAsyncEventArgs.SetBuffer(_receiveBuffer, 0, receiveBufferSize);
-        // Send
-        _sendSocketAsyncEventArgs = new SocketAsyncEventArgs();
-        _sendSocketAsyncEventArgs.Completed += socketAsyncEventArgsCompleted.OnCompleted;
-        // Disconnect
-        _disconnectSocketAsyncEventArgs = new SocketAsyncEventArgs();
-        _disconnectSocketAsyncEventArgs.Completed += socketAsyncEventArgsCompleted.OnCompleted;
-        _disconnectSocketAsyncEventArgs.DisconnectReuseSocket = false;
-    }
-
     #region Event
 
     public event TcpChannelEvent? OpenCompleted;
@@ -66,6 +42,30 @@ public class TcpChannel : ITcpChannel
     private readonly byte[] _receiveBuffer;
 
     #endregion
+
+    public TcpChannel(int receiveBufferSize)
+    {
+        ChannelId = Guid.NewGuid().ToString();
+        ChannelState = RunState.Off;
+
+        // Completed
+        SocketAsyncEventArgsCompleted socketAsyncEventArgsCompleted = new();
+        socketAsyncEventArgsCompleted.ProcessReceive += ProcessReceive;
+        socketAsyncEventArgsCompleted.ProcessSend += ProcessSend;
+        socketAsyncEventArgsCompleted.ProcessDisconnect += ProcessDisconnect;
+        // Receive
+        _receiveBuffer = new byte[receiveBufferSize];
+        _receiveSocketAsyncEventArgs = new SocketAsyncEventArgs();
+        _receiveSocketAsyncEventArgs.Completed += socketAsyncEventArgsCompleted.OnCompleted;
+        _receiveSocketAsyncEventArgs.SetBuffer(_receiveBuffer, 0, receiveBufferSize);
+        // Send
+        _sendSocketAsyncEventArgs = new SocketAsyncEventArgs();
+        _sendSocketAsyncEventArgs.Completed += socketAsyncEventArgsCompleted.OnCompleted;
+        // Disconnect
+        _disconnectSocketAsyncEventArgs = new SocketAsyncEventArgs();
+        _disconnectSocketAsyncEventArgs.Completed += socketAsyncEventArgsCompleted.OnCompleted;
+        _disconnectSocketAsyncEventArgs.DisconnectReuseSocket = false;
+    }
 
     #region Operate
 
