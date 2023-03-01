@@ -20,9 +20,9 @@ public class DemoHandler : HandlerBase<CMessage>
         DemoService demoService = new();
 
         if (session.SessionId == null || session.SessionId.Equals(""))
-            session.Activate(Guid.NewGuid().ToString());
+            session.Activate("Server");
 
-        session.Send(new SMessage { Text = content.Text });
-        await demoService.Produce(new QMessage{Text = content.Text});
+        session.Send(new SMessage { Text = "Server" });
+        // await demoService.Produce(new QMessage{Text = content.Text});
     }
 }

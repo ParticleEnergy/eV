@@ -7,7 +7,7 @@ using eV.Module.Routing.Interface;
 UnitySetting setting = new()
 {
     Host = "127.0.0.1",
-    Port = 8001,
+    Port = 8000,
     ProjectAssemblyString = "eV.Demo.Client",
     PublicObjectAssemblyString = "eV.Demo.Client",
 };
