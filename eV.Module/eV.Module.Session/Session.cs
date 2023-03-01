@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using System.Collections;
+using System.Text.Json;
 using eV.Module.EasyLog;
 using eV.Module.Routing;
 using eV.Module.Routing.Interface;
@@ -162,7 +163,12 @@ public sealed class Session : ISession
             KeyValuePair<string, byte[]?> result = GetSendData(data);
             if (result.Value == null || !Send(result.Value))
                 return false;
-            SessionDebug.DebugSend(SessionId, result.Key, data);
+
+            if (Logger.IsDebug())
+            {
+                Logger.Debug($"Send [{result.Key}] [{SessionId}] {JsonSerializer.Serialize(data)}");
+            }
+
             return true;
         }
         catch (Exception e)
@@ -185,7 +191,12 @@ public sealed class Session : ISession
             KeyValuePair<string, byte[]?> result = GetSendData(data);
             if (result.Value == null || SendAction == null || await SendAction.Invoke(sessionId, result.Value))
                 return false;
-            SessionDebug.DebugSend(SessionId, sessionId, result.Key, data);
+
+            if (Logger.IsDebug())
+            {
+                Logger.Debug($"SendBySessionId [{result.Key}] [{SessionId}] [{sessionId}] {JsonSerializer.Serialize(data)}");
+            }
+
             return true;
         }
         catch (Exception e)
@@ -209,7 +220,12 @@ public sealed class Session : ISession
             if (result.Value == null || SendBroadcastAction == null)
                 return;
             SendBroadcastAction?.Invoke(_sessionId, result.Value);
-            SessionDebug.DebugSendBroadcast(SessionId, result.Key, data);
+
+            if (Logger.IsDebug())
+            {
+                Logger.Debug($"SendBroadcast [{result.Key}] [{SessionId}] {JsonSerializer.Serialize(data)}");
+            }
+
         }
         catch (Exception e)
         {
@@ -230,8 +246,7 @@ public sealed class Session : ISession
 
             foreach (Packet? packet in packets)
             {
-                KeyValuePair<string, object> result = await Dispatch.Dispense(this, packet);
-                SessionDebug.DebugReceive(SessionId, result.Key, result.Value);
+                await Dispatch.Dispense(this, packet);
             }
         }
         catch (Exception e)

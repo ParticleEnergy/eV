@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using System.Reflection;
+using System.Text.Json;
 using eV.Module.EasyLog;
 using eV.Module.Routing.Attributes;
 using eV.Module.Routing.Interface;
@@ -76,10 +77,10 @@ public static class Dispatch
         RegisterHandler(handlerAssemblyString);
     }
 
-    public static async Task<KeyValuePair<string, object>> Dispense(ISession session, IPacket packet)
+    public static async Task Dispense(ISession session, IPacket packet)
     {
         if (packet.GetName().Equals("") || packet.GetContent().Length == 0)
-            return new KeyValuePair<string, object>("", new object());
+            return;
 
         try
         {
@@ -87,20 +88,26 @@ public static class Dispatch
             if (route == null)
             {
                 Logger.Error($"The receiver corresponding to packet [{packet.GetName()}] is not found");
-                return new KeyValuePair<string, object>("", new object());
+                return;
             }
 
             object content = Serializer.Deserialize(packet.GetContent(), route.ContentType);
-            await route.Handler.Run(session, content);
 
-            return new KeyValuePair<string, object>(packet.GetName(), content);
+            if (Logger.IsDebug())
+            {
+                Logger.Debug( $"ReceiveMessage [{packet.GetName()}] [{session.SessionId}] {JsonSerializer.Serialize(content)}");
+            }
+            else
+            {
+                Logger.Info($"ReceiveMessage [{packet.GetName()}] [{session.SessionId}]");
+            }
+
+            await route.Handler.Run(session, content);
         }
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
         }
-
-        return new KeyValuePair<string, object>("", new object());
     }
 
     private static IRoute? GetRoute(string name)

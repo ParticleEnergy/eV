@@ -44,9 +44,6 @@ public class Server
         _sessionExtension.OnActivateEvent += ServerEvent.SessionOnActivate;
         _sessionExtension.OnReleaseEvent += ServerEvent.SessionOnRelease;
 
-        if (Configure.Instance.BaseOption.Debug)
-            SessionDebug.EnableDebug();
-
         Profile.Init(
             Configure.Instance.BaseOption.PublicObjectAssemblyString,
             Configure.Instance.BaseOption.GameProfilePath,

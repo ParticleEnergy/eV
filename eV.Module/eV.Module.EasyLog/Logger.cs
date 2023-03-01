@@ -15,6 +15,11 @@ public static class Logger
         s_log = log;
     }
 
+    public static bool IsDebug()
+    {
+        return s_log.IsDebug();
+    }
+
     public static void Debug(object message)
     {
         s_log.Debug(message);

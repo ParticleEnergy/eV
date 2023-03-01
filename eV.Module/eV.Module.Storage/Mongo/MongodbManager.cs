@@ -33,14 +33,17 @@ public class MongodbManager
             {
                 var mongoConnectionUrl = new MongoUrl(connString);
                 var mongoClientSettings = MongoClientSettings.FromUrl(mongoConnectionUrl);
-                mongoClientSettings.ClusterConfigurator = clusterBuilder =>
+                if (Logger.IsDebug())
                 {
-                    clusterBuilder.Subscribe<CommandStartedEvent>(commandStartedEvent =>
+                    mongoClientSettings.ClusterConfigurator = clusterBuilder =>
                     {
-                        Logger.Debug(
-                            $"Mongodb [{commandStartedEvent.CommandName}] {commandStartedEvent.Command.ToJson()}");
-                    });
-                };
+                        clusterBuilder.Subscribe<CommandStartedEvent>(commandStartedEvent =>
+                        {
+                            Logger.Debug(
+                                $"Mongodb [{commandStartedEvent.CommandName}] {commandStartedEvent.Command.ToJson()}");
+                        });
+                    };
+                }
                 MongoClient client = new(mongoClientSettings);
                 _clients.Add(dbName, client);
                 Logger.Info($"Mongodb [{dbName}] connected success");

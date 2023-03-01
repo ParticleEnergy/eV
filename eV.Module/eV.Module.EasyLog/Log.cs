@@ -7,6 +7,11 @@ namespace eV.Module.EasyLog;
 
 public class Log : ILog
 {
+    public bool IsDebug()
+    {
+        return true;
+    }
+
     public void Debug(object message)
     {
         Console.WriteLine(message);

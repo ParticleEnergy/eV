@@ -1,7 +1,6 @@
 using eV.Demo.Server.Message;
 using eV.Demo.Server.Service;
 using eV.Framework.Server.Base;
-using eV.Module.EasyLog;
 using eV.Module.Routing.Attributes;
 using eV.Module.Routing.Interface;
 

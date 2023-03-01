@@ -28,7 +28,7 @@ public class RedisManager
         foreach ((string name, ConfigurationOptions option) in redisOptions)
             try
             {
-                ConnectionMultiplexer conn = ConnectionMultiplexer.Connect(option);
+                ConnectionMultiplexer conn = Logger.IsDebug() ? ConnectionMultiplexer.Connect(option, new RedisLogger()) : ConnectionMultiplexer.Connect(option);
                 if (!conn.IsConnected)
                     continue;
                 _redisConnection.Add(name, conn);

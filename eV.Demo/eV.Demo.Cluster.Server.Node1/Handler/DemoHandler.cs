@@ -1,6 +1,5 @@
 
 using eV.Demo.Cluster.Server.Node1.Message;
-using eV.Demo.Cluster.Server.Node1.Service;
 using eV.Framework.Server.Base;
 using eV.Module.Routing.Attributes;
 using eV.Module.Routing.Interface;

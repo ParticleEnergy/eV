@@ -5,14 +5,15 @@ namespace eV.Module.EasyLog.Interface;
 
 public interface ILog
 {
-    void Debug(object message);
-    void Debug(object message, Exception exception);
-    void Info(object message);
-    void Info(object message, Exception exception);
-    void Warn(object message);
-    void Warn(object message, Exception exception);
-    void Error(object message);
-    void Error(object message, Exception exception);
-    void Fatal(object message);
-    void Fatal(object message, Exception exception);
+    public bool IsDebug();
+    public void Debug(object message);
+    public void Debug(object message, Exception exception);
+    public void Info(object message);
+    public void Info(object message, Exception exception);
+    public void Warn(object message);
+    public void Warn(object message, Exception exception);
+    public void Error(object message);
+    public void Error(object message, Exception exception);
+    public void Fatal(object message);
+    public void Fatal(object message, Exception exception);
 }

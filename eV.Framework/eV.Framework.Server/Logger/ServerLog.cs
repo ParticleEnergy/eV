@@ -15,6 +15,11 @@ public class ServerLog : ILog
         _logger = LogManager.GetLogger(loggerName);
     }
 
+    public bool IsDebug()
+    {
+        return _logger.IsDebugEnabled;
+    }
+
     public void Debug(object message)
     {
         _logger.Debug(message);
