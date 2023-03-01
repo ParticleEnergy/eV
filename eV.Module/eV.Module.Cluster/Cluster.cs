@@ -117,14 +117,25 @@ public class Cluster
     {
         try
         {
+            var batch = _redis.GetDatabase().CreateBatch();
+
+            // 删除消费者
+            batch.StreamDeleteConsumerAsync(
+                consumerIdentifier.GetStream(_nodeId),
+                consumerIdentifier.GetGroup(_nodeId),
+                consumerIdentifier.GetConsumer(_nodeId)
+            );
+
             // 删除组
-            _redis.GetDatabase().StreamDeleteConsumerGroup(
+            batch.StreamDeleteConsumerGroupAsync(
                 consumerIdentifier.GetStream(_nodeId),
                 consumerIdentifier.GetGroup(_nodeId)
             );
 
             // 删除流
-            _redis.GetDatabase().KeyDelete(consumerIdentifier.GetStream(_nodeId));
+            batch.KeyDeleteAsync(consumerIdentifier.GetStream(_nodeId));
+
+            batch.Execute();
         }
         catch (Exception e)
         {

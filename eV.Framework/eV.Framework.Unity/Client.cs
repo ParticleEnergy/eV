@@ -92,7 +92,7 @@ public class Client
         {
             Packet packet = new();
             packet.SetName("ClientSendBySessionId");
-            packet.SetContent(Serializer.Serialize(new { ClientSendBySessionId = sessionId, Data = data }));
+            packet.SetContent(Serializer.Serialize(new { SessionId = sessionId, Data = data }));
             return Task.FromResult(session.Send(Package.Pack(packet)));
         };
 

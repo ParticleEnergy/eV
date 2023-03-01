@@ -22,7 +22,7 @@ client.OnConnect += delegate(ISession session)
 };
 client.Connect();
 Console.ReadLine();
-
+//
 //
 // using StackExchange.Redis;
 //
@@ -54,20 +54,23 @@ Console.ReadLine();
 // // // 读取消息
 //
 // string command = $"XREADGROUP GROUP {group} {consumer} BLOCK 0 COUNT 1 STREAMS {stream} >";
+//
+//
+//
 // while (true)
 // {
 //     Console.WriteLine(command);
-//     var result = await redis.GetDatabase().ExecuteAsync(command);
+//     var result =  redis.GetDatabase().Execute("XREADGROUP", new object[]{ "GROUP", group, consumer, "BLOCK", 0,"COUNT", 1, "STREAMS", stream, ">" });
 //     // var messages =await  redis.GetDatabase().StreamReadGroupAsync(
 //     //     "eV:Queue:eV.Demo.Server:Stream:QMessage",
 //     //     "eV:Queue:eV.Demo.Server:Group:QMessage",
 //     //     "eV:Queue:eV.Demo.Server:Node:ff7c1286-40c1-4542-898c-a8c34f7650ab:Consumer:QMessage",
 //     //     ">",
 //     //     count: 1,
-//     //     false,
+//     //     true,
 //     //     flags: CommandFlags.None);
-//
-//     // 处理消息
+//     //
+//     //
 //     // foreach (var message in messages)
 //     // {
 //     //     // 打印消息
@@ -77,5 +80,5 @@ Console.ReadLine();
 //     //     db.StreamAcknowledge("eV:Queue:eV.Demo.Server:Stream:QMessage", "eV:Queue:eV.Demo.Server:Group:QMessage", message.Id);
 //     //     await db.StreamDeleteAsync("eV:Queue:eV.Demo.Server:Stream:QMessage", new []{message.Id});
 //     // }
-//     Console.WriteLine("stop");
+//     Console.WriteLine("test");
 // }

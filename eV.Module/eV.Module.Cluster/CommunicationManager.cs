@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using eV.Module.Cluster.Communication;
 using eV.Module.Cluster.Interface;
@@ -167,14 +168,14 @@ public class CommunicationManager
         }
     }
 
-    public StreamEntry[] Consume(ConsumerIdentifier consumerIdentifier)
+    public StreamEntry[] Consume(string stream, string group, string consumer)
     {
         try
         {
             return _redis.GetDatabase().StreamReadGroup(
-                consumerIdentifier.GetStream(NodeId),
-                consumerIdentifier.GetGroup(NodeId),
-                consumerIdentifier.GetConsumer(NodeId),
+                stream,
+                group,
+                consumer,
                 ">",
                 1,
                 true
@@ -187,9 +188,9 @@ public class CommunicationManager
         }
     }
 
-    public async Task DeleteMessage(ConsumerIdentifier consumerIdentifier, RedisValue[] ids)
+    public async Task DeleteMessage(string stream, RedisValue[] ids)
     {
-        await _redis.GetDatabase().StreamDeleteAsync(consumerIdentifier.GetStream(NodeId), ids);
+        await _redis.GetDatabase().StreamDeleteAsync(stream, ids);
     }
 
     public ConsumerIdentifier? GetConsumerIdentifier(Type type)

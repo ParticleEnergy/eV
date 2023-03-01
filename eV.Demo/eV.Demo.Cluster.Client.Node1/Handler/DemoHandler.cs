@@ -12,6 +12,8 @@ public class DemoHandler : HandlerBase<SMessage>
     protected override Task Handle(ISession session, SMessage content)
     {
         Logger.Info(content.Text);
+        session.Activate("Client.Node2");
+        session.Send("Server.Node2",  new CMessage() { Text = "ClientNode1" });
         return Task.CompletedTask;
     }
 }

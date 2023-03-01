@@ -52,9 +52,13 @@ public class SendBroadcast : IInternalHandler
         if (CommunicationManager.Instance == null)
             return;
 
-        while (cancellationToken.IsCancellationRequested)
+        string stream = consumerIdentifier.GetStream(CommunicationManager.Instance.NodeId);
+        string group = consumerIdentifier.GetGroup(CommunicationManager.Instance.NodeId);
+        string consumer = consumerIdentifier.GetConsumer(CommunicationManager.Instance.NodeId);
+
+        while (!cancellationToken.IsCancellationRequested)
         {
-            var messages = CommunicationManager.Instance.Consume(consumerIdentifier);
+            var messages = CommunicationManager.Instance.Consume(stream, group, consumer);
 
             if (messages.Length <=0 )
                 continue;
@@ -74,7 +78,7 @@ public class SendBroadcast : IInternalHandler
                 }
             }
             if (deleteIds.Count > 0)
-                await CommunicationManager.Instance.DeleteMessage(consumerIdentifier, deleteIds.ToArray());
+                await CommunicationManager.Instance.DeleteMessage(stream, deleteIds.ToArray());
         }
     }
 }
