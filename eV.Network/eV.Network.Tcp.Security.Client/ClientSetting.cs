@@ -19,9 +19,7 @@ public class ClientSetting
 
     #endregion
 
-#if !NETSTANDARD
+    public bool TcpKeepAlive { get; set; } = DefaultSetting.TcpKeepAlive;
     public int TcpKeepAliveTime { get; set; } = DefaultSetting.TcpKeepAliveTime;
     public int TcpKeepAliveInterval { get; set; } = DefaultSetting.TcpKeepAliveInterval;
-    public int TcpKeepAliveRetryCount { get; set; } = DefaultSetting.TcpKeepAliveRetryCount;
-#endif
 }

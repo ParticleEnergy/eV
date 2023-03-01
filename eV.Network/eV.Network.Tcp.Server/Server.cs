@@ -3,6 +3,7 @@
 
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using eV.Module.EasyLog;
 using eV.Network.Core;
 using eV.Network.Core.Channel;
@@ -30,9 +31,10 @@ public class Server : IServer
     private int _backlog;
     private int _maxConnectionCount;
     private int _receiveBufferSize;
+    private bool _tcpKeepAlive;
     private int _tcpKeepAliveTime;
     private int _tcpKeepAliveInterval;
-    private int _tcpKeepAliveRetryCount;
+    private const uint SioKeepaliveValue = 0x98000004;
 
     #endregion
 
@@ -58,9 +60,31 @@ public class Server : IServer
         _connectedCount = 0;
 
         _socket = new Socket(_ipEndPoint!.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-        _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-        _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, _tcpKeepAliveInterval);
-        _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, _tcpKeepAliveRetryCount);
+
+        if (_tcpKeepAlive)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                byte[] inOptionValues = new byte[12];
+                BitConverter.GetBytes((uint)1).CopyTo(inOptionValues, 1);
+                BitConverter.GetBytes((uint)_tcpKeepAliveTime * 1000).CopyTo(inOptionValues, 4);
+                BitConverter.GetBytes((uint)_tcpKeepAliveInterval * 1000).CopyTo(inOptionValues, 8);
+                _socket.IOControl(unchecked((int)SioKeepaliveValue), inOptionValues, null);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                _socket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)3, _tcpKeepAliveTime);
+                _socket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)17, _tcpKeepAliveInterval);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, _tcpKeepAliveTime);
+                _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, _tcpKeepAliveInterval);
+            }
+        }
+
 
         _socketAsyncEventArgsCompleted = new SocketAsyncEventArgsCompleted();
         _socketAsyncEventArgsCompleted.ProcessAccept += ProcessAccept;
@@ -82,9 +106,9 @@ public class Server : IServer
         _maxConnectionCount = setting.MaxConnectionCount;
         _receiveBufferSize = setting.ReceiveBufferSize;
 
+        _tcpKeepAlive = setting.TcpKeepAlive;
         _tcpKeepAliveTime = setting.TcpKeepAliveTime;
         _tcpKeepAliveInterval = setting.TcpKeepAliveInterval;
-        _tcpKeepAliveRetryCount = setting.TcpKeepAliveRetryCount;
     }
 
     #endregion
@@ -123,8 +147,30 @@ public class Server : IServer
             TcpChannel? channel = _channelPool.Pop();
             if (channel != null)
             {
-                socketAsyncEventArgs.AcceptSocket.SetSocketOption(SocketOptionLevel.Tcp,
-                    SocketOptionName.TcpKeepAliveTime, _tcpKeepAliveTime);
+                if (_tcpKeepAlive)
+                {
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        byte[] inOptionValues = new byte[12];
+                        BitConverter.GetBytes((uint)1).CopyTo(inOptionValues, 1);
+                        BitConverter.GetBytes((uint)_tcpKeepAliveTime * 1000).CopyTo(inOptionValues, 4);
+                        BitConverter.GetBytes((uint)_tcpKeepAliveInterval * 1000).CopyTo(inOptionValues, 8);
+                        socketAsyncEventArgs.AcceptSocket.IOControl(unchecked((int)SioKeepaliveValue), inOptionValues, null);
+                    }
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    {
+                        socketAsyncEventArgs.AcceptSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                        socketAsyncEventArgs.AcceptSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)3, _tcpKeepAliveTime);
+                        socketAsyncEventArgs.AcceptSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)17, _tcpKeepAliveInterval);
+                    }
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    {
+                        socketAsyncEventArgs.AcceptSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                        _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, _tcpKeepAliveTime);
+                        _socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, _tcpKeepAliveInterval);
+                    }
+                }
+
                 channel.Open(socketAsyncEventArgs.AcceptSocket);
             }
             else

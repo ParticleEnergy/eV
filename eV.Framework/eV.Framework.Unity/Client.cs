@@ -29,7 +29,15 @@ public class Client
 
         if (setting.CertFile.Equals(""))
         {
-            ClientSetting clientSetting = new() { Host = setting.Host, Port = setting.Port, ReceiveBufferSize = setting.ReceiveBufferSize };
+            ClientSetting clientSetting = new()
+            {
+                Host = setting.Host,
+                Port = setting.Port,
+                ReceiveBufferSize = setting.ReceiveBufferSize,
+                TcpKeepAlive = setting.TcpKeepAlive,
+                TcpKeepAliveTime = setting.TcpKeepAliveTime,
+                TcpKeepAliveInterval = setting.TcpKeepAliveInterval
+            };
             _client = new eVNetworkClient(clientSetting);
         }
         else

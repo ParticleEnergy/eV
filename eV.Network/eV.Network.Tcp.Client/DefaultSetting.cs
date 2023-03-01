@@ -9,9 +9,7 @@ internal static class DefaultSetting
     public const int Port = 8888;
     public const int ReceiveBufferSize = 2048;
 
-#if !NETSTANDARD
-    public const int TcpKeepAliveTime = 60;
-    public const int TcpKeepAliveInterval = 3;
-    public const int TcpKeepAliveRetryCount = 3;
-#endif
+    public const bool TcpKeepAlive = true;
+    public const int TcpKeepAliveTime = 600;
+    public const int TcpKeepAliveInterval = 60;
 }

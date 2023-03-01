@@ -10,7 +10,7 @@ internal static class DefaultSetting
     public const int Backlog = 512;
     public const int MaxConnectionCount = 1024;
     public const int ReceiveBufferSize = 2048;
-    public const int TcpKeepAliveTime = 60;
-    public const int TcpKeepAliveInterval = 3;
-    public const int TcpKeepAliveRetryCount = 3;
+    public const bool TcpKeepAlive = true;
+    public const int TcpKeepAliveTime = 600;
+    public const int TcpKeepAliveInterval = 60;
 }

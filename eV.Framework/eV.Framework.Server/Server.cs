@@ -61,7 +61,10 @@ public class Server
 
     private static ServerSetting GetServerSetting()
     {
-        ServerSetting serverSetting = new();
+        ServerSetting serverSetting = new()
+        {
+            TcpKeepAlive = Configure.Instance.ServerOption.TcpKeepAlive
+        };
         if (!Configure.Instance.ServerOption.Host.Equals(""))
             serverSetting.Host = Configure.Instance.ServerOption.Host;
 
@@ -82,9 +85,6 @@ public class Server
 
         if (Configure.Instance.ServerOption.TcpKeepAliveInterval > 0)
             serverSetting.TcpKeepAliveInterval = Configure.Instance.ServerOption.TcpKeepAliveInterval;
-
-        if (Configure.Instance.ServerOption.TcpKeepAliveRetryCount > 0)
-            serverSetting.TcpKeepAliveRetryCount = Configure.Instance.ServerOption.TcpKeepAliveRetryCount;
 
         return serverSetting;
     }

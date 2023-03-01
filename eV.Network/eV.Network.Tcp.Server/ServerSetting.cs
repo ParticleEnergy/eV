@@ -8,9 +8,9 @@ public class ServerSetting
     public int MaxConnectionCount { get; set; } = DefaultSetting.MaxConnectionCount;
     public int ReceiveBufferSize { get; set; } = DefaultSetting.ReceiveBufferSize;
 
+    public bool TcpKeepAlive { get; set; } = DefaultSetting.TcpKeepAlive;
     public int TcpKeepAliveTime { get; set; } = DefaultSetting.TcpKeepAliveTime;
     public int TcpKeepAliveInterval { get; set; } = DefaultSetting.TcpKeepAliveInterval;
-    public int TcpKeepAliveRetryCount { get; set; } = DefaultSetting.TcpKeepAliveRetryCount;
 
     #region Socket
 
