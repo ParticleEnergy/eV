@@ -138,10 +138,9 @@ public class Client : ITcpClient
     {
         if (socketAsyncEventArgs.ConnectSocket is { Connected: true })
         {
-            if (socketAsyncEventArgs.ConnectSocket.ProtocolType == ProtocolType.Tcp)
-                socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, _tcpKeepAlive);
-
+            socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, _tcpKeepAlive);
             _channel.Open(socketAsyncEventArgs.ConnectSocket);
+
             return true;
         }
 
