@@ -173,10 +173,37 @@ public class Client : ITcpClient
     {
         if (socketAsyncEventArgs.ConnectSocket is { Connected: true })
         {
+            if (socketAsyncEventArgs.ConnectSocket.ProtocolType == ProtocolType.Tcp && _tcpKeepAlive)
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    byte[] inOptionValues = new byte[12];
+                    BitConverter.GetBytes((uint)1).CopyTo(inOptionValues, 1);
+                    BitConverter.GetBytes((uint)_tcpKeepAliveTime * 1000).CopyTo(inOptionValues, 4);
+                    BitConverter.GetBytes((uint)_tcpKeepAliveInterval * 1000).CopyTo(inOptionValues, 8);
+                    socketAsyncEventArgs.ConnectSocket.IOControl(unchecked((int)SioKeepaliveValue), inOptionValues, null);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || Environment.OSVersion.VersionString.ToLower().Contains("android"))
+                {
+                    socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                    socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)3, _tcpKeepAliveTime);
+                    socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)17, _tcpKeepAliveInterval);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
 #if !NETSTANDARD
-            if (socketAsyncEventArgs.ConnectSocket.ProtocolType == ProtocolType.Tcp)
-                socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, _tcpKeepAliveTime);
+                    socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                    socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, _tcpKeepAliveTime);
+                    socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, _tcpKeepAliveInterval);
 #endif
+                }
+                else if (Environment.OSVersion.VersionString.ToLower().Contains("darwin"))
+                {
+                    socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)0x10, _tcpKeepAliveTime);
+                    socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Tcp, (SocketOptionName)0x101, _tcpKeepAliveInterval);
+                }
+            }
+
             _channel.Open(socketAsyncEventArgs.ConnectSocket);
         }
         else
