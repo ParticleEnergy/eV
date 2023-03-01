@@ -174,7 +174,9 @@ public class TcpChannel : ITcpChannel
         }
 
         if (!_socket.ReceiveAsync(_receiveSocketAsyncEventArgs))
-            ProcessReceive(_receiveSocketAsyncEventArgs);
+        {
+            return ProcessReceive(_receiveSocketAsyncEventArgs);
+        }
         return true;
     }
 
@@ -196,13 +198,22 @@ public class TcpChannel : ITcpChannel
             return false;
         }
 
-        lock (_sendSocketAsyncEventArgs)
+        try
         {
-            _sendSocketAsyncEventArgs.SetBuffer(data, 0, data.Length);
-            if (!_socket!.SendAsync(_sendSocketAsyncEventArgs))
-                ProcessSend(_sendSocketAsyncEventArgs);
+            lock (_sendSocketAsyncEventArgs)
+            {
+                _sendSocketAsyncEventArgs.SetBuffer(data, 0, data.Length);
+                if (!_socket!.SendAsync(_sendSocketAsyncEventArgs))
+                {
+                    return ProcessSend(_sendSocketAsyncEventArgs);
+                }
+            }
         }
-
+        catch (Exception e)
+        {
+            Logger.Error(e.Message, e);
+            return false;
+        }
         return true;
     }
 
@@ -210,37 +221,36 @@ public class TcpChannel : ITcpChannel
 
     #region Process
 
-    private void ProcessReceive(SocketAsyncEventArgs socketAsyncEventArgs)
+    private bool ProcessReceive(SocketAsyncEventArgs socketAsyncEventArgs)
     {
         try
         {
             if (_socket == null)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
-                return;
+                return false;
             }
 
             if (!_socket.Connected)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SocketNotConnect, Close);
-                return;
+                return false;
             }
 
             if (socketAsyncEventArgs.SocketError != SocketError.Success)
             {
                 Logger.Debug($"Channel {ChannelId} Error {socketAsyncEventArgs.SocketError}");
                 ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
-                return;
+                return false;
             }
 
             if (socketAsyncEventArgs.BytesTransferred == 0)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SocketBytesTransferredIsZero, Close);
-                return;
+                return false;
             }
 
-            Receive?.Invoke(socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset)
-                .Take(socketAsyncEventArgs.BytesTransferred).ToArray());
+            Receive?.Invoke(socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset).Take(socketAsyncEventArgs.BytesTransferred).ToArray());
             LastReceiveDateTime = DateTime.Now;
             StartReceive();
         }
@@ -248,29 +258,31 @@ public class TcpChannel : ITcpChannel
         {
             Logger.Error(e.Message, e);
             Close();
+            return false;
         }
+        return true;
     }
 
-    private void ProcessSend(SocketAsyncEventArgs socketAsyncEventArgs)
+    private bool ProcessSend(SocketAsyncEventArgs socketAsyncEventArgs)
     {
         try
         {
             if (_socket == null)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
-                return;
+                return false;
             }
 
             if (!_socket.Connected)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SocketNotConnect, Close);
-                return;
+                return false;
             }
 
             if (socketAsyncEventArgs.SocketError != SocketError.Success)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
-                return;
+                return false;
             }
 
             LastSendDateTime = DateTime.Now;
@@ -278,13 +290,16 @@ public class TcpChannel : ITcpChannel
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
+            return false;
         }
+        return true;
     }
 
-    private void ProcessDisconnect(SocketAsyncEventArgs socketAsyncEventArgs)
+    private bool ProcessDisconnect(SocketAsyncEventArgs socketAsyncEventArgs)
     {
         Logger.Info($"Channel {ChannelId} {RemoteEndPoint} disconnect");
         Release();
+        return true;
     }
 
     #endregion

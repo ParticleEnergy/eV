@@ -134,7 +134,7 @@ public class Client : ITcpClient
 
     #region Process
 
-    private void ProcessConnect(SocketAsyncEventArgs socketAsyncEventArgs)
+    private bool ProcessConnect(SocketAsyncEventArgs socketAsyncEventArgs)
     {
         if (socketAsyncEventArgs.ConnectSocket is { Connected: true })
         {
@@ -142,17 +142,18 @@ public class Client : ITcpClient
                 socketAsyncEventArgs.ConnectSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, _tcpKeepAlive);
 
             _channel.Open(socketAsyncEventArgs.ConnectSocket);
+            return true;
         }
-        else
-        {
-            Logger.Error($"Connect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port} failed");
-        }
+
+        Logger.Error($"Connect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port} failed");
+        return false;
     }
 
-    private void ProcessDisconnect(SocketAsyncEventArgs socketAsyncEventArgs)
+    private bool ProcessDisconnect(SocketAsyncEventArgs socketAsyncEventArgs)
     {
         Logger.Info($"Disconnect to Server {_ipEndPoint?.Address}:{_ipEndPoint?.Port}");
         Release();
+        return true;
     }
 
     #endregion

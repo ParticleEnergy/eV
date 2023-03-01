@@ -199,32 +199,36 @@ public class UdpChannel : IUdpChannel
 
     #region Process
 
-    private void ProcessReceiveFrom(SocketAsyncEventArgs socketAsyncEventArgs)
+    private bool ProcessReceiveFrom(SocketAsyncEventArgs socketAsyncEventArgs)
     {
         try
         {
             if (_socket == null)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
-                return;
+                return false;
             }
 
             if (socketAsyncEventArgs.SocketError != SocketError.Success)
             {
                 Logger.Debug($"Channel {ChannelId} Error {socketAsyncEventArgs.SocketError}");
                 ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
-                return;
+                return false;
             }
 
             if (socketAsyncEventArgs.BytesTransferred == 0)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SocketBytesTransferredIsZero, Close);
-                return;
+                return false;
             }
 
             Receive?.Invoke(
-                socketAsyncEventArgs.Buffer?.Skip(socketAsyncEventArgs.Offset)
-                    .Take(socketAsyncEventArgs.BytesTransferred).ToArray(), socketAsyncEventArgs.RemoteEndPoint);
+                socketAsyncEventArgs.Buffer?
+                    .Skip(socketAsyncEventArgs.Offset)
+                    .Take(socketAsyncEventArgs.BytesTransferred)
+                    .ToArray(),
+                socketAsyncEventArgs.RemoteEndPoint
+            );
             LastReceiveDateTime = DateTime.Now;
             StartReceiveFrom();
         }
@@ -232,23 +236,25 @@ public class UdpChannel : IUdpChannel
         {
             Logger.Error(e.Message, e);
             Close();
+            return false;
         }
+        return true;
     }
 
-    private void ProcessSendTo(SocketAsyncEventArgs socketAsyncEventArgs)
+    private bool ProcessSendTo(SocketAsyncEventArgs socketAsyncEventArgs)
     {
         try
         {
             if (_socket == null)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
-                return;
+                return false;
             }
 
             if (socketAsyncEventArgs.SocketError != SocketError.Success)
             {
                 ChannelError.Error(ChannelError.ErrorCode.SocketError, Close);
-                return;
+                return false;
             }
 
             LastSendDateTime = DateTime.Now;
@@ -258,7 +264,9 @@ public class UdpChannel : IUdpChannel
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
+            return false;
         }
+        return true;
     }
 
     #endregion

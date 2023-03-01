@@ -85,31 +85,32 @@ public class Server : IServer
 
     #region Process
 
-    private void ProcessAccept(SocketAsyncEventArgs socketAsyncEventArgs)
+    private bool ProcessAccept(SocketAsyncEventArgs socketAsyncEventArgs)
     {
         if (ServerState == RunState.Off)
-            return;
+            return false;
+
         StartAccept();
 
         if (socketAsyncEventArgs.SocketError != SocketError.Success)
         {
             CloseAcceptSocketAsyncEventArgs(socketAsyncEventArgs);
             Logger.Error($"ProcessAccept {socketAsyncEventArgs.SocketError}");
-            return;
+            return false;
         }
 
         if (socketAsyncEventArgs.AcceptSocket == null)
         {
             ResetAcceptSocketAsyncEventArgs(socketAsyncEventArgs);
             Logger.Error("ProcessAccept AcceptSocket is null");
-            return;
+            return false;
         }
 
         if (!socketAsyncEventArgs.AcceptSocket.Connected)
         {
             Logger.Error("ProcessAccept AcceptSocket not Connected");
             ResetAcceptSocketAsyncEventArgs(socketAsyncEventArgs);
-            return;
+            return false;
         }
 
         try
@@ -128,11 +129,14 @@ public class Server : IServer
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
+            return false;
         }
         finally
         {
             ResetAcceptSocketAsyncEventArgs(socketAsyncEventArgs);
         }
+
+        return true;
     }
 
     #endregion
