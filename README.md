@@ -23,9 +23,7 @@ module
         "Backlog": 32,
         "MaxConnectionCount": 128,
         "ReceiveBufferSize": 2048,
-        "TcpKeepAliveTime": 60,
-        "TcpKeepAliveInterval": 3,
-        "TcpKeepAliveRetryCount": 3,
+        "TcpKeepAlive": true,
         "SessionMaximumIdleTime": 1800
     },
     "HttpServer": {
