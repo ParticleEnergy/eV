@@ -66,7 +66,7 @@ public class Client : ITcpClient
     #region Resource
 
     private Socket? _socket;
-    private readonly TcpChannel _channel;
+    private readonly ITcpChannel _channel;
     private readonly SocketAsyncEventArgs _connectSocketAsyncEventArgs;
 
     #endregion

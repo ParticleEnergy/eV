@@ -79,7 +79,7 @@ public sealed class Session : ISession
 
     public DateTime? LastActiveDateTime
     {
-        get => _channel.LastSendDateTime;
+        get => _channel.LastSendDateTime > _channel.LastReceiveDateTime ? _channel.LastSendDateTime : _channel.LastReceiveDateTime;
         set { }
     }
 

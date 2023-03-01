@@ -9,7 +9,6 @@ using eV.Module.Session;
 using eV.Network.Core.Interface;
 using eV.Network.Tcp.Client;
 using eVNetworkClient = eV.Network.Tcp.Client.Client;
-using eVNetworkSecurityClient = eV.Network.Tcp.Security.Client.Client;
 
 namespace eV.Framework.Unity;
 
@@ -25,24 +24,8 @@ public class Client
             Logger.Info(DefaultSetting.Logo);
         }
 
-        if (setting.CertFile.Equals(""))
-        {
-            ClientSetting clientSetting = new() { Host = setting.Host, Port = setting.Port, ReceiveBufferSize = setting.ReceiveBufferSize, TcpKeepAlive = setting.TcpKeepAlive };
-            _client = new eVNetworkClient(clientSetting);
-        }
-        else
-        {
-            Network.Tcp.Security.Client.ClientSetting clientSetting = new()
-            {
-                Host = setting.Host,
-                Port = setting.Port,
-                ReceiveBufferSize = setting.ReceiveBufferSize,
-                TargetHost = setting.TargetHost,
-                CertFile = setting.CertFile,
-                SslProtocols = setting.SslProtocols
-            };
-            _client = new eVNetworkSecurityClient(clientSetting);
-        }
+        ClientSetting clientSetting = new() { Host = setting.Host, Port = setting.Port, ReceiveBufferSize = setting.ReceiveBufferSize, TcpKeepAlive = setting.TcpKeepAlive };
+        _client = new eVNetworkClient(clientSetting);
 
         _client.ConnectCompleted += ClientOnConnectCompleted;
         _client.DisconnectCompleted += ClientOnDisconnectCompleted;

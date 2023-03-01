@@ -80,3 +80,37 @@ Console.ReadLine();
 //     // }
 //     Console.WriteLine("test");
 // }
+
+// 建立 socket 连接并获取网络流
+//
+// using System.Net.Security;
+// using System.Net.Sockets;
+// using System.Text;
+//
+// Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+// await socket.ConnectAsync("example.com", 443);
+// NetworkStream networkStream = new NetworkStream(socket, true);
+//
+// // 创建 SslStream 并使用网络流进行包装
+// SslStream sslStream = new SslStream(networkStream);
+// await sslStream.AuthenticateAsClientAsync("example.com");
+//
+// // 将 SslStream 封装到 SocketAsyncEventArgs 对象中
+// SocketAsyncEventArgs socketArgs = new SocketAsyncEventArgs();
+// socketArgs.RemoteEndPoint = socket.RemoteEndPoint;
+// socketArgs.Completed += SocketArgs_Completed;
+// socketArgs.UserToken = sslStream;
+// socketArgs.SetBuffer(new byte[1024], 0, 1024);
+//
+// // 使用 SocketAsyncEventArgs 发送和接收数据
+// await sslStream.WriteAsync(Encoding.UTF8.GetBytes("Hello, world!"));
+// socket.SendAsync(socketArgs);
+//
+// // 接收响应数据
+// await socket.ReceiveAsync(socketArgs);
+// byte[] responseBuffer = socketArgs.Buffer;
+// int bytesRead = socketArgs.BytesTransferred;
+//
+// // 解密响应数据
+// string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesRead);
+// Console.WriteLine(response);

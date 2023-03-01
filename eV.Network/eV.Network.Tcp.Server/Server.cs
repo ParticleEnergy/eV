@@ -40,7 +40,7 @@ public class Server : IServer
     private readonly Socket _socket;
     private readonly SocketAsyncEventArgsCompleted _socketAsyncEventArgsCompleted;
     private readonly ObjectPool<SocketAsyncEventArgs> _acceptSocketAsyncEventArgsPool;
-    private readonly ObjectPool<TcpChannel> _channelPool;
+    private readonly ObjectPool<ITcpChannel> _channelPool;
     private readonly ChannelManager _connectedChannels;
     private readonly Semaphore _maxAcceptedConnected;
 
@@ -62,7 +62,7 @@ public class Server : IServer
         _socketAsyncEventArgsCompleted.ProcessAccept += ProcessAccept;
 
         _acceptSocketAsyncEventArgsPool = new ObjectPool<SocketAsyncEventArgs>();
-        _channelPool = new ObjectPool<TcpChannel>();
+        _channelPool = new ObjectPool<ITcpChannel>();
         _maxAcceptedConnected = new Semaphore(_maxConnectionCount + 1, _maxConnectionCount + 1);
         _connectedChannels = new ChannelManager();
     }
@@ -114,7 +114,7 @@ public class Server : IServer
 
         try
         {
-            TcpChannel? channel = _channelPool.Pop();
+            ITcpChannel? channel = _channelPool.Pop();
             if (channel != null)
             {
                 socketAsyncEventArgs.AcceptSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, _tcpKeepAlive);

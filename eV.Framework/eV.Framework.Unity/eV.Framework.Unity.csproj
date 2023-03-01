@@ -10,10 +10,10 @@
     <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10</LangVersion>
-    <TargetFrameworks>net6.0;netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Framework.Unity</RootNamespace>
-    <PackageVersion>1.6.3</PackageVersion>
+    <PackageVersion>1.7.0</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,7 +21,6 @@
     <ProjectReference Include="..\..\eV.Module\eV.Module.Routing\eV.Module.Routing.csproj" />
     <ProjectReference Include="..\..\eV.Module\eV.Module.Session\eV.Module.Session.csproj" />
     <ProjectReference Include="..\..\eV.Network\eV.Network.Tcp.Client\eV.Network.Tcp.Client.csproj" />
-    <ProjectReference Include="..\..\eV.Network\eV.Network.Tcp.Security.Client\eV.Network.Tcp.Security.Client.csproj" />
   </ItemGroup>
 
 </Project>

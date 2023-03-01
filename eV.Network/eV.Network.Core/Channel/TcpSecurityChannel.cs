@@ -63,6 +63,11 @@ public class TcpSecurityChannel : ITcpChannel
 
     #region Operate
 
+    public void Open(Socket socket)
+    {
+        var sslStream = new SslStream(new NetworkStream(socket), false);
+    }
+
     public void Open(TcpClient tcpClient)
     {
         if (ChannelState == RunState.On)
@@ -107,15 +112,11 @@ public class TcpSecurityChannel : ITcpChannel
             Logger.Error(e.Message, e);
         }
     }
-#if !NETSTANDARD2_0_OR_GREATER
     private async void Release()
     {
         if (_sslStream != null)
             await _sslStream.ShutdownAsync();
-#else
-    private void Release()
-    {
-#endif
+
         _tcpClient?.Close();
         _sslStream?.Close();
         _cancellationTokenSource?.Cancel();
