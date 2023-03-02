@@ -2,10 +2,10 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using System.Reflection;
-using System.Text.Json;
 using eV.Module.EasyLog;
 using eV.Module.Routing.Attributes;
 using eV.Module.Routing.Interface;
+using Newtonsoft.Json;
 
 namespace eV.Module.Routing;
 
@@ -95,7 +95,7 @@ public static class Dispatch
 
             if (Logger.IsDebug())
             {
-                Logger.Debug($"ReceiveMessage [{packet.GetName()}] [{session.SessionId}] {JsonSerializer.Serialize(content)}");
+                Logger.Debug($"ReceiveMessage [{packet.GetName()}] [{session.SessionId}] {JsonConvert.SerializeObject(content)}");
             }
             else
             {

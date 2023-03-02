@@ -2,12 +2,12 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using System.Collections;
-using System.Text.Json;
 using eV.Module.EasyLog;
 using eV.Module.Routing;
 using eV.Module.Routing.Interface;
 using eV.Network.Core;
 using eV.Network.Core.Interface;
+using Newtonsoft.Json;
 
 namespace eV.Module.Session;
 
@@ -166,7 +166,7 @@ public sealed class Session : ISession
 
             if (Logger.IsDebug())
             {
-                Logger.Debug($"Send [{result.Key}] [{SessionId}] {JsonSerializer.Serialize(data)}");
+                Logger.Debug($"Send [{result.Key}] [{SessionId}] {JsonConvert.SerializeObject(data)}");
             }
 
             return true;
@@ -194,7 +194,7 @@ public sealed class Session : ISession
 
             if (Logger.IsDebug())
             {
-                Logger.Debug($"SendBySessionId [{result.Key}] [{SessionId}] [{sessionId}] {JsonSerializer.Serialize(data)}");
+                Logger.Debug($"SendBySessionId [{result.Key}] [{SessionId}] [{sessionId}] {JsonConvert.SerializeObject(data)}");
             }
 
             return true;
@@ -223,7 +223,7 @@ public sealed class Session : ISession
 
             if (Logger.IsDebug())
             {
-                Logger.Debug($"SendBroadcast [{result.Key}] [{SessionId}] {JsonSerializer.Serialize(data)}");
+                Logger.Debug($"SendBroadcast [{result.Key}] [{SessionId}] {JsonConvert.SerializeObject(data)}");
             }
         }
         catch (Exception e)
