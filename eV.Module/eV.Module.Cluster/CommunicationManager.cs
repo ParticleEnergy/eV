@@ -19,14 +19,14 @@ public class CommunicationManager
     private readonly Dictionary<int, ConsumerIdentifier> _sendConsumerIdentifiers;
     private readonly Dictionary<int, ConsumerIdentifier> _sendBroadcastConsumerIdentifiers;
 
-    private readonly ConnectionMultiplexer _redis;
+    private readonly IDatabase _redisInstance;
 
     public static CommunicationManager? Instance { get; private set; }
 
     private CommunicationManager
     (
         string nodeId,
-        ConnectionMultiplexer redis,
+        IConnectionMultiplexer redis,
         ISessionRegistrationAuthority sessionRegistrationAuthority,
         Dictionary<Type, ConsumerIdentifier> consumerIdentifiers,
         Dictionary<int, ConsumerIdentifier> sendConsumerIdentifiers,
@@ -34,7 +34,7 @@ public class CommunicationManager
     )
     {
         NodeId = nodeId;
-        _redis = redis;
+        _redisInstance = redis.GetDatabase();
         SessionRegistrationAuthority = sessionRegistrationAuthority;
         _consumerIdentifiers = consumerIdentifiers;
         _sendConsumerIdentifiers = sendConsumerIdentifiers;
@@ -79,7 +79,7 @@ public class CommunicationManager
                 return false;
             }
 
-            return !(await _redis.GetDatabase().StreamAddAsync(consumerIdentifier.GetStream(nodeId), "data", JsonSerializer.Serialize(data))).IsNull;
+            return !(await _redisInstance.StreamAddAsync(consumerIdentifier.GetStream(nodeId), "data", JsonSerializer.Serialize(data))).IsNull;
         }
         catch (Exception e)
         {
@@ -105,7 +105,7 @@ public class CommunicationManager
 
             foreach (string nodeId in await SessionRegistrationAuthority.GetAllNodeIds())
             {
-                await _redis.GetDatabase().StreamAddAsync(consumerIdentifier.GetStream(nodeId), "data", JsonSerializer.Serialize(data));
+                await _redisInstance.StreamAddAsync(consumerIdentifier.GetStream(nodeId), "data", JsonSerializer.Serialize(data));
             }
 
             return true;
@@ -127,7 +127,7 @@ public class CommunicationManager
 
             Random random = new();
             return !(
-                await _redis.GetDatabase().StreamAddAsync
+                await _redisInstance.StreamAddAsync
                 (
                     _sendConsumerIdentifiers[random.Next(0, _sendConsumerIdentifiers.Count)].GetStream(nodeId),
                     new[] { new NameValueEntry(CommunicationStream.GetSessionIdKey(), sessionId), new NameValueEntry(CommunicationStream.GetBodyKey(), Convert.ToBase64String(body)) }
@@ -151,7 +151,7 @@ public class CommunicationManager
                     continue;
 
                 Random random = new();
-                await _redis.GetDatabase().StreamAddAsync
+                await _redisInstance.StreamAddAsync
                 (
                     _sendBroadcastConsumerIdentifiers[random.Next(0, _sendBroadcastConsumerIdentifiers.Count)].GetStream(nodeId),
                     "data",
@@ -172,7 +172,7 @@ public class CommunicationManager
     {
         try
         {
-            return _redis.GetDatabase().StreamReadGroup(
+            return _redisInstance.StreamReadGroup(
                 stream,
                 group,
                 consumer,
@@ -190,7 +190,7 @@ public class CommunicationManager
 
     public async Task DeleteMessage(string stream, RedisValue[] ids)
     {
-        await _redis.GetDatabase().StreamDeleteAsync(stream, ids);
+        await _redisInstance.StreamDeleteAsync(stream, ids);
     }
 
     public ConsumerIdentifier? GetConsumerIdentifier(Type type)

@@ -10,14 +10,14 @@ namespace eV.Module.Queue;
 
 public class MessageProcessor
 {
-    private readonly ConnectionMultiplexer _redis;
+    private readonly IDatabase _redisInstance;
     private readonly Dictionary<Type, ConsumerIdentifier> _consumerIdentifiers;
 
     public static MessageProcessor? Instance { get; private set; }
 
-    private MessageProcessor(ConnectionMultiplexer redis, Dictionary<Type, ConsumerIdentifier> consumerIdentifiers)
+    private MessageProcessor(IConnectionMultiplexer redis, Dictionary<Type, ConsumerIdentifier> consumerIdentifiers)
     {
-        _redis = redis;
+        _redisInstance = redis.GetDatabase();
         _consumerIdentifiers = consumerIdentifiers;
     }
 
@@ -44,7 +44,7 @@ public class MessageProcessor
                 return false;
             }
 
-            return !(await _redis.GetDatabase().StreamAddAsync(consumerIdentifier.Stream, "data", JsonSerializer.Serialize(data))).IsNull;
+            return !(await _redisInstance.StreamAddAsync(consumerIdentifier.Stream, "data", JsonSerializer.Serialize(data))).IsNull;
         }
         catch (Exception e)
         {
@@ -57,7 +57,7 @@ public class MessageProcessor
     {
         try
         {
-            return _redis.GetDatabase().StreamReadGroup(
+            return _redisInstance.StreamReadGroup(
                 consumerIdentifier.Stream,
                 consumerIdentifier.Group,
                 consumerIdentifier.Consumer,
@@ -75,12 +75,12 @@ public class MessageProcessor
 
     public bool AckMessage(ConsumerIdentifier consumerIdentifier, RedisValue id)
     {
-        return _redis.GetDatabase().StreamAcknowledge(consumerIdentifier.Stream, consumerIdentifier.Group, id) > 0;
+        return _redisInstance.StreamAcknowledge(consumerIdentifier.Stream, consumerIdentifier.Group, id) > 0;
     }
 
     public async Task DeleteMessage(ConsumerIdentifier consumerIdentifier, RedisValue[] ids)
     {
-        await _redis.GetDatabase().StreamDeleteAsync(consumerIdentifier.Stream, ids);
+        await _redisInstance.StreamDeleteAsync(consumerIdentifier.Stream, ids);
     }
 
     public ConsumerIdentifier? GetConsumerIdentifier(Type type)
