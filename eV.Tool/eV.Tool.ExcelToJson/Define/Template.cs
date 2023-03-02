@@ -59,6 +59,6 @@ public class {2}
     public const string ComplexProperty = @"    /// <summary>
     /// {0}
     /// </summary>
-    public {1}? {2} {{ get; set; }}
+    public {1}? {2} {{ get; set; }} = null;
 ";
 }
