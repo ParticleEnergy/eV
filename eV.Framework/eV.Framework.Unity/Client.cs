@@ -15,6 +15,15 @@ namespace eV.Framework.Unity;
 
 public class Client
 {
+    private const string Logo = @"
+      _    __   __  __      _ __
+  ___| |  / /  / / / /___  (_) /___  __
+ / _ \ | / /  / / / / __ \/ / __/ / / /
+/  __/ |/ /  / /_/ / / / / / /_/ /_/ /
+\___/|___/   \____/_/ /_/_/\__/\__, /
+                              /____/
+";
+
     private readonly ITcpClient _client;
 
     public Client(UnitySetting setting)
@@ -22,20 +31,14 @@ public class Client
         if (setting.Log != null)
         {
             Logger.SetLogger(setting.Log);
-            Logger.Info(DefaultSetting.Logo);
+            Logger.Info(Logo);
         }
 
-        ClientSetting clientSetting = new()
-        {
-            Host = setting.Host,
-            Port = setting.Port,
-            ReceiveBufferSize = setting.ReceiveBufferSize,
-            TcpKeepAlive = setting.TcpKeepAlive
-        };
+        ClientSetting clientSetting = new() { Host = setting.Host, Port = setting.Port, ReceiveBufferSize = setting.ReceiveBufferSize, TcpKeepAlive = setting.TcpKeepAlive };
 
         if (setting is { TlsCertData: { }, TlsTargetHost: { } })
         {
-            X509CertificateCollection x509CertificateCollection = new ();
+            X509CertificateCollection x509CertificateCollection = new();
             X509Certificate x509Certificate = new X509Certificate2(setting.TlsCertData, setting.TlsCertPassword);
             x509CertificateCollection.Add(x509Certificate);
 

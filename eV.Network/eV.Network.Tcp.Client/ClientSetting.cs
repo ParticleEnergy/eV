@@ -7,22 +7,22 @@ namespace eV.Network.Tcp.Client;
 
 public class ClientSetting
 {
-    public int ReceiveBufferSize { get; set; } = DefaultSetting.ReceiveBufferSize;
+    public int ReceiveBufferSize { get; set; } = 2048;
 
     #region Socket
 
-    public string Host { get; set; } = DefaultSetting.Host;
-    public int Port { get; set; } = DefaultSetting.Port;
+    public string Host { get; set; } = "127.0.0.1";
+    public int Port { get; set; } = 8888;
 
     #endregion
 
-    public bool TcpKeepAlive { get; set; } = DefaultSetting.TcpKeepAlive;
+    public bool TcpKeepAlive { get; set; } = true;
 
     #region tls
 
-    public string? TlsTargetHost { get; set; } = DefaultSetting.TlsTargetHost;
-    public X509CertificateCollection? TlsX509CertificateCollection { get; set; } = DefaultSetting.TlsX509CertificateCollection;
-    public bool TlsCheckCertificateRevocation { get; set; } = DefaultSetting.TlsCheckCertificateRevocation;
+    public string? TlsTargetHost { get; set; } = "eV";
+    public X509CertificateCollection? TlsX509CertificateCollection { get; set; }
+    public bool TlsCheckCertificateRevocation { get; set; }
 
     #endregion
 }

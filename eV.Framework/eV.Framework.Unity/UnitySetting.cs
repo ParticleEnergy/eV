@@ -7,16 +7,16 @@ namespace eV.Framework.Unity;
 
 public class UnitySetting
 {
-    public string Host { get; set; } = DefaultSetting.Host;
-    public int Port { get; set; } = DefaultSetting.Port;
-    public int ReceiveBufferSize { get; set; } = DefaultSetting.ReceiveBufferSize;
+    public string Host { get; set; } = "127.0.0.1";
+    public int Port { get; set; } = 8888;
+    public int ReceiveBufferSize { get; set; } = 2048;
     public string ProjectAssemblyString { get; set; } = string.Empty;
     public string PublicObjectAssemblyString { get; set; } = string.Empty;
 
-    public string? TlsTargetHost { get; set; } = DefaultSetting.TlsTargetHost;
+    public string? TlsTargetHost { get; set; } = "eV";
     public byte[]? TlsCertData { get; set; } = null;
     public string? TlsCertPassword { get; set; } = null;
     public bool TlsCheckCertificateRevocation { get; set; } = false;
-    public bool TcpKeepAlive { get; set; } = DefaultSetting.TcpKeepAlive;
+    public bool TcpKeepAlive { get; set; } = true;
     public ILog? Log { get; set; } = null;
 }

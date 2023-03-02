@@ -7,23 +7,23 @@ namespace eV.Network.Tcp.Server;
 
 public class ServerSetting
 {
-    public int MaxConnectionCount { get; set; } = DefaultSetting.MaxConnectionCount;
-    public int ReceiveBufferSize { get; set; } = DefaultSetting.ReceiveBufferSize;
-    public bool TcpKeepAlive { get; set; } = DefaultSetting.TcpKeepAlive;
+    public int MaxConnectionCount { get; set; } = 1024;
+    public int ReceiveBufferSize { get; set; } = 2048;
+    public bool TcpKeepAlive { get; set; } = true;
 
     #region Socket
 
-    public string Host { get; set; } = DefaultSetting.Host;
-    public int Port { get; set; } = DefaultSetting.Port;
-    public int Backlog { get; set; } = DefaultSetting.Backlog;
+    public string Host { get; set; } = "127.0.0.1";
+    public int Port { get; set; } = 8888;
+    public int Backlog { get; set; } = 512;
 
     #endregion
 
     #region tls
 
-    public string? TlsTargetHost { get; set; } = DefaultSetting.TlsTargetHost;
-    public X509CertificateCollection? TlsX509CertificateCollection { get; set; } = DefaultSetting.TlsX509CertificateCollection;
-    public bool TlsCheckCertificateRevocation { get; set; } = DefaultSetting.TlsCheckCertificateRevocation;
+    public string? TlsTargetHost { get; set; } = "eV";
+    public X509CertificateCollection? TlsX509CertificateCollection { get; set; }
+    public bool TlsCheckCertificateRevocation { get; set; }
 
     #endregion
 }

@@ -25,6 +25,14 @@ namespace eV.Framework.Server;
 
 public class Server
 {
+    private const string Logo = @"
+      _    __   _____
+  ___| |  / /  / ___/___  ______   _____  _____
+ / _ \ | / /   \__ \/ _ \/ ___/ | / / _ \/ ___/
+/  __/ |/ /   ___/ /  __/ /   | |/ /  __/ /
+\___/|___/   /____/\___/_/    |___/\___/_/
+";
+
     private readonly eVNetworkServer _server = new(GetServerSetting());
 
     private readonly IdleDetection _idleDetection = new(Configure.Instance.ServerOption.SessionMaximumIdleTime);
@@ -38,7 +46,7 @@ public class Server
     public Server()
     {
         EasyLogger.SetLogger(new ServerLog(Configure.Instance.ProjectName));
-        EasyLogger.Info(DefaultSetting.Logo);
+        EasyLogger.Info(Logo);
 
         _server.AcceptConnect += ServerOnAcceptConnect;
 
@@ -66,7 +74,7 @@ public class Server
 
         if (Configure.Instance.ServerOption.TlsTargetHost != string.Empty && Configure.Instance.ServerOption.TlsCertFile != string.Empty)
         {
-            X509CertificateCollection x509CertificateCollection = new ();
+            X509CertificateCollection x509CertificateCollection = new();
             X509Certificate x509Certificate = new X509Certificate2(Configure.Instance.ServerOption.TlsCertFile, Configure.Instance.ServerOption.TlsCertPassword);
             x509CertificateCollection.Add(x509Certificate);
 
