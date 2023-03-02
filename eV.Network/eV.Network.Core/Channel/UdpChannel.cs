@@ -238,6 +238,7 @@ public class UdpChannel : IUdpChannel
             Close();
             return false;
         }
+
         return true;
     }
 
@@ -266,6 +267,7 @@ public class UdpChannel : IUdpChannel
             Logger.Error(e.Message, e);
             return false;
         }
+
         return true;
     }
 

@@ -3,6 +3,7 @@
 
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using eV.Module.EasyLog;
 using eV.Network.Core;
 using eV.Network.Core.Channel;
@@ -31,6 +32,10 @@ public class Server : IServer
     private int _maxConnectionCount;
     private int _receiveBufferSize;
     private bool _tcpKeepAlive;
+
+    private string? _tlsTargetHost;
+    private X509CertificateCollection? _tlsX509CertificateCollection;
+    private bool _tlsCheckCertificateRevocation;
 
     #endregion
 
@@ -79,6 +84,10 @@ public class Server : IServer
         _receiveBufferSize = setting.ReceiveBufferSize;
 
         _tcpKeepAlive = setting.TcpKeepAlive;
+
+        _tlsTargetHost = setting.TlsTargetHost;
+        _tlsX509CertificateCollection = setting.TlsX509CertificateCollection;
+        _tlsCheckCertificateRevocation = setting.TlsCheckCertificateRevocation;
     }
 
     #endregion
@@ -215,7 +224,16 @@ public class Server : IServer
 
         for (int i = 0; i < _maxConnectionCount; ++i)
         {
-            TcpChannel channel = new(_receiveBufferSize);
+            ITcpChannel channel;
+            if (_tlsTargetHost == null || _tlsX509CertificateCollection == null)
+            {
+                channel = new TcpChannel(_receiveBufferSize);
+            }
+            else
+            {
+                channel = new SslTcpChannel(_receiveBufferSize, _tlsTargetHost, _tlsX509CertificateCollection, _tlsCheckCertificateRevocation);
+            }
+
             channel.OpenCompleted += OpenCompleted;
             channel.CloseCompleted += CloseCompleted;
             _channelPool.Push(channel);

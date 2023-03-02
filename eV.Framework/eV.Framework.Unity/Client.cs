@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 
+using System.Security.Cryptography.X509Certificates;
 using eV.Module.EasyLog;
 using eV.Module.Routing;
 using eV.Module.Routing.Interface;
@@ -24,7 +25,25 @@ public class Client
             Logger.Info(DefaultSetting.Logo);
         }
 
-        ClientSetting clientSetting = new() { Host = setting.Host, Port = setting.Port, ReceiveBufferSize = setting.ReceiveBufferSize, TcpKeepAlive = setting.TcpKeepAlive };
+        ClientSetting clientSetting = new()
+        {
+            Host = setting.Host,
+            Port = setting.Port,
+            ReceiveBufferSize = setting.ReceiveBufferSize,
+            TcpKeepAlive = setting.TcpKeepAlive
+        };
+
+        if (setting is { TlsCertData: { }, TlsTargetHost: { } })
+        {
+            X509CertificateCollection x509CertificateCollection = new ();
+            X509Certificate x509Certificate = new X509Certificate2(setting.TlsCertData, setting.TlsCertPassword);
+            x509CertificateCollection.Add(x509Certificate);
+
+            clientSetting.TlsTargetHost = setting.TlsTargetHost;
+            clientSetting.TlsX509CertificateCollection = x509CertificateCollection;
+            clientSetting.TlsCheckCertificateRevocation = setting.TlsCheckCertificateRevocation;
+        }
+
         _client = new eVNetworkClient(clientSetting);
 
         _client.ConnectCompleted += ClientOnConnectCompleted;

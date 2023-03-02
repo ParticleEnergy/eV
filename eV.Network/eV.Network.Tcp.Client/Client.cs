@@ -3,6 +3,7 @@
 
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using eV.Module.EasyLog;
 using eV.Network.Core;
 using eV.Network.Core.Channel;
@@ -12,6 +13,33 @@ namespace eV.Network.Tcp.Client;
 
 public class Client : ITcpClient
 {
+    #region Event
+
+    public event TcpChannelEvent? ConnectCompleted;
+    public event TcpChannelEvent? DisconnectCompleted;
+
+    #endregion
+
+    #region Setting
+
+    private IPEndPoint? _ipEndPoint;
+    private int _receiveBufferSize;
+    private bool _tcpKeepAlive;
+    private string? _tlsTargetHost;
+    private X509CertificateCollection? _tlsX509CertificateCollection;
+    private bool _tlsCheckCertificateRevocation;
+
+    #endregion
+
+
+    #region Resource
+
+    private Socket? _socket;
+    private readonly ITcpChannel _channel;
+    private readonly SocketAsyncEventArgs _connectSocketAsyncEventArgs;
+
+    #endregion
+
     public Client(ClientSetting setting)
     {
         SetSetting(setting);
@@ -21,7 +49,15 @@ public class Client : ITcpClient
         socketAsyncEventArgsCompleted.ProcessConnect += ProcessConnect;
         socketAsyncEventArgsCompleted.ProcessDisconnect += ProcessDisconnect;
 
-        _channel = new TcpChannel(_receiveBufferSize);
+        if (_tlsTargetHost == null || _tlsX509CertificateCollection == null)
+        {
+            _channel = new TcpChannel(_receiveBufferSize);
+        }
+        else
+        {
+            _channel = new SslTcpChannel(_receiveBufferSize, _tlsTargetHost, _tlsX509CertificateCollection, _tlsCheckCertificateRevocation);
+        }
+
         _channel.OpenCompleted += OpenCompleted;
         _channel.CloseCompleted += CloseCompleted;
 
@@ -45,31 +81,11 @@ public class Client : ITcpClient
         );
         _receiveBufferSize = setting.ReceiveBufferSize;
         _tcpKeepAlive = setting.TcpKeepAlive;
+
+        _tlsTargetHost = setting.TlsTargetHost;
+        _tlsX509CertificateCollection = setting.TlsX509CertificateCollection;
+        _tlsCheckCertificateRevocation = setting.TlsCheckCertificateRevocation;
     }
-
-    #region Event
-
-    public event TcpChannelEvent? ConnectCompleted;
-    public event TcpChannelEvent? DisconnectCompleted;
-
-    #endregion
-
-    #region Setting
-
-    private IPEndPoint? _ipEndPoint;
-    private int _receiveBufferSize;
-    private bool _tcpKeepAlive;
-
-    #endregion
-
-
-    #region Resource
-
-    private Socket? _socket;
-    private readonly ITcpChannel _channel;
-    private readonly SocketAsyncEventArgs _connectSocketAsyncEventArgs;
-
-    #endregion
 
     #region Operate
 

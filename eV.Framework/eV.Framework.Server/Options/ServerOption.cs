@@ -12,4 +12,9 @@ public class ServerOption
     public int ReceiveBufferSize { get; set; }
     public bool TcpKeepAlive { get; set; } = true;
     public int SessionMaximumIdleTime { get; set; }
+
+    public string TlsTargetHost { get; set; } = string.Empty;
+    public string TlsCertFile { get; set; } = string.Empty;
+    public string? TlsCertPassword { get; set; } = null;
+    public bool TlsCheckCertificateRevocation { get; set; } = false;
 }

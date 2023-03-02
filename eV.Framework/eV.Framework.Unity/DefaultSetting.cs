@@ -22,6 +22,5 @@ internal static class DefaultSetting
 
     public const bool TcpKeepAlive = true;
 
-    public const SslProtocols SslProtocols = (SslProtocols)192;
-    public const string TargetHost = "eV";
+    public const string TlsTargetHost = "eV";
 }

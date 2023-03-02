@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 
+using System.Security.Cryptography.X509Certificates;
 using eV.Framework.Server.Logger;
 using eV.Framework.Server.Options;
 using eV.Framework.Server.SystemHandler;
@@ -62,6 +63,18 @@ public class Server
     private static ServerSetting GetServerSetting()
     {
         ServerSetting serverSetting = new() { TcpKeepAlive = Configure.Instance.ServerOption.TcpKeepAlive };
+
+        if (Configure.Instance.ServerOption.TlsTargetHost != string.Empty && Configure.Instance.ServerOption.TlsCertFile != string.Empty)
+        {
+            X509CertificateCollection x509CertificateCollection = new ();
+            X509Certificate x509Certificate = new X509Certificate2(Configure.Instance.ServerOption.TlsCertFile, Configure.Instance.ServerOption.TlsCertPassword);
+            x509CertificateCollection.Add(x509Certificate);
+
+            serverSetting.TlsTargetHost = Configure.Instance.ServerOption.TlsTargetHost;
+            serverSetting.TlsX509CertificateCollection = x509CertificateCollection;
+            serverSetting.TlsCheckCertificateRevocation = Configure.Instance.ServerOption.TlsCheckCertificateRevocation;
+        }
+
         if (!Configure.Instance.ServerOption.Host.Equals(""))
             serverSetting.Host = Configure.Instance.ServerOption.Host;
 
