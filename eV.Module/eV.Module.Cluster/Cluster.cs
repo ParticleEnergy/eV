@@ -61,7 +61,7 @@ public class Cluster
                 continue;
 
             _channelIdentifiers[contentTypes[0]] = new ChannelIdentifier(_clusterId, contentTypes[0].Name, handler.IsMultipleSubscribers);
-            _handlers[type] = handler;
+            _handlers[contentTypes[0]] = handler;
 
             Logger.Info($"InternalHandler [{type.FullName}] registration succeeded");
         }
@@ -73,7 +73,7 @@ public class Cluster
             return;
 
         _channelIdentifiers[contentType] = new ChannelIdentifier(_clusterId, contentType.Name, handler.IsMultipleSubscribers);
-        _handlers[handlerType] = handler;
+        _handlers[contentType] = handler;
     }
 
     public void Start()

@@ -64,9 +64,7 @@ public class CommunicationManager
             {
                 return false;
             }
-
-            await _subscriber.PublishAsync(channelIdentifier.GetChannel(nodeId), JsonSerializer.Serialize(data));
-            return true;
+            return await _subscriber.PublishAsync(channelIdentifier.GetChannel(nodeId), JsonSerializer.Serialize(data)) > 0;
         }
         catch (Exception e)
         {
@@ -128,10 +126,12 @@ public class CommunicationManager
             if (channelIdentifier.IsMultipleSubscribers)
             {
                 await _subscriber.SubscribeAsync(channelIdentifier.GetChannel(), handler);
+                Logger.Info($"Cluster channel [{channelIdentifier.GetChannel()}] Handler [{type.Name}] subscribe succeeded");
             }
             else
             {
                 await _subscriber.SubscribeAsync(channelIdentifier.GetChannel(NodeId), handler);
+                Logger.Info($"Cluster channel [{channelIdentifier.GetChannel(NodeId)}] Handler [{type.Name}] subscribe succeeded");
             }
         }
         catch (Exception e)

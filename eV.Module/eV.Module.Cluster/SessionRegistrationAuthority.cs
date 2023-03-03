@@ -14,7 +14,7 @@ public class SessionRegistrationAuthority : ISessionRegistrationAuthority
     private readonly IDatabase _redisInstance;
 
     private const string HashTableKey = "eV:Cluster:{0}";
-    private const string SetKey = "eV:Cluster:{0}:node{1}";
+    private const string SetKey = "eV:Cluster:{0}:node:{1}";
 
     public SessionRegistrationAuthority(string clusterId, string nodeId, IConnectionMultiplexer redis)
     {
