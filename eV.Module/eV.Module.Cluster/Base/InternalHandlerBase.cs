@@ -14,12 +14,12 @@ public abstract class InternalHandlerBase<T> : IInternalHandler
     public virtual bool IsMultipleSubscribers { get; set; } = false;
     protected abstract Task Handle(T data);
 
-    public async Task Run()
+    public void Run()
     {
         if (CommunicationManager.Instance == null)
             return;
 
-        await CommunicationManager.Instance.Subscribe(typeof(T), Action);
+        CommunicationManager.Instance.Subscribe(typeof(T), Action);
     }
 
     private async void Action(RedisChannel _, RedisValue value)

@@ -49,7 +49,7 @@ public class Server
     {
         EasyLogger.SetLogger(new ServerLog(Configure.Instance.ProjectName));
         EasyLogger.Info(Logo);
-
+        EasyLogger.Info($"NodeId [{_nodeId}]");
         _server.AcceptConnect += ServerOnAcceptConnect;
 
         _sessionExtension.OnActivateEvent += ServerEvent.SessionOnActivate;

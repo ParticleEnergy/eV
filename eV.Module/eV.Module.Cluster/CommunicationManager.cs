@@ -109,7 +109,7 @@ public class CommunicationManager
         }
     }
 
-    public async Task Subscribe(Type type, Action<RedisChannel, RedisValue> handler)
+    public void Subscribe(Type type, Action<RedisChannel, RedisValue> handler)
     {
         try
         {
@@ -125,12 +125,12 @@ public class CommunicationManager
 
             if (channelIdentifier.IsMultipleSubscribers)
             {
-                await _subscriber.SubscribeAsync(channelIdentifier.GetChannel(), handler);
+                _subscriber.Subscribe(channelIdentifier.GetChannel(), handler);
                 Logger.Info($"Cluster channel [{channelIdentifier.GetChannel()}] Handler [{type.Name}] subscribe succeeded");
             }
             else
             {
-                await _subscriber.SubscribeAsync(channelIdentifier.GetChannel(NodeId), handler);
+                _subscriber.Subscribe(channelIdentifier.GetChannel(NodeId), handler);
                 Logger.Info($"Cluster channel [{channelIdentifier.GetChannel(NodeId)}] Handler [{type.Name}] subscribe succeeded");
             }
         }

@@ -7,5 +7,5 @@ public interface IInternalHandler
 {
     public bool IsMultipleSubscribers { get; set; }
 
-    public Task Run();
+    public void Run();
 }
