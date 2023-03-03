@@ -147,7 +147,7 @@ public class Server
                 _nodeId,
                 Configure.Instance.BaseOption.ProjectAssemblyString,
                 clusterRedis
-             );
+            );
 
             _cluster.AddCustomHandler(typeof(SendBroadcastInternalHandler), typeof(InternalSendBroadcastPackage));
             _cluster.AddCustomHandler(typeof(SendInternalHandler), typeof(SendBySessionIdPackage));

@@ -64,6 +64,7 @@ public class CommunicationManager
             {
                 return false;
             }
+
             return await _subscriber.PublishAsync(channelIdentifier.GetChannel(nodeId), JsonSerializer.Serialize(data)) > 0;
         }
         catch (Exception e)

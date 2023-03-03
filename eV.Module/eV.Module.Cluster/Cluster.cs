@@ -17,7 +17,7 @@ public class Cluster
     private readonly string _clusterId;
     private readonly string _nodeId;
 
-    private readonly Dictionary<Type, ChannelIdentifier>  _channelIdentifiers = new();
+    private readonly Dictionary<Type, ChannelIdentifier> _channelIdentifiers = new();
     private readonly Dictionary<Type, IInternalHandler> _handlers = new();
 
     private readonly SessionRegistrationAuthority _sessionRegistrationAuthority;
