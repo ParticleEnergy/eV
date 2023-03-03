@@ -1,9 +1,7 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
-
 using System.Text.Json;
-using eV.Module.Cluster.Communication;
 using eV.Module.Cluster.Interface;
 using eV.Module.EasyLog;
 using StackExchange.Redis;
@@ -12,33 +10,25 @@ namespace eV.Module.Cluster;
 
 public class CommunicationManager
 {
+    public static CommunicationManager? Instance { get; private set; }
     public string NodeId { get; }
     public ISessionRegistrationAuthority SessionRegistrationAuthority { get; }
 
-    private readonly Dictionary<Type, ConsumerIdentifier> _consumerIdentifiers;
-    private readonly Dictionary<int, ConsumerIdentifier> _sendConsumerIdentifiers;
-    private readonly Dictionary<int, ConsumerIdentifier> _sendBroadcastConsumerIdentifiers;
+    private readonly ISubscriber _subscriber;
+    private readonly Dictionary<Type, ChannelIdentifier> _channelIdentifiers;
 
-    private readonly IDatabase _redisInstance;
 
-    public static CommunicationManager? Instance { get; private set; }
-
-    private CommunicationManager
-    (
+    private CommunicationManager(
         string nodeId,
         IConnectionMultiplexer redis,
         ISessionRegistrationAuthority sessionRegistrationAuthority,
-        Dictionary<Type, ConsumerIdentifier> consumerIdentifiers,
-        Dictionary<int, ConsumerIdentifier> sendConsumerIdentifiers,
-        Dictionary<int, ConsumerIdentifier> sendBroadcastConsumerIdentifiers
+        Dictionary<Type, ChannelIdentifier> channelIdentifiers
     )
     {
         NodeId = nodeId;
-        _redisInstance = redis.GetDatabase();
+        _subscriber = redis.GetSubscriber();
         SessionRegistrationAuthority = sessionRegistrationAuthority;
-        _consumerIdentifiers = consumerIdentifiers;
-        _sendConsumerIdentifiers = sendConsumerIdentifiers;
-        _sendBroadcastConsumerIdentifiers = sendBroadcastConsumerIdentifiers;
+        _channelIdentifiers = channelIdentifiers;
     }
 
     public static void InitCommunicationManager
@@ -46,9 +36,7 @@ public class CommunicationManager
         string nodeId,
         ConnectionMultiplexer redis,
         ISessionRegistrationAuthority sessionRegistrationAuthority,
-        Dictionary<Type, ConsumerIdentifier> consumerIdentifiers,
-        Dictionary<int, ConsumerIdentifier> sendConsumerIdentifiers,
-        Dictionary<int, ConsumerIdentifier> sendBroadcastConsumerIdentifiers
+        Dictionary<Type, ChannelIdentifier> channelIdentifiers
     )
     {
         if (Instance != null)
@@ -58,28 +46,27 @@ public class CommunicationManager
             nodeId,
             redis,
             sessionRegistrationAuthority,
-            consumerIdentifiers,
-            sendConsumerIdentifiers,
-            sendBroadcastConsumerIdentifiers
+            channelIdentifiers
         );
     }
 
-    public async Task<bool> Produce<TValue>(string nodeId, TValue data)
+    public async Task<bool> SendInternalMessage<T>(string nodeId, T data)
     {
         try
         {
-            var type = typeof(TValue);
-            if (!_consumerIdentifiers.ContainsKey(type))
+            var type = typeof(T);
+            if (!_channelIdentifiers.ContainsKey(type))
             {
                 return false;
             }
 
-            if (!_consumerIdentifiers.TryGetValue(type, out ConsumerIdentifier? consumerIdentifier))
+            if (!_channelIdentifiers.TryGetValue(type, out ChannelIdentifier? channelIdentifier))
             {
                 return false;
             }
 
-            return !(await _redisInstance.StreamAddAsync(consumerIdentifier.GetStream(nodeId), "data", JsonSerializer.Serialize(data))).IsNull;
+            await _subscriber.PublishAsync(channelIdentifier.GetChannel(nodeId), JsonSerializer.Serialize(data));
+            return true;
         }
         catch (Exception e)
         {
@@ -88,24 +75,31 @@ public class CommunicationManager
         }
     }
 
-    public async Task<bool> Produce<TValue>(TValue data)
+    public async Task<bool> SendInternalMessage<T>(T data)
     {
         try
         {
-            var type = typeof(TValue);
-            if (!_consumerIdentifiers.ContainsKey(type))
+            var type = typeof(T);
+            if (!_channelIdentifiers.ContainsKey(type))
             {
                 return false;
             }
 
-            if (!_consumerIdentifiers.TryGetValue(type, out ConsumerIdentifier? consumerIdentifier))
+            if (!_channelIdentifiers.TryGetValue(type, out ChannelIdentifier? channelIdentifier))
             {
                 return false;
             }
 
-            foreach (string nodeId in await SessionRegistrationAuthority.GetAllNodeIds())
+            if (channelIdentifier.IsMultipleSubscribers)
             {
-                await _redisInstance.StreamAddAsync(consumerIdentifier.GetStream(nodeId), "data", JsonSerializer.Serialize(data));
+                await _subscriber.PublishAsync(channelIdentifier.GetChannel(), JsonSerializer.Serialize(data));
+            }
+            else
+            {
+                foreach (string nodeId in await SessionRegistrationAuthority.GetAllNodeIds())
+                {
+                    await _subscriber.PublishAsync(channelIdentifier.GetChannel(nodeId), JsonSerializer.Serialize(data));
+                }
             }
 
             return true;
@@ -117,91 +111,32 @@ public class CommunicationManager
         }
     }
 
-    public async Task<bool> Send(string sessionId, byte[] body)
+    public async Task Subscribe(Type type, Action<RedisChannel, RedisValue> handler)
     {
         try
         {
-            string nodeId = await SessionRegistrationAuthority.GetNodeId(sessionId);
-            if (nodeId == string.Empty)
-                return false;
-
-            Random random = new();
-            return !(
-                await _redisInstance.StreamAddAsync
-                (
-                    _sendConsumerIdentifiers[random.Next(0, _sendConsumerIdentifiers.Count)].GetStream(nodeId),
-                    new[] { new NameValueEntry(CommunicationStream.GetSessionIdKey(), sessionId), new NameValueEntry(CommunicationStream.GetBodyKey(), Convert.ToBase64String(body)) }
-                )
-            ).IsNull;
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e.Message, e);
-            return false;
-        }
-    }
-
-    public async Task<bool> SendBroadcast(byte[] data)
-    {
-        try
-        {
-            foreach (string nodeId in await SessionRegistrationAuthority.GetAllNodeIds())
+            if (!_channelIdentifiers.ContainsKey(type))
             {
-                if (nodeId.Equals(NodeId))
-                    continue;
-
-                Random random = new();
-                await _redisInstance.StreamAddAsync
-                (
-                    _sendBroadcastConsumerIdentifiers[random.Next(0, _sendBroadcastConsumerIdentifiers.Count)].GetStream(nodeId),
-                    "data",
-                    Convert.ToBase64String(data)
-                );
+                return;
             }
 
-            return true;
+            if (!_channelIdentifiers.TryGetValue(type, out ChannelIdentifier? channelIdentifier))
+            {
+                return;
+            }
+
+            if (channelIdentifier.IsMultipleSubscribers)
+            {
+                await _subscriber.SubscribeAsync(channelIdentifier.GetChannel(), handler);
+            }
+            else
+            {
+                await _subscriber.SubscribeAsync(channelIdentifier.GetChannel(NodeId), handler);
+            }
         }
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
-            return false;
         }
-    }
-
-    public StreamEntry[] Consume(string stream, string group, string consumer)
-    {
-        try
-        {
-            return _redisInstance.StreamReadGroup(
-                stream,
-                group,
-                consumer,
-                ">",
-                1,
-                true
-            );
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e.Message, e);
-            return Array.Empty<StreamEntry>();
-        }
-    }
-
-    public async Task DeleteMessage(string stream, RedisValue[] ids)
-    {
-        await _redisInstance.StreamDeleteAsync(stream, ids);
-    }
-
-    public ConsumerIdentifier? GetConsumerIdentifier(Type type)
-    {
-        if (!_consumerIdentifiers.ContainsKey(type))
-        {
-            return null;
-        }
-
-        _consumerIdentifiers.TryGetValue(type, out ConsumerIdentifier? consumerIdentifier);
-
-        return consumerIdentifier;
     }
 }

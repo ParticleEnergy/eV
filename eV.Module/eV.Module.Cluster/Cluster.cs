@@ -4,7 +4,6 @@
 
 using System.Reflection;
 using eV.Module.Cluster.Attributes;
-using eV.Module.Cluster.Communication;
 using eV.Module.Cluster.Interface;
 using eV.Module.EasyLog;
 using StackExchange.Redis;
@@ -14,38 +13,28 @@ namespace eV.Module.Cluster;
 public class Cluster
 {
     private bool _isStart;
-    private readonly CancellationTokenSource _cancellationTokenSource;
 
     private readonly string _clusterId;
     private readonly string _nodeId;
 
-    private readonly Dictionary<Type, ConsumerIdentifier> _consumerIdentifiers = new();
+    private readonly Dictionary<Type, ChannelIdentifier>  _channelIdentifiers = new();
     private readonly Dictionary<Type, IInternalHandler> _handlers = new();
 
     private readonly SessionRegistrationAuthority _sessionRegistrationAuthority;
     private readonly ConnectionMultiplexer _redis;
 
-    private readonly Send _send;
-    private readonly SendBroadcast _sendBroadcast;
-
     public Cluster(
         string clusterId,
         string nodeId,
         string clusterAssemblyString,
-        ConnectionMultiplexer redis,
-        CommunicationSetting communicationSetting
+        ConnectionMultiplexer redis
     )
     {
-        _cancellationTokenSource = new CancellationTokenSource();
-
         _clusterId = clusterId;
         _nodeId = nodeId;
         _redis = redis;
 
         _sessionRegistrationAuthority = new SessionRegistrationAuthority(_clusterId, _nodeId, _redis);
-
-        _send = new Send(_clusterId, communicationSetting.SendAction, communicationSetting.SendBatchProcessingQuantity);
-        _sendBroadcast = new SendBroadcast(_clusterId, communicationSetting.SendBroadcastAction, communicationSetting.SendBroadcastBatchProcessingQuantity);
 
         Register(clusterAssemblyString);
     }
@@ -71,76 +60,20 @@ public class Cluster
             if (contentTypes is not { Length: > 0 })
                 continue;
 
-            _consumerIdentifiers[contentTypes[0]] = new ConsumerIdentifier(_clusterId, contentTypes[0].Name);
-
+            _channelIdentifiers[contentTypes[0]] = new ChannelIdentifier(_clusterId, contentTypes[0].Name, handler.IsMultipleSubscribers);
             _handlers[type] = handler;
+
             Logger.Info($"InternalHandler [{type.FullName}] registration succeeded");
         }
-
-        CommunicationManager.InitCommunicationManager
-        (
-            _nodeId,
-            _redis,
-            _sessionRegistrationAuthority,
-            _consumerIdentifiers,
-            _send.ConsumerIdentifiers,
-            _sendBroadcast.ConsumerIdentifiers
-        );
     }
 
-    private void InitStream(ConsumerIdentifier consumerIdentifier)
+    public void AddCustomHandler(Type handlerType, Type contentType)
     {
-        try
-        {
-            if (_redis.GetDatabase().KeyExists(consumerIdentifier.GetStream(_nodeId)))
-            {
-                StreamGroupInfo[] groupInfos = _redis.GetDatabase().StreamGroupInfo(consumerIdentifier.GetStream(_nodeId));
+        if (Activator.CreateInstance(handlerType) is not IInternalHandler handler)
+            return;
 
-                bool groupExists = groupInfos.Any(streamGroupInfo => streamGroupInfo.Name == consumerIdentifier.GetGroup(_nodeId));
-
-                if (groupExists) return;
-            }
-
-            _redis.GetDatabase().StreamCreateConsumerGroup(
-                consumerIdentifier.GetStream(_nodeId),
-                consumerIdentifier.GetGroup(_nodeId),
-                StreamPosition.NewMessages
-            );
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e.Message, e);
-        }
-    }
-
-    private void ReleaseStream(ConsumerIdentifier consumerIdentifier)
-    {
-        try
-        {
-            var batch = _redis.GetDatabase().CreateBatch();
-
-            // 删除消费者
-            batch.StreamDeleteConsumerAsync(
-                consumerIdentifier.GetStream(_nodeId),
-                consumerIdentifier.GetGroup(_nodeId),
-                consumerIdentifier.GetConsumer(_nodeId)
-            );
-
-            // 删除组
-            batch.StreamDeleteConsumerGroupAsync(
-                consumerIdentifier.GetStream(_nodeId),
-                consumerIdentifier.GetGroup(_nodeId)
-            );
-
-            // 删除流
-            batch.KeyDeleteAsync(consumerIdentifier.GetStream(_nodeId));
-
-            batch.Execute();
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e.Message, e);
-        }
+        _channelIdentifiers[contentType] = new ChannelIdentifier(_clusterId, contentType.Name, handler.IsMultipleSubscribers);
+        _handlers[handlerType] = handler;
     }
 
     public void Start()
@@ -152,39 +85,25 @@ public class Cluster
 
         _sessionRegistrationAuthority.Start();
 
-        // Send
-        foreach (ConsumerIdentifier consumerIdentifier in _send.ConsumerIdentifiers.Values)
-        {
-            InitStream(consumerIdentifier);
-        }
-
-        _send.Run(_cancellationTokenSource.Token);
-        Logger.Info("Cluster Send start consume");
-
-        // SendBroadcast
-        foreach (ConsumerIdentifier consumerIdentifier in _sendBroadcast.ConsumerIdentifiers.Values)
-        {
-            InitStream(consumerIdentifier);
-        }
-
-        _sendBroadcast.Run(_cancellationTokenSource.Token);
-        Logger.Info("Cluster SendBroadcast start consume");
+        CommunicationManager.InitCommunicationManager
+        (
+            _nodeId,
+            _redis,
+            _sessionRegistrationAuthority,
+            _channelIdentifiers
+        );
 
         // Internal
         foreach ((Type contentType, IInternalHandler handler) in _handlers)
         {
-            if (!_consumerIdentifiers.ContainsKey(contentType))
+            if (!_channelIdentifiers.ContainsKey(contentType))
                 continue;
 
-            _consumerIdentifiers.TryGetValue(contentType, out ConsumerIdentifier? consumerIdentifier);
-            if (consumerIdentifier == null)
+            _channelIdentifiers.TryGetValue(contentType, out ChannelIdentifier? channelIdentifier);
+            if (channelIdentifier == null)
                 continue;
 
-            InitStream(consumerIdentifier);
-
-            Task.Run(() => { handler.Run(_cancellationTokenSource.Token); }, _cancellationTokenSource.Token);
-
-            Logger.Info($"ReceiveInternalHandler [{contentType.FullName}] start consume");
+            handler.Run();
         }
 
         _isStart = true;
@@ -197,34 +116,7 @@ public class Cluster
         if (!_isStart)
             return;
 
-        _cancellationTokenSource.Cancel();
-
         _sessionRegistrationAuthority.Stop();
-
-        // Send
-        foreach (ConsumerIdentifier consumerIdentifier in _send.ConsumerIdentifiers.Values)
-        {
-            ReleaseStream(consumerIdentifier);
-        }
-
-        // SendBroadcast
-        foreach (ConsumerIdentifier consumerIdentifier in _sendBroadcast.ConsumerIdentifiers.Values)
-        {
-            ReleaseStream(consumerIdentifier);
-        }
-
-        foreach (Type contentType in _handlers.Keys)
-        {
-            if (!_consumerIdentifiers.ContainsKey(contentType))
-                continue;
-
-            _consumerIdentifiers.TryGetValue(contentType, out ConsumerIdentifier? consumerIdentifier);
-            if (consumerIdentifier == null)
-                continue;
-
-            ReleaseStream(consumerIdentifier);
-        }
-
         Logger.Info("Cluster stop");
     }
 }

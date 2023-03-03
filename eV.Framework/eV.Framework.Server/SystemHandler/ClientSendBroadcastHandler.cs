@@ -2,19 +2,15 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using eV.Framework.Server.Base;
+using eV.Framework.Server.Object;
 using eV.Module.Routing.Interface;
 using EasyLogger = eV.Module.EasyLog.Logger;
 
 namespace eV.Framework.Server.SystemHandler;
 
-public class ClientSendBroadcast
+public class ClientSendBroadcastHandler : HandlerBase<ClientSendBroadcastPackage>
 {
-    public byte[]? Data { get; set; } = null;
-}
-
-public class ClientSendBroadcastHandler : HandlerBase<ClientSendBroadcast>
-{
-    protected override async Task Handle(ISession session, ClientSendBroadcast content)
+    protected override async Task Handle(ISession session, ClientSendBroadcastPackage content)
     {
         if (content.Data is not { Length: > 0 })
         {
@@ -22,6 +18,7 @@ public class ClientSendBroadcastHandler : HandlerBase<ClientSendBroadcast>
             return;
         }
 
-        await ServerSession.Instance.SendBroadcast(session.SessionId!, content.Data);
+        if (session.SessionId != null)
+            await ServerSession.SendBroadcast(session.SessionId, content.Data);
     }
 }

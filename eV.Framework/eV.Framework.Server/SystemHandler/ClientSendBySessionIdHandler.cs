@@ -2,20 +2,15 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 using eV.Framework.Server.Base;
+using eV.Framework.Server.Object;
 using eV.Module.Routing.Interface;
 using EasyLogger = eV.Module.EasyLog.Logger;
 
 namespace eV.Framework.Server.SystemHandler;
 
-public class ClientSendBySessionId
+public class ClientSendBySessionIdHandler : HandlerBase<SendBySessionIdPackage>
 {
-    public string SessionId { get; set; } = string.Empty;
-    public byte[]? Data { get; set; } = null;
-}
-
-public class ClientSendBySessionIdHandler : HandlerBase<ClientSendBySessionId>
-{
-    protected override async Task Handle(ISession session, ClientSendBySessionId content)
+    protected override async Task Handle(ISession session, SendBySessionIdPackage content)
     {
         if (content.SessionId.Equals(""))
         {
@@ -29,6 +24,6 @@ public class ClientSendBySessionIdHandler : HandlerBase<ClientSendBySessionId>
             return;
         }
 
-        await ServerSession.Instance.Send(content.SessionId, content.Data);
+        await ServerSession.Send(content.SessionId, content.Data);
     }
 }

@@ -32,13 +32,13 @@ public class ServiceBase
     {
         if (CommunicationManager.Instance == null)
             return false;
-        return await CommunicationManager.Instance.Produce(nodeId, data);
+        return await CommunicationManager.Instance.SendInternalMessage(nodeId, data);
     }
 
     public async Task<bool> SendInternalMessage<TValue>(TValue data)
     {
         if (CommunicationManager.Instance == null)
             return false;
-        return await CommunicationManager.Instance.Produce(data);
+        return await CommunicationManager.Instance.SendInternalMessage(data);
     }
 }

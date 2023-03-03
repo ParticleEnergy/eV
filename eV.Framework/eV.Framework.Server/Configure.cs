@@ -69,7 +69,5 @@ public class Configure
     public Dictionary<string, RedisOption>? RedisOption =>
         Config.GetSection(RedisOptionKey).Get<Dictionary<string, RedisOption>>();
 
-    public ClusterOption? ClusterOption => Config.GetSection(ClusterOptionKey).Get<ClusterOption>();
-
     #endregion
 }

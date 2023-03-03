@@ -75,12 +75,28 @@ public class MessageProcessor
 
     public bool AckMessage(ConsumerIdentifier consumerIdentifier, RedisValue id)
     {
-        return _redisInstance.StreamAcknowledge(consumerIdentifier.Stream, consumerIdentifier.Group, id) > 0;
+        try
+        {
+            return _redisInstance.StreamAcknowledge(consumerIdentifier.Stream, consumerIdentifier.Group, id) > 0;
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e.Message, e);
+            return false;
+        }
     }
 
-    public async Task DeleteMessage(ConsumerIdentifier consumerIdentifier, RedisValue[] ids)
+    public async Task<bool> DeleteMessage(ConsumerIdentifier consumerIdentifier, RedisValue[] ids)
     {
-        await _redisInstance.StreamDeleteAsync(consumerIdentifier.Stream, ids);
+        try
+        {
+            return await _redisInstance.StreamDeleteAsync(consumerIdentifier.Stream, ids) > 0;
+        }
+        catch (Exception e)
+        {
+            Logger.Error(e.Message, e);
+            throw;
+        }
     }
 
     public ConsumerIdentifier? GetConsumerIdentifier(Type type)

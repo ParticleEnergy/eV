@@ -14,17 +14,17 @@ public class SessionExtension : ISessionExtend
 
     public async Task<bool> Send(string sessionId, byte[] data)
     {
-        return await ServerSession.Instance.Send(sessionId, data);
+        return await ServerSession.Send(sessionId, data);
     }
 
     public async void SendBroadcast(string selfSessionId, byte[] data)
     {
-        await ServerSession.Instance.SendBroadcast(selfSessionId, data);
+        await ServerSession.SendBroadcast(selfSessionId, data);
     }
 
     public void OnActivate(ISession session)
     {
-        if (ServerSession.Instance.Activate(session))
+        if (ServerSession.Activate(session))
         {
             OnActivateEvent?.Invoke(session);
         }
@@ -39,7 +39,7 @@ public class SessionExtension : ISessionExtend
     {
         if (session.SessionId is not (null or ""))
         {
-            if (!ServerSession.Instance.Release(session))
+            if (!ServerSession.Release(session))
                 EasyLogger.Warn($"Session {session.SessionId} Session remove active group error");
         }
         else

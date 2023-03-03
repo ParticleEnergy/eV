@@ -1,55 +1,46 @@
 // Copyright (c) ParticleEnergy. All rights reserved.
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
+using eV.Framework.Server.Object;
 using eV.Module.Cluster;
 using eV.Module.Routing.Interface;
 using eV.Module.Session;
 
 namespace eV.Framework.Server;
 
-public class ServerSession
+public static class ServerSession
 {
-    public static ServerSession Instance { get; } = new();
-
-    private ServerSession()
+    public static async Task<bool> Send(string sessionId, byte[] data)
     {
-    }
-
-    public async Task<bool> Send(string sessionId, byte[] data)
-    {
-        Session? session = SessionDispatch.Instance.SessionManager.GetActiveSession(sessionId);
-        if (session != null)
-            return session.Send(data);
-
-        if (CommunicationManager.Instance != null)
+        if (SessionDispatch.Instance.Send(sessionId, data))
         {
-            return await CommunicationManager.Instance.Send(sessionId, data);
+            return true;
         }
 
-        return false;
+        if (CommunicationManager.Instance == null) return false;
+
+        string nodeId = await CommunicationManager.Instance.SessionRegistrationAuthority.GetNodeId(sessionId);
+        if (nodeId.Equals(""))
+            return false;
+
+        return await CommunicationManager.Instance.SendInternalMessage(nodeId, new SendBySessionIdPackage { SessionId = sessionId, Data = data });
     }
 
-    public async Task SendBroadcast(string selfSessionId, byte[] data)
+    public static async Task SendBroadcast(string selfSessionId, byte[] data)
     {
-        if (SessionDispatch.Instance.SessionManager.GetActiveCount() <= 0)
-            return;
-
-        foreach ((string _, Session? session) in SessionDispatch.Instance.SessionManager.GetAllActiveSession())
+        if (CommunicationManager.Instance == null)
         {
-            if (session.SessionId == null || session.SessionId.Equals(selfSessionId))
-                continue;
-            session.Send(data);
+            SessionDispatch.Instance.SendBroadcast(selfSessionId, data);
         }
-
-        if (CommunicationManager.Instance != null)
+        else
         {
-            await CommunicationManager.Instance.SendBroadcast(data);
+            await CommunicationManager.Instance.SendInternalMessage(new InternalSendBroadcastPackage { SelfSessionId = selfSessionId, Data = data });
         }
     }
 
-    public bool Activate(ISession session)
+    public static bool Activate(ISession session)
     {
-        if (!SessionDispatch.Instance.SessionManager.AddActiveSession((Session)session))
+        if (!SessionDispatch.Instance.Activate((Session)session))
             return false;
 
         if (CommunicationManager.Instance != null)
@@ -60,9 +51,9 @@ public class ServerSession
         return true;
     }
 
-    public bool Release(ISession session)
+    public static bool Release(ISession session)
     {
-        if (!SessionDispatch.Instance.SessionManager.RemoveActiveSession((Session)session))
+        if (!SessionDispatch.Instance.Release((Session)session))
             return false;
 
         if (CommunicationManager.Instance != null)

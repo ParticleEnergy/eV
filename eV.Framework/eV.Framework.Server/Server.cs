@@ -3,7 +3,9 @@
 
 
 using System.Security.Cryptography.X509Certificates;
+using eV.Framework.Server.ClusterCommunication;
 using eV.Framework.Server.Logger;
+using eV.Framework.Server.Object;
 using eV.Framework.Server.Options;
 using eV.Framework.Server.SystemHandler;
 using eV.Framework.Server.Utils;
@@ -108,8 +110,8 @@ public class Server
             Configure.Instance.BaseOption.PublicObjectAssemblyString
         );
 
-        Dispatch.AddCustomHandler(typeof(ClientSendBroadcastHandler), typeof(ClientSendBroadcast));
-        Dispatch.AddCustomHandler(typeof(ClientSendBySessionIdHandler), typeof(ClientSendBySessionId));
+        Dispatch.AddCustomHandler(typeof(ClientSendBroadcastHandler), typeof(ClientSendBroadcastPackage));
+        Dispatch.AddCustomHandler(typeof(ClientSendBySessionIdHandler), typeof(SendBySessionIdPackage));
     }
 
     public void Start()
@@ -144,29 +146,11 @@ public class Server
                 Configure.Instance.ProjectName,
                 _nodeId,
                 Configure.Instance.BaseOption.ProjectAssemblyString,
-                clusterRedis,
-                new CommunicationSetting
-                {
-                    SendAction = (sessionId, data) =>
-                    {
-                        Session? session = SessionDispatch.Instance.SessionManager.GetActiveSession(sessionId);
-                        return session != null && session.Send(data);
-                    },
-                    SendBroadcastAction = (data) =>
-                    {
-                        if (SessionDispatch.Instance.SessionManager.GetActiveCount() <= 0)
-                            return;
+                clusterRedis
+             );
 
-                        foreach ((string _, Session? session) in SessionDispatch.Instance.SessionManager.GetAllActiveSession())
-                        {
-                            if (session.SessionId == null)
-                                continue;
-                            session.Send(data);
-                        }
-                    },
-                    SendBatchProcessingQuantity = Configure.Instance.ClusterOption == null ? 1 : Configure.Instance.ClusterOption.SendBatchProcessingQuantity,
-                    SendBroadcastBatchProcessingQuantity = Configure.Instance.ClusterOption == null ? 1 : Configure.Instance.ClusterOption.SendBroadcastBatchProcessingQuantity
-                });
+            _cluster.AddCustomHandler(typeof(SendBroadcastInternalHandler), typeof(InternalSendBroadcastPackage));
+            _cluster.AddCustomHandler(typeof(SendInternalHandler), typeof(SendBySessionIdPackage));
         }
 
         RegisterHandler();
