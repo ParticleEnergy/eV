@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 
+using System.Security.Authentication;
 using eV.Framework.Server.Options;
 using StackExchange.Redis;
 
@@ -21,12 +22,26 @@ public static class ConfigUtils
             config.User = option.User;
         if (option.Password != null)
             config.Password = option.Password;
-        if (option.Keepalive != null)
-            config.KeepAlive = (int)option.Keepalive;
         if (option.Address.Length == 1 && option.Database != null)
             config.DefaultDatabase = option.Database;
+        if (option.Keepalive != null)
+            config.KeepAlive = (int)option.Keepalive;
+        if (option.AsyncTimeout != null)
+            config.AsyncTimeout = (int)option.AsyncTimeout;
+        if (option.SyncTimeout != null)
+            config.SyncTimeout = (int)option.SyncTimeout;
 
-        config.DefaultVersion = new Version(6, 0, 9);
+        if (option.Ssl != null && (bool)option.Ssl && option.SslHost != null && !option.SslHost.Equals(""))
+        {
+            config.Ssl = true;
+            config.SslHost = option.SslHost;
+            config.SslProtocols = SslProtocols.Tls13;
+        }
+
+        if (option.AllowAdmin != null)
+            config.AllowAdmin = (bool)option.AllowAdmin;
+
+        config.DefaultVersion = new Version(option.VersionMajor, option.VersionMinor, option.VersionBuild);
         return config;
     }
 }

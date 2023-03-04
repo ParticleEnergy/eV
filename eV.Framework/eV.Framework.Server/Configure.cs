@@ -12,19 +12,15 @@ public class Configure
     private const string ProjectNameKey = "ProjectName";
     private const string BaseOptionKey = "Base";
     private const string ServerOptionKey = "Server";
-    private const string ClusterOptionKey = "Cluster";
     private const string MongodbOptionKey = "Mongodb";
     private const string RedisOptionKey = "Redis";
 
     private Configure()
     {
-        object[] attributes = Assembly.GetExecutingAssembly()
-            .GetCustomAttributes(typeof(AssemblyConfigurationAttribute), false);
+        object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyConfigurationAttribute), false);
 
         ConfigurationBuilder builder = new();
-        builder.AddJsonFile(attributes.Length == 0
-            ? "appsettings.json"
-            : ((AssemblyConfigurationAttribute)attributes[0]).Configuration);
+        builder.AddJsonFile(attributes.Length == 0 ? "appsettings.json" : ((AssemblyConfigurationAttribute)attributes[0]).Configuration);
         Config = builder.Build();
     }
 

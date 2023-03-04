@@ -22,6 +22,6 @@ public class DemoHandler : HandlerBase<CMessage>
             session.Activate("Server");
 
         session.Send(new SMessage { Text = "Server" });
-        await demoService.Produce(new QMessage{Text = content.Text});
+        await demoService.Produce(new QMessage { Text = content.Text });
     }
 }

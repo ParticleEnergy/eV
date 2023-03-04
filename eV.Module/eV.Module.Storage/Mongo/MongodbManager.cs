@@ -39,8 +39,10 @@ public class MongodbManager
                     {
                         clusterBuilder.Subscribe<CommandStartedEvent>(commandStartedEvent =>
                         {
-                            Logger.Debug(
-                                $"Mongodb [{commandStartedEvent.CommandName}] {commandStartedEvent.Command.ToJson()}");
+                            Logger.Debug
+                            (
+                                $"Mongodb [{commandStartedEvent.CommandName}] {commandStartedEvent.Command.ToJson()}"
+                            );
                         });
                     };
                 }
