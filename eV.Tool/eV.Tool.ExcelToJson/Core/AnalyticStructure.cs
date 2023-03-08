@@ -52,7 +52,7 @@ public class AnalyticStructure
             FieldType.Int => "int",
             FieldType.Double => "double",
             _ => string.Join(", ", type.Replace(" ", "").Split(Const.SplitFlag)).ToLower()
-                .Replace(FieldType.Dict.ToLower(), "Dictionary").Replace(FieldType.List.ToLower(), "List")
+                .Replace(FieldType.Dict.ToLower(), "SortedDictionary").Replace(FieldType.List.ToLower(), "List")
         };
     }
 
@@ -108,10 +108,8 @@ public class AnalyticStructure
         Dictionary<string, ObjectInfo> objectInfos = new() { [Const.MainSheet] = GetObjectInfo(excelInfo.MainSheetInfo) };
         objectInfos[Const.MainSheet].IsMain = true;
         objectInfos[Const.MainSheet].ClassName = excelInfo.FileName;
-        objectInfos[Const.MainSheet].ProfileType =
-            excelInfo.MainSheetInfo.PrimaryKeyFieldInfo!.Type == FieldType.PrimaryKeyList ? "List" : "Dictionary";
-        objectInfos[Const.MainSheet].ProfileDetailType =
-            excelInfo.MainSheetInfo.PrimaryKeyFieldInfo!.Type == FieldType.PrimaryKeyList ? "" : "string, ";
+        objectInfos[Const.MainSheet].ProfileType = excelInfo.MainSheetInfo.PrimaryKeyFieldInfo!.Type == FieldType.PrimaryKeyList ? "List" : "SortedDictionary";
+        objectInfos[Const.MainSheet].ProfileDetailType = excelInfo.MainSheetInfo.PrimaryKeyFieldInfo!.Type == FieldType.PrimaryKeyList ? "" : "string, ";
         objectInfos[Const.MainSheet].IsDependencies = excelInfo.SubSheetInfos.Count > 0;
 
         foreach (SheetInfo sheetInfo in excelInfo.SubSheetInfos)
@@ -128,7 +126,7 @@ public class AnalyticStructure
             switch (sheetInfo.ForeignKeyFieldInfo.Type)
             {
                 case FieldType.ForeignKeyDictionary:
-                    objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty { Type = $"Dictionary<string, {sheetInfo.Name}>", Name = $"{sheetInfo.Name}Dictionary", Comment = sheetInfo.Name });
+                    objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty { Type = $"SortedDictionary<string, {sheetInfo.Name}>", Name = $"{sheetInfo.Name}Dictionary", Comment = sheetInfo.Name });
                     break;
                 case FieldType.ForeignKeyList:
                     objectInfos[key].ObjectComplexProperties.Add(new ObjectComplexProperty { Type = $"List<{sheetInfo.Name}>", Name = $"{sheetInfo.Name}List", Comment = sheetInfo.Name });
