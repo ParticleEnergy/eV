@@ -109,6 +109,7 @@ public class SslTcpChannel : ITcpChannel
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
+            Close();
         }
     }
 

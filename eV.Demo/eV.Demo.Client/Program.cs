@@ -4,6 +4,9 @@ using eV.Demo.Client.Message;
 using eV.Framework.Unity;
 using eV.Module.Routing.Interface;
 
+string path = "/Users/three.zhang/Projects/eV/eV/eV.Tool/eV.Tool.GenerateCertificateFile/bin/Release/net6.0/certificate.pfx"; // 文件路径
+byte[] pfxBytes = File.ReadAllBytes(path);
+
 UnitySetting setting = new()
 {
     Host = "127.0.0.1",
@@ -11,7 +14,12 @@ UnitySetting setting = new()
     Port = 8000,
     ProjectAssemblyString = "eV.Demo.Client",
     PublicObjectAssemblyString = "eV.Demo.Client",
+    TlsTargetHost = "127.0.0.1",
+    TlsCertPassword = "123456",
+    TlsCertData = pfxBytes,
+    TlsCheckCertificateRevocation = false
 };
+
 Client client = new(setting);
 client.OnConnect += delegate(ISession session)
 {
@@ -20,6 +28,8 @@ client.OnConnect += delegate(ISession session)
 };
 client.Connect();
 Console.ReadLine();
+
+
 //
 //
 // using StackExchange.Redis;

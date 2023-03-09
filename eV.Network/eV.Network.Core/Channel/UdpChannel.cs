@@ -95,6 +95,7 @@ public class UdpChannel : IUdpChannel
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
+            Close();
         }
     }
 

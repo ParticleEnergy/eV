@@ -15,6 +15,6 @@ public class ServerOption
 
     public string TlsTargetHost { get; set; } = string.Empty;
     public string TlsCertFile { get; set; } = string.Empty;
-    public string? TlsCertPassword { get; set; } = null;
-    public bool TlsCheckCertificateRevocation { get; set; } = false;
+    public string? TlsCertPassword { get; set; }
+    public bool TlsCheckCertificateRevocation { get; set; }
 }

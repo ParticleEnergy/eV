@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 
+using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using eV.Module.EasyLog;
 using eV.Module.Routing;
@@ -28,6 +29,7 @@ public class Client
 
     public Client(UnitySetting setting)
     {
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
         if (setting.Log != null)
         {
             Logger.SetLogger(setting.Log);

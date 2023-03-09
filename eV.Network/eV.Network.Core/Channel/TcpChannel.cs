@@ -90,6 +90,7 @@ public class TcpChannel : ITcpChannel
         catch (Exception e)
         {
             Logger.Error(e.Message, e);
+            Close();
         }
     }
 

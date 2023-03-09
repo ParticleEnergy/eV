@@ -2,6 +2,7 @@
 // Licensed under the Apache license. See the LICENSE file in the project root for full license information.
 
 
+using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using eV.Framework.Server.ClusterCommunication;
 using eV.Framework.Server.Logger;
@@ -47,6 +48,8 @@ public class Server
 
     public Server()
     {
+        ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
         EasyLogger.SetLogger(new ServerLog(Configure.Instance.ProjectName));
         EasyLogger.Info(Logo);
         EasyLogger.Info($"NodeId [{_nodeId}]");

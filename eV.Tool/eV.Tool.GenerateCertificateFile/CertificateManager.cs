@@ -11,17 +11,23 @@ public static class CertificateManager
 {
     public static void GenerateSelfSignedCertificate(string targetHost, string password, string path = "./")
     {
-        RSA rsa = RSA.Create(2048);
-        // 创建证书请求
-        CertificateRequest csr = new($"CN={targetHost}", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        // Generate a new RSA key pair
+        using RSA rsa = RSA.Create();
 
-        // 生成证书
-        X509Certificate2 cert = csr.CreateSelfSigned(DateTimeOffset.UtcNow, DateTimeOffset.UtcNow.AddYears(1));
+        // Create a CertificateRequest with the subject name and the RSA key
+        CertificateRequest request = new($"CN={targetHost}", rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
-        // 导出证书到PFX文件
-        byte[] pfxBytes = cert.Export(X509ContentType.Pfx, password);
+        // Create a self-signed X.509 certificate
+        DateTimeOffset startDate = DateTimeOffset.UtcNow;
+        DateTimeOffset endDate = startDate.AddYears(1);
+        X509Certificate2 certificate = request.CreateSelfSigned(startDate, endDate);
 
-        string filePath = Path.Combine(path, "cert.pfx");
+        // Export the certificate to a PFX file with a password
+        byte[] pfxBytes = certificate.Export(X509ContentType.Pfx, password);
+
+        string filePath = Path.Combine(path, "certificate.pfx");
+        // Save the PFX file to disk
         File.WriteAllBytes(filePath, pfxBytes);
+        Console.WriteLine($"Certificate saved to {filePath}");
     }
 }
