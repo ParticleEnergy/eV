@@ -54,6 +54,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eV.Demo.Cluster.Client.Node
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eV.Demo.Cluster.Client.Node2", "eV.Demo\eV.Demo.Cluster.Client.Node2\eV.Demo.Cluster.Client.Node2.csproj", "{38FF619D-76AE-433F-8994-71047BBD4181}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eV.Tool.GenerateCertificateFile", "eV.Tool\eV.Tool.GenerateCertificateFile\eV.Tool.GenerateCertificateFile.csproj", "{2A40694F-C3E7-4454-A7D7-AB8A560FE0F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +84,7 @@ Global
 		{11521AD9-1EFB-4171-AD7B-B55B6E672525} = {528ACCD2-97B4-4DE4-8D47-FAFC4BEDF8F1}
 		{77B84616-F6D5-469C-8CDC-BB57FFA058C2} = {528ACCD2-97B4-4DE4-8D47-FAFC4BEDF8F1}
 		{38FF619D-76AE-433F-8994-71047BBD4181} = {528ACCD2-97B4-4DE4-8D47-FAFC4BEDF8F1}
+		{2A40694F-C3E7-4454-A7D7-AB8A560FE0F8} = {7CCD329B-CFDB-458F-8F42-0C5E824BB9ED}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FAD04CC7-C8D2-413E-BA93-8A914B7B39F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -172,5 +175,9 @@ Global
 		{38FF619D-76AE-433F-8994-71047BBD4181}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38FF619D-76AE-433F-8994-71047BBD4181}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38FF619D-76AE-433F-8994-71047BBD4181}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A40694F-C3E7-4454-A7D7-AB8A560FE0F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A40694F-C3E7-4454-A7D7-AB8A560FE0F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A40694F-C3E7-4454-A7D7-AB8A560FE0F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A40694F-C3E7-4454-A7D7-AB8A560FE0F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
