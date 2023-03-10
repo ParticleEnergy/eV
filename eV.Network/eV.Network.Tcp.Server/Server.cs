@@ -33,8 +33,8 @@ public class Server : IServer
     private int _receiveBufferSize;
     private bool _tcpKeepAlive;
 
-    private string? _tlsTargetHost;
-    private X509CertificateCollection? _tlsX509CertificateCollection;
+    private X509Certificate2? _tlsX509Certificate2;
+    private bool _tlsClientCertificateRequired;
     private bool _tlsCheckCertificateRevocation;
 
     #endregion
@@ -85,8 +85,8 @@ public class Server : IServer
 
         _tcpKeepAlive = setting.TcpKeepAlive;
 
-        _tlsTargetHost = setting.TlsTargetHost;
-        _tlsX509CertificateCollection = setting.TlsX509CertificateCollection;
+        _tlsX509Certificate2 = setting.TlsX509Certificate2;
+        _tlsClientCertificateRequired = setting.TlsClientCertificateRequired;
         _tlsCheckCertificateRevocation = setting.TlsCheckCertificateRevocation;
     }
 
@@ -225,13 +225,13 @@ public class Server : IServer
         for (int i = 0; i < _maxConnectionCount; ++i)
         {
             ITcpChannel channel;
-            if (_tlsTargetHost == null || _tlsX509CertificateCollection == null)
+            if (_tlsX509Certificate2 == null)
             {
                 channel = new TcpChannel(_receiveBufferSize);
             }
             else
             {
-                channel = new SslTcpChannel(_receiveBufferSize, _tlsTargetHost, _tlsX509CertificateCollection, _tlsCheckCertificateRevocation);
+                channel = new SslTcpChannel(_receiveBufferSize, _tlsX509Certificate2, _tlsClientCertificateRequired, _tlsCheckCertificateRevocation);
             }
 
             channel.OpenCompleted += OpenCompleted;
@@ -334,7 +334,7 @@ public class Server : IServer
 
         if (!_connectedChannels.Remove(channel))
             Logger.Error($"Channel {channel.RemoteEndPoint} {channel.ChannelId} remove on failed");
-        _channelPool.Push((TcpChannel)channel);
+        _channelPool.Push(channel);
         Interlocked.Decrement(ref _connectedCount);
         _maxAcceptedConnected.Release();
     }

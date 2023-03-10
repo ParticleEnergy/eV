@@ -77,14 +77,12 @@ public class Server
     {
         ServerSetting serverSetting = new() { TcpKeepAlive = Configure.Instance.ServerOption.TcpKeepAlive };
 
-        if (Configure.Instance.ServerOption.TlsTargetHost != string.Empty && Configure.Instance.ServerOption.TlsCertFile != string.Empty)
+        if (Configure.Instance.ServerOption.TlsCertFile != string.Empty)
         {
-            X509CertificateCollection x509CertificateCollection = new();
-            X509Certificate x509Certificate = new X509Certificate2(Configure.Instance.ServerOption.TlsCertFile, Configure.Instance.ServerOption.TlsCertPassword);
-            x509CertificateCollection.Add(x509Certificate);
+            X509Certificate2 x509Certificate = new(Configure.Instance.ServerOption.TlsCertFile, Configure.Instance.ServerOption.TlsCertPassword);
 
-            serverSetting.TlsTargetHost = Configure.Instance.ServerOption.TlsTargetHost;
-            serverSetting.TlsX509CertificateCollection = x509CertificateCollection;
+            serverSetting.TlsX509Certificate2 = x509Certificate;
+            serverSetting.TlsClientCertificateRequired = Configure.Instance.ServerOption.TlsClientCertificateRequired;
             serverSetting.TlsCheckCertificateRevocation = Configure.Instance.ServerOption.TlsCheckCertificateRevocation;
         }
 

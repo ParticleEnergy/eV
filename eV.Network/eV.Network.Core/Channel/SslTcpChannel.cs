@@ -40,19 +40,54 @@ public class SslTcpChannel : ITcpChannel
 
     private Socket? _socket;
     private SslStream? _sslStream;
-    private readonly SocketAsyncEventArgs _receiveSocketAsyncEventArgs;
     private readonly SocketAsyncEventArgs _disconnectSocketAsyncEventArgs;
     private readonly byte[] _receiveBuffer;
 
     #endregion
 
-    #region Setting
+    #region Public Setting
 
-    private readonly string _targetHost;
-    private readonly X509CertificateCollection _x509CertificateCollection;
     private readonly bool _checkCertificateRevocation;
 
     #endregion
+
+    #region Server Setting
+
+    private readonly bool? _clientCertificateRequired;
+    private readonly X509Certificate2? _x509Certificate2;
+
+    #endregion
+
+    #region Client Setting
+
+    private readonly string? _targetHost;
+    private readonly X509CertificateCollection? _x509CertificateCollection;
+
+    #endregion
+
+    #region Constructor
+
+    public SslTcpChannel(int receiveBufferSize, X509Certificate2 x509Certificate2, bool clientCertificateRequired, bool checkCertificateRevocation)
+    {
+        ChannelId = Guid.NewGuid().ToString();
+        ChannelState = RunState.Off;
+
+        // Setting
+        _x509Certificate2 = x509Certificate2;
+        _clientCertificateRequired = clientCertificateRequired;
+        _checkCertificateRevocation = checkCertificateRevocation;
+
+        // Completed
+        SocketAsyncEventArgsCompleted socketAsyncEventArgsCompleted = new();
+        socketAsyncEventArgsCompleted.ProcessDisconnect += ProcessDisconnect;
+        // Receive
+        _receiveBuffer = new byte[receiveBufferSize];
+
+        // Disconnect
+        _disconnectSocketAsyncEventArgs = new SocketAsyncEventArgs();
+        _disconnectSocketAsyncEventArgs.Completed += socketAsyncEventArgsCompleted.OnCompleted;
+        _disconnectSocketAsyncEventArgs.DisconnectReuseSocket = false;
+    }
 
     public SslTcpChannel(int receiveBufferSize, string targetHost, X509CertificateCollection x509CertificateCollection, bool checkCertificateRevocation)
     {
@@ -66,13 +101,9 @@ public class SslTcpChannel : ITcpChannel
 
         // Completed
         SocketAsyncEventArgsCompleted socketAsyncEventArgsCompleted = new();
-        socketAsyncEventArgsCompleted.ProcessReceive += ProcessReceive;
         socketAsyncEventArgsCompleted.ProcessDisconnect += ProcessDisconnect;
         // Receive
         _receiveBuffer = new byte[receiveBufferSize];
-        _receiveSocketAsyncEventArgs = new SocketAsyncEventArgs();
-        _receiveSocketAsyncEventArgs.Completed += socketAsyncEventArgsCompleted.OnCompleted;
-        _receiveSocketAsyncEventArgs.SetBuffer(_receiveBuffer, 0, receiveBufferSize);
 
         // Disconnect
         _disconnectSocketAsyncEventArgs = new SocketAsyncEventArgs();
@@ -80,9 +111,12 @@ public class SslTcpChannel : ITcpChannel
         _disconnectSocketAsyncEventArgs.DisconnectReuseSocket = false;
     }
 
+    #endregion
+
+
     #region Operate
 
-    public void Open(Socket socket)
+    public async void Open(Socket socket)
     {
         if (ChannelState == RunState.On)
         {
@@ -94,7 +128,7 @@ public class SslTcpChannel : ITcpChannel
         {
             Init(socket);
 
-            if (!Authenticate())
+            if (!await Authenticate())
             {
                 Close();
                 return;
@@ -120,8 +154,8 @@ public class SslTcpChannel : ITcpChannel
         ChannelState = RunState.Off;
         try
         {
-            _sslStream?.ShutdownAsync().Wait();
             _sslStream?.Close();
+            _sslStream?.Dispose();
 
             if (_socket is { Connected: true })
             {
@@ -157,7 +191,6 @@ public class SslTcpChannel : ITcpChannel
         {
             _socket = null;
             _sslStream = null;
-            _receiveSocketAsyncEventArgs.UserToken = null;
             Array.Clear(_receiveBuffer, 0, _receiveBuffer.Length);
 
             Logger.Info($"Channel {ChannelId} {RemoteEndPoint} close");
@@ -203,13 +236,13 @@ public class SslTcpChannel : ITcpChannel
             return false;
         }
 
-        if (_receiveSocketAsyncEventArgs.Buffer == null)
+        if (!_sslStream.CanRead)
         {
             ChannelError.Error(ChannelError.ErrorCode.SslStreamIoError, Close);
             return false;
         }
 
-        _sslStream.BeginRead(_receiveSocketAsyncEventArgs.Buffer, _receiveSocketAsyncEventArgs.Offset, _receiveSocketAsyncEventArgs.Count, ReceiveCallback, null);
+        _sslStream.BeginRead(_receiveBuffer, 0, _receiveBuffer.Length, ReceiveCallback, null);
         return true;
     }
 
@@ -257,44 +290,6 @@ public class SslTcpChannel : ITcpChannel
 
     #region Process
 
-    private bool ProcessReceive(SocketAsyncEventArgs socketAsyncEventArgs)
-    {
-        try
-        {
-            if (_socket == null)
-            {
-                ChannelError.Error(ChannelError.ErrorCode.SocketIsNull, Close);
-                return false;
-            }
-
-            if (!_socket.Connected)
-            {
-                ChannelError.Error(ChannelError.ErrorCode.SocketNotConnect, Close);
-                return false;
-            }
-
-            if (socketAsyncEventArgs.BytesTransferred == 0)
-            {
-                ChannelError.Error(ChannelError.ErrorCode.SocketBytesTransferredIsZero, Close);
-                return false;
-            }
-
-            if (socketAsyncEventArgs.UserToken != null)
-            {
-                Receive?.Invoke((byte[])socketAsyncEventArgs.UserToken);
-                LastReceiveDateTime = DateTime.Now;
-            }
-        }
-        catch (Exception e)
-        {
-            Logger.Error(e.Message, e);
-            Close();
-            return false;
-        }
-
-        return true;
-    }
-
     private bool ProcessDisconnect(SocketAsyncEventArgs socketAsyncEventArgs)
     {
         Logger.Info($"Channel {ChannelId} {RemoteEndPoint} disconnect");
@@ -329,16 +324,17 @@ public class SslTcpChannel : ITcpChannel
             }
 
             int bytesRead = _sslStream.EndRead(ar);
-            if (bytesRead > 0 && _receiveSocketAsyncEventArgs.Buffer != null)
+            if (bytesRead > 0)
             {
-                byte[] data = new byte[bytesRead];
-                Buffer.BlockCopy(_receiveSocketAsyncEventArgs.Buffer, _receiveSocketAsyncEventArgs.Offset, data, 0, bytesRead);
-                _receiveSocketAsyncEventArgs.UserToken = data;
-                _receiveSocketAsyncEventArgs.SetBuffer(_receiveSocketAsyncEventArgs.Offset, _receiveSocketAsyncEventArgs.Count);
-                ProcessReceive(_receiveSocketAsyncEventArgs);
-            }
+                Receive?.Invoke(_receiveBuffer.Skip(0).Take(bytesRead).ToArray());
+                LastReceiveDateTime = DateTime.Now;
 
-            StartReceive();
+                StartReceive();
+            }
+            else
+            {
+                Close();
+            }
         }
         catch (Exception e)
         {
@@ -381,7 +377,7 @@ public class SslTcpChannel : ITcpChannel
 
     #endregion
 
-    private bool Authenticate()
+    private async Task<bool> Authenticate()
     {
         if (_sslStream == null)
         {
@@ -391,7 +387,14 @@ public class SslTcpChannel : ITcpChannel
 
         try
         {
-            _sslStream.AuthenticateAsClient(_targetHost, _x509CertificateCollection, SslProtocols.Tls12, _checkCertificateRevocation);
+            if (_targetHost != null && !_targetHost.Equals("") && _x509CertificateCollection != null)
+            {
+                await _sslStream.AuthenticateAsClientAsync(_targetHost, _x509CertificateCollection, SslProtocols.Tls12, _checkCertificateRevocation);
+            }
+            else
+            {
+                await _sslStream.AuthenticateAsServerAsync(_x509Certificate2!, _clientCertificateRequired ?? false, SslProtocols.Tls12, _checkCertificateRevocation);
+            }
 
             return _sslStream.IsAuthenticated && _sslStream.IsEncrypted;
         }
@@ -399,7 +402,10 @@ public class SslTcpChannel : ITcpChannel
         {
             Logger.Error(e.Message, e);
             if (e.InnerException != null)
-                Logger.Error(e.InnerException.Message, e.InnerException);
+            {
+                Logger.Error($"Inner exception message: {e.InnerException.Message}", e.InnerException);
+            }
+
             Close();
             return false;
         }

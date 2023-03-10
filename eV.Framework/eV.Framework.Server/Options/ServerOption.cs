@@ -13,8 +13,8 @@ public class ServerOption
     public bool TcpKeepAlive { get; set; } = true;
     public int SessionMaximumIdleTime { get; set; }
 
-    public string TlsTargetHost { get; set; } = string.Empty;
     public string TlsCertFile { get; set; } = string.Empty;
     public string? TlsCertPassword { get; set; }
+    public bool TlsClientCertificateRequired { get; set; }
     public bool TlsCheckCertificateRevocation { get; set; }
 }

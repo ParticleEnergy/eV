@@ -21,8 +21,8 @@ public class ServerSetting
 
     #region tls
 
-    public string? TlsTargetHost { get; set; } = "eV";
-    public X509CertificateCollection? TlsX509CertificateCollection { get; set; }
+    public X509Certificate2? TlsX509Certificate2 { get; set; }
+    public bool TlsClientCertificateRequired { get; set; }
     public bool TlsCheckCertificateRevocation { get; set; }
 
     #endregion

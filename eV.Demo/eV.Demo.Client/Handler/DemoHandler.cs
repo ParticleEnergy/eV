@@ -12,8 +12,8 @@ public class DemoHandler : HandlerBase<SMessage>
     protected override Task Handle(ISession session, SMessage content)
     {
         Logger.Info(content.Text);
-        // session.Send(new CMessage { Text = content.Text });
-        // Thread.Sleep(1000);
+        session.Send(new CMessage { Text = content.Text });
+        Thread.Sleep(1000);
         return Task.CompletedTask;
     }
 }
