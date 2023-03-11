@@ -1,4 +1,4 @@
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square&logo=Apache)](LICENSE)
+[![License](https://img.shields.io/github/license/ParticleEnergy/eV)](https://github.com/ParticleEnergy/eV/blob/main/LICENSE)
 
 # eV
 
