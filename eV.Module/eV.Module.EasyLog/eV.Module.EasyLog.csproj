@@ -13,5 +13,10 @@
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Module.EasyLog</RootNamespace>
     <PackageVersion>1.6.10</PackageVersion>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\eV.Module\eV.Module.EasyLog\README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
 </Project>

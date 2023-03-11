@@ -14,7 +14,12 @@
     <PackageVersion>1.6.10</PackageVersion>
     <RootNamespace>eV.Network.Core</RootNamespace>
     <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\eV.Network\eV.Network.Core\README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\eV.Module\eV.Module.EasyLog\eV.Module.EasyLog.csproj" />

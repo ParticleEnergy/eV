@@ -13,7 +13,12 @@
     <RootNamespace>eV.Module.Cluster</RootNamespace>
     <PackageVersion>1.6.10</PackageVersion>
     <TargetFramework>net6.0</TargetFramework>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\eV.Module\eV.Module.Cluster\README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="StackExchange.Redis" Version="2.6.96" />
   </ItemGroup>

@@ -14,7 +14,12 @@
     <Authors>绵羊</Authors>
     <PackageVersion>1.6.10</PackageVersion>
     <RootNamespace>eV.Module.Routing</RootNamespace>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\eV.Module\eV.Module.Routing\README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MongoDB.Bson" Version="2.19.0" />

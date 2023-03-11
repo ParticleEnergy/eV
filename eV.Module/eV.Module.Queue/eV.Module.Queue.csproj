@@ -13,7 +13,13 @@
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Module.Queue</RootNamespace>
     <TargetFramework>net6.0</TargetFramework>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\eV.Module\eV.Module.Queue\README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\eV.Module.EasyLog\eV.Module.EasyLog.csproj" />
   </ItemGroup>

@@ -14,8 +14,12 @@
     <PackageVersion>1.6.10</PackageVersion>
     <RootNamespace>eV.Network.Tcp.Server</RootNamespace>
     <TargetFramework>net6.0</TargetFramework>
-
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\eV.Network\eV.Network.Tcp.Server\README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\eV.Network.Core\eV.Network.Core.csproj" />
