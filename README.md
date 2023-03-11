@@ -58,3 +58,7 @@ dotnet add package eV.Framework.Server
 | [eV.Network.Core](https://github.com/ParticleEnergy/eV/tree/main/eV.Network/eV.Network.Core)               | [![NuGet version](https://img.shields.io/nuget/v/eV.Network.Core)](https://www.nuget.org/packages/eV.Network.Core)     | Description |
 | [eV.Network.Tcp.Client](https://github.com/ParticleEnergy/eV/tree/main/eV.Network/eV.Network.Tcp.Client) | [![NuGet version](https://img.shields.io/nuget/v/eV.Network.Tcp.Client)](https://www.nuget.org/packages/eV.Network.Tcp.Client) | Description |
 | [eV.Network.Tcp.Server](https://github.com/ParticleEnergy/eV/tree/main/eV.Network/eV.Network.Tcp.Server) | [![NuGet version](https://img.shields.io/nuget/v/eV.Network.Tcp.Server)](https://www.nuget.org/packages/eV.Network.Tcp.Server) | Description |
+
+
+# System Requirement
+.NET Standard 2.1 (.NET 6)
