@@ -15,8 +15,13 @@
     <RootNamespace>eV.Framework.Server</RootNamespace>
     <PackageVersion>1.6.10</PackageVersion>
     <TargetFramework>net6.0</TargetFramework>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Include="..\..\eV.Framework\eV.Framework.Server\README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
+  
   <ItemGroup>
     <ProjectReference Include="..\..\eV.Module\eV.Module.Cluster\eV.Module.Cluster.csproj" />
     <ProjectReference Include="..\..\eV.Module\eV.Module.GameProfile\eV.Module.GameProfile.csproj" />

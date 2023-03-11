@@ -14,7 +14,12 @@
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Framework.Unity</RootNamespace>
     <PackageVersion>1.6.10</PackageVersion>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\eV.Framework\eV.Framework.Unity\README.md" Pack="true" PackagePath=""/>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\eV.Module\eV.Module.EasyLog\eV.Module.EasyLog.csproj" />
