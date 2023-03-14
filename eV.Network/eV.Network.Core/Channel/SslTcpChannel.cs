@@ -466,10 +466,13 @@ public class SslTcpChannel : ITcpChannel
         }
 
         // 检查证书是否颁发给正确的主机名
-        if (!certificate.Subject.Contains($"CN={_targetHost}", StringComparison.OrdinalIgnoreCase))
+        if (_targetHost != null && !_targetHost.Equals(string.Empty))
         {
-            Logger.Error($"Certificate is not issued to {_targetHost}");
-            return false;
+            if (!certificate.Subject.Contains($"CN={_targetHost}", StringComparison.OrdinalIgnoreCase))
+            {
+                Logger.Error($"Certificate is not issued to {_targetHost}");
+                return false;
+            }
         }
 
         // 验证证书链

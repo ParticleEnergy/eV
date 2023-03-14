@@ -20,7 +20,7 @@ public class ClientSetting
 
     #region tls
 
-    public string? TlsTargetHost { get; set; } = "eV";
+    public string? TlsTargetHost { get; set; } = string.Empty;
     public X509CertificateCollection? TlsX509CertificateCollection { get; set; }
     public bool TlsCheckCertificateRevocation { get; set; }
 

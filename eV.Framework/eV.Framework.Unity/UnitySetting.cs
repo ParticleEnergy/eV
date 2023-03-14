@@ -13,7 +13,7 @@ public class UnitySetting
     public string ProjectAssemblyString { get; set; } = string.Empty;
     public string PublicObjectAssemblyString { get; set; } = string.Empty;
 
-    public string? TlsTargetHost { get; set; } = "eV";
+    public string? TlsTargetHost { get; set; } = string.Empty;
     public byte[]? TlsCertData { get; set; } = null;
     public string? TlsCertPassword { get; set; } = null;
     public bool TlsCheckCertificateRevocation { get; set; } = false;
