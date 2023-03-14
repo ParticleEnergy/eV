@@ -13,7 +13,7 @@
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Framework.Server</RootNamespace>
-    <PackageVersion>1.6.11</PackageVersion>
+    <PackageVersion>1.6.12</PackageVersion>
     <TargetFramework>net6.0</TargetFramework>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
@@ -21,7 +21,7 @@
   <ItemGroup>
     <None Include="..\..\eV.Framework\eV.Framework.Server\README.md" Pack="true" PackagePath=""/>
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\..\eV.Module\eV.Module.Cluster\eV.Module.Cluster.csproj" />
     <ProjectReference Include="..\..\eV.Module\eV.Module.GameProfile\eV.Module.GameProfile.csproj" />

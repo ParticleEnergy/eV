@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/ParticleEnergy/eV</PackageProjectUrl>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10</LangVersion>
-    <PackageVersion>1.6.11</PackageVersion>
+    <PackageVersion>1.6.12</PackageVersion>
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Module.Storage</RootNamespace>
     <TargetFramework>net6.0</TargetFramework>
@@ -19,7 +19,7 @@
   <ItemGroup>
     <None Include="..\..\eV.Module\eV.Module.Storage\README.md" Pack="true" PackagePath=""/>
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\eV.Module.EasyLog\eV.Module.EasyLog.csproj" />
   </ItemGroup>

@@ -204,7 +204,7 @@ public class SslTcpChannel : ITcpChannel
     private void Init(Socket socket)
     {
         _socket = socket;
-        _sslStream = new SslStream(new NetworkStream(socket));
+        _sslStream = new SslStream(new NetworkStream(socket), false, RemoteCertificateValidationCallback);
         ChannelState = RunState.On;
         ConnectedDateTime = DateTime.Now;
         RemoteEndPoint = _socket?.RemoteEndPoint;
@@ -377,6 +377,8 @@ public class SslTcpChannel : ITcpChannel
 
     #endregion
 
+    #region Validation
+
     private async Task<bool> Authenticate()
     {
         if (_sslStream == null)
@@ -410,4 +412,88 @@ public class SslTcpChannel : ITcpChannel
             return false;
         }
     }
+
+    private bool RemoteCertificateValidationCallback(object sender, X509Certificate? certificate, X509Chain? chain, SslPolicyErrors sslPolicyErrors)
+    {
+        // 如果启用了调试模式，则允许所有证书
+        if (Logger.IsDebug())
+            return true;
+
+        // 如果有任何策略错误，则拒绝证书
+        if (sslPolicyErrors != SslPolicyErrors.None)
+        {
+            Logger.Error($"Certificate error: {sslPolicyErrors}");
+            return false;
+        }
+
+        // 如果证书为 null，则拒绝证书
+        if (certificate == null)
+        {
+            Logger.Error("Certificate is null");
+            return false;
+        }
+
+        // 如果证书链为 null，则拒绝证书
+        if (chain == null)
+        {
+            Logger.Error("Certificate chain is null");
+            return false;
+        }
+
+        // 检查证书是否被吊销
+        if (chain.ChainStatus.Any(status => status.Status == X509ChainStatusFlags.RevocationStatusUnknown || status.Status == X509ChainStatusFlags.Revoked))
+        {
+            Logger.Error("Certificate is revoked or revocation status is unknown");
+            return false;
+        }
+
+        try
+        {
+            // 检查证书是否有效
+            chain.Build(new X509Certificate2(certificate));
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Error validating certificate: {ex.Message}");
+            return false;
+        }
+
+        // 检查证书是否过期
+        if (DateTime.Now < DateTime.Parse(certificate.GetEffectiveDateString()) || DateTime.Now > DateTime.Parse(certificate.GetExpirationDateString()))
+        {
+            Logger.Error("Certificate is expired");
+            return false;
+        }
+
+        // 检查证书是否颁发给正确的主机名
+        if (!certificate.Subject.Contains($"CN={_targetHost}", StringComparison.OrdinalIgnoreCase))
+        {
+            Logger.Error($"Certificate is not issued to {_targetHost}");
+            return false;
+        }
+
+        // 验证证书链
+        bool chainIsValid = true;
+        for (int i = 0; i < chain.ChainElements.Count - 1; i++)
+        {
+            var current = chain.ChainElements[i];
+            var issuer = chain.ChainElements[i + 1];
+
+            // 检查颁发者和主题名称是否匹配
+            if (current.Certificate.Issuer.Equals(issuer.Certificate.Subject, StringComparison.OrdinalIgnoreCase)) continue;
+            chainIsValid = false;
+            break;
+        }
+
+        if (!chainIsValid)
+        {
+            Logger.Error("Certificate chain validation failed");
+            return false;
+        }
+
+        // 证书验证成功
+        return true;
+    }
+
+    #endregion
 }
