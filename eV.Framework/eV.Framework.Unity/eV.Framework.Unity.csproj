@@ -13,7 +13,7 @@
     <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Framework.Unity</RootNamespace>
-    <PackageVersion>1.6.12</PackageVersion>
+    <PackageVersion>1.6.13</PackageVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
