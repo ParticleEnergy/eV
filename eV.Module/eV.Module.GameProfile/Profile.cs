@@ -12,7 +12,6 @@ public static class Profile
 {
     private static DirectoryInfo? s_profileDirInfo;
     private static string? s_assemblyString;
-    private static string? s_profilePath;
     private static IProfileParser? s_profileParser;
     public static Dictionary<string, object> Config { get; private set; } = new();
     public static event Action? OnLoad;
@@ -58,17 +57,6 @@ public static class Profile
         s_profileDirInfo = new DirectoryInfo(path);
         s_profileParser = new GameProfileParser();
         Load();
-    }
-
-    public static void Init(string assemblyString, string path, bool monitoringChange)
-    {
-        s_profilePath = path;
-        s_assemblyString = assemblyString;
-        s_profileDirInfo = new DirectoryInfo(path);
-        s_profileParser = new GameProfileParser();
-        Load();
-        if (monitoringChange)
-            Monitoring();
     }
 
     public static void AssignmentConfigObject<T>(T co)
@@ -119,24 +107,5 @@ public static class Profile
 
         Config = s_profileParser.Parser(configType, configJsonString);
         OnLoad?.Invoke();
-    }
-
-    private static void Monitoring()
-    {
-        if (s_profilePath == null)
-        {
-            Logger.Error("GameProfile not init");
-            return;
-        }
-
-        FileSystemWatcher watcher = new(s_profilePath);
-        watcher.Filter = "*.json";
-        watcher.IncludeSubdirectories = true;
-        watcher.EnableRaisingEvents = true;
-        watcher.Changed += (_, _) => { Load(); };
-        watcher.Created += (_, _) => { Load(); };
-        watcher.Deleted += (_, _) => { Load(); };
-        watcher.Renamed += (_, _) => { Load(); };
-        watcher.Error += (_, args) => { Logger.Error(args.GetException().Message, args.GetException()); };
     }
 }

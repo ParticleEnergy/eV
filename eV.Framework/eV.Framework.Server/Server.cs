@@ -60,8 +60,7 @@ public class Server
 
         Profile.Init(
             Configure.Instance.BaseOption.PublicObjectAssemblyString,
-            Configure.Instance.BaseOption.GameProfilePath,
-            Configure.Instance.BaseOption.GameProfileMonitoringChange
+            Configure.Instance.BaseOption.GameProfilePath
         );
     }
 

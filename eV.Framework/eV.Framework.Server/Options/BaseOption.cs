@@ -8,5 +8,4 @@ public class BaseOption
     public string ProjectAssemblyString { get; set; } = string.Empty;
     public string PublicObjectAssemblyString { get; set; } = string.Empty;
     public string GameProfilePath { get; set; } = string.Empty;
-    public bool GameProfileMonitoringChange { get; set; }
 }
