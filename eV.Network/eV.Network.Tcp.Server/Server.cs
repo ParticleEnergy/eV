@@ -41,6 +41,7 @@ public class Server : IServer
 
     #region Resource
 
+    public int ConnectedCount => _connectedCount;
     private int _connectedCount;
     private readonly Socket _socket;
     private readonly SocketAsyncEventArgsCompleted _socketAsyncEventArgsCompleted;
