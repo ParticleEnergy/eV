@@ -9,27 +9,27 @@ using Microsoft.Extensions.Logging;
 
 namespace eV.Framework.Server;
 
-public class Builder
+public class TcpBuilder
 {
     private readonly IHostBuilder _builder;
     private Action<IServiceCollection>? _configureServicesDelegate;
 
-    public Builder(string[]? args)
+    public TcpBuilder(string[] args)
     {
-        _builder = args == null ? Host.CreateDefaultBuilder() : Host.CreateDefaultBuilder(args);
+        _builder = Host.CreateDefaultBuilder(args);
     }
 
-    public Builder ConfigureServices(Action<IServiceCollection> configureDelegate)
+    public TcpBuilder ConfigureServices(Action<IServiceCollection> configureDelegate)
     {
         _configureServicesDelegate = configureDelegate;
         return this;
     }
 
-    public Application Build()
+    public TcpApplication Build()
     {
         _builder.ConfigureServices(services =>
         {
-            services.AddSingleton<IHostedService, HostedService>();
+            services.AddSingleton<IHostedService, TcpHostedService>();
             services.AddLogging(builder =>
             {
                 builder.ClearProviders();
@@ -38,6 +38,6 @@ public class Builder
             _configureServicesDelegate?.Invoke(services);
         });
 
-        return new Application(_builder.Build());
+        return new TcpApplication(_builder.Build());
     }
 }

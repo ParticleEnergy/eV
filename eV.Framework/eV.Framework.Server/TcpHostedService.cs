@@ -5,12 +5,12 @@ using Microsoft.Extensions.Hosting;
 
 namespace eV.Framework.Server;
 
-internal sealed class HostedService : IHostedService
+internal sealed class TcpHostedService : IHostedService
 {
     private readonly IHostApplicationLifetime _appLifetime;
     private readonly Server _server;
 
-    public HostedService(IHostApplicationLifetime appLifetime)
+    public TcpHostedService(IHostApplicationLifetime appLifetime)
     {
         _appLifetime = appLifetime;
         _server = new Server();

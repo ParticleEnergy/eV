@@ -2,7 +2,7 @@
 
 using eV.Framework.Server;
 
-await Application
-    .CreateBuilder(args)
+await ApplicationBuilder
+    .CreateTcpBuilder(args)
     .Build()
     .RunAsync();
