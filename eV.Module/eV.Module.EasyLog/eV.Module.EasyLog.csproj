@@ -12,7 +12,7 @@
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Module.EasyLog</RootNamespace>
-    <PackageVersion>1.7.0</PackageVersion>
+    <PackageVersion>1.7.1</PackageVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
