@@ -59,8 +59,8 @@ public class Configure
         }
     }
 
-    public Dictionary<string, string>? MongodbOption =>
-        Config.GetSection(MongodbOptionKey).Get<Dictionary<string, string>>();
+    public Dictionary<string, MongoOption>? MongodbOption =>
+        Config.GetSection(MongodbOptionKey).Get<Dictionary<string, MongoOption>>();
 
     public Dictionary<string, RedisOption>? RedisOption =>
         Config.GetSection(RedisOptionKey).Get<Dictionary<string, RedisOption>>();

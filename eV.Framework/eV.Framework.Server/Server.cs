@@ -118,7 +118,14 @@ public class Server
     {
         // Mongodb
         if (Configure.Instance.MongodbOption != null)
-            MongodbManager.Instance.Start(Configure.Instance.MongodbOption);
+        {
+            Dictionary<string, string> configs = new();
+
+            foreach (MongoOption mongoOption in Configure.Instance.MongodbOption.Values)
+                configs[mongoOption.Database] = mongoOption.ConnectionUrl;
+
+            MongodbManager.Instance.Start(configs);
+        }
 
         // Redis
         if (Configure.Instance.RedisOption != null)
