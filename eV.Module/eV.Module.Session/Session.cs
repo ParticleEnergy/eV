@@ -166,7 +166,7 @@ public sealed class Session : ISession
 
             if (Logger.IsDebug())
             {
-                Logger.Debug($"Send [{result.Key}] [{SessionId}] {JsonConvert.SerializeObject(data)}");
+                Logger.Debug($"Send [{result.Key}] [{SessionId}]\n{JsonConvert.SerializeObject(data, Formatting.Indented)}");
             }
 
             return true;
@@ -194,7 +194,7 @@ public sealed class Session : ISession
 
             if (Logger.IsDebug())
             {
-                Logger.Debug($"SendBySessionId [{result.Key}] [{SessionId}] [{sessionId}] {JsonConvert.SerializeObject(data)}");
+                Logger.Debug($"SendBySessionId [{result.Key}] [{SessionId}] [{sessionId}]\n{JsonConvert.SerializeObject(data, Formatting.Indented)}");
             }
 
             return true;
@@ -223,7 +223,7 @@ public sealed class Session : ISession
 
             if (Logger.IsDebug())
             {
-                Logger.Debug($"SendBroadcast [{result.Key}] [{SessionId}] {JsonConvert.SerializeObject(data)}");
+                Logger.Debug($"SendBroadcast [{result.Key}] [{SessionId}]\n{JsonConvert.SerializeObject(data, Formatting.Indented)}");
             }
         }
         catch (Exception e)

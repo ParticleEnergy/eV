@@ -13,7 +13,7 @@
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
     <RootNamespace>eV.Framework.Server</RootNamespace>
-    <PackageVersion>1.7.1</PackageVersion>
+    <PackageVersion>1.7.2</PackageVersion>
     <TargetFramework>net6.0</TargetFramework>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>

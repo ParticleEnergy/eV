@@ -11,7 +11,7 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <LangVersion>10</LangVersion>
     <Authors>绵羊</Authors>
-    <PackageVersion>1.7.1</PackageVersion>
+    <PackageVersion>1.7.2</PackageVersion>
     <RootNamespace>eV.Network.Core</RootNamespace>
     <TargetFrameworks>net6.0;netstandard2.1</TargetFrameworks>
     <PackageReadmeFile>README.md</PackageReadmeFile>

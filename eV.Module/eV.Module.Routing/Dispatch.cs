@@ -95,7 +95,7 @@ public static class Dispatch
 
             if (Logger.IsDebug())
             {
-                Logger.Debug($"ReceiveMessage [{packet.GetName()}] [{session.SessionId}] {JsonConvert.SerializeObject(content)}");
+                Logger.Debug($"ReceiveMessage [{packet.GetName()}] [{session.SessionId}]\n{JsonConvert.SerializeObject(content, Formatting.Indented)}");
             }
             else
             {
